@@ -109,4 +109,4 @@ make install
 
 Go to your Embassy Services page, select **Nostr**, configure and start the service. Then, verify its interfaces are accessible.
 
-**Done!** 
+**Done!**
