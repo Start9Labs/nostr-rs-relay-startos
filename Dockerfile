@@ -1,3 +1,7 @@
+FROM golang:latest as noscl
+
+RUN go install github.com/fiatjaf/noscl@latest
+
 FROM docker.io/library/rust:1.66.0 as builder
 
 RUN USER=root cargo install cargo-auditable
@@ -36,6 +40,7 @@ RUN groupadd $APP_USER \
     && mkdir -p ${APP_DATA}
 
 COPY --from=builder /nostr-rs-relay/target/release/nostr-rs-relay ${APP}/nostr-rs-relay
+COPY --from=noscl /go/bin/noscl /usr/local/bin/noscl
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
