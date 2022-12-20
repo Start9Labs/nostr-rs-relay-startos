@@ -1,6 +1,6 @@
-# Wrapper for nostr-rs-relay
+# Wrapper for nostr
 
-This is a nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite. This repository creates the `s9pk` package that is installed to run `nostr-rs-relay` on [embassyOS](https://github.com/Start9Labs/embassy-os/). Learn more about service packaging in the [Developer Docs](https://start9.com/latest/developer-docs/).
+This is a nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite. This repository creates the `s9pk` package that is installed to run `nostr` on [embassyOS](https://github.com/Start9Labs/embassy-os/). Learn more about service packaging in the [Developer Docs](https://start9.com/latest/developer-docs/).
 
 ## Dependencies
 
@@ -55,7 +55,7 @@ cd embassy-os/backend/
 ./install-sdk.sh
 embassy-sdk init
 ```
-Now you are ready to build the `nostr-rs-relay` package!
+Now you are ready to build the `nostr` package!
 
 ## Cloning
 
@@ -68,13 +68,13 @@ cd nostr-wrapper
 
 ## Building
 
-To build the `nostr-rs-relay` package for all platforms using embassy-sdk version >=0.3.3, run the following command:
+To build the `nostr` package for all platforms using embassy-sdk version >=0.3.3, run the following command:
 
 ```
 make
 ```
 
-To build the `nostr-rs-relay` package for a single platform using embassy-sdk version <=0.3.2, run:
+To build the `nostr` package for a single platform using embassy-sdk version <=0.3.2, run:
 
 ```
 # for amd64
