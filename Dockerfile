@@ -23,8 +23,9 @@ RUN cargo auditable build --release --locked
 
 FROM docker.io/library/debian:bullseye-20221205-slim
 
-ARG APP=/usr/src/app
-ARG APP_DATA=/usr/src/app/db
+# ARG APP=/usr/src/app
+ARG APP=/home/appuser
+ARG APP_DATA=/home/appuser/db
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata sqlite3 libc6 \
     && rm -rf /var/lib/apt/lists/*
