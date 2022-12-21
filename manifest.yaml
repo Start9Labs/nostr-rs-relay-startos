@@ -56,16 +56,16 @@ volumes:
   main:
     type: data
 interfaces:
-  electrum:
-    name: Electrum Interface
-    description: Serves an electrum API for use with compatible wallets
+  websocket:
+    name: Websocket Interface
+    description: Nostr websocket relay interface
     tor-config:
       port-mapping:
-        50001: "50001"
-    # lan-config:
-    #   443:
-    #     ssl: true
-    #     internal: 50001
+        80: "8080"
+    lan-config:
+      443:
+        ssl: true
+        internal: 8080
     ui: false
     protocols:
       - tcp
