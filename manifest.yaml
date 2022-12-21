@@ -20,8 +20,8 @@ assets:
 main:
   type: docker
   image: main
-  entrypoint: "./nostr-rs-relay"
-  args: [" --db", "/usr/src/app/db"]
+  entrypoint: "docker_entrypoint.sh"
+  args: []
   mounts:
     main: /data
 health-checks: {}

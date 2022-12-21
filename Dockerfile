@@ -25,7 +25,7 @@ FROM docker.io/library/debian:bullseye-20221205-slim
 
 # ARG APP=/usr/src/app
 ARG APP=/home/appuser
-ARG APP_DATA=/home/appuser/db
+ARG APP_DATA=/data
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata sqlite3 libc6 \
     && rm -rf /var/lib/apt/lists/*
@@ -41,7 +41,11 @@ RUN groupadd $APP_USER \
     && mkdir -p ${APP_DATA}
 
 COPY --from=builder /nostr-rs-relay/target/release/nostr-rs-relay ${APP}/nostr-rs-relay
-COPY --from=noscl /go/bin/noscl /usr/local/bin/noscl
+# COPY --from=noscl /go/bin/noscl /usr/local/bin/noscl
+COPY --from=noscl /go/bin/noscl ${APP}/noscl
+COPY ./nostr-rs-relay/config.toml ${APP}/config.toml
+RUN mkdir -p /home/appuser/.config/nostr
+COPY ./config.json /home/appuser/.config/nostr/config.json
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
@@ -63,10 +67,10 @@ RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
 
 # ----
 
-USER $APP_USER
+# USER $APP_USER
 WORKDIR ${APP}
 
-ENV RUST_LOG=info,nostr_rs_relay=info
+ENV RUST_LOG=trace,nostr_rs_relay=trace
 ENV APP_DATA=${APP_DATA}
 
 # CMD ./nostr-rs-relay --db ${APP_DATA}
