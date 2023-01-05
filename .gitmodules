@@ -1,0 +1,3 @@
+[submodule "nostr-rs-relay"]
+	path = nostr-rs-relay
+	url = git@github.com:dr-bonez/nostr-rs-relay
