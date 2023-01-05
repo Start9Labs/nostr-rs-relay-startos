@@ -1,7 +1,3 @@
-FROM golang:latest as noscl
-
-RUN go install github.com/fiatjaf/noscl@latest
-
 FROM docker.io/library/rust:1.66.0 as builder
 
 RUN USER=root cargo install cargo-auditable
@@ -23,8 +19,7 @@ RUN cargo auditable build --release --locked
 
 FROM docker.io/library/debian:bullseye-20221205-slim
 
-# ARG APP=/usr/src/app
-ARG APP=/home/appuser
+ARG APP=/usr/src/app
 ARG APP_DATA=/data
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata sqlite3 libc6 \
@@ -41,11 +36,7 @@ RUN groupadd $APP_USER \
     && mkdir -p ${APP_DATA}
 
 COPY --from=builder /nostr-rs-relay/target/release/nostr-rs-relay ${APP}/nostr-rs-relay
-# COPY --from=noscl /go/bin/noscl /usr/local/bin/noscl
-COPY --from=noscl /go/bin/noscl ${APP}/noscl
 COPY ./nostr-rs-relay/config.toml ${APP}/config.toml
-RUN mkdir -p /home/appuser/.config/nostr
-COPY ./config.json /home/appuser/.config/nostr/config.json
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
@@ -59,10 +50,6 @@ RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/d
 # ADD ./configurator/target/${ARCH}-unknown-linux-musl/release/configurator /usr/local/bin/configurator
 ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
-# ADD ./check-electrum.sh /usr/local/bin/check-electrum.sh
-# RUN chmod a+x /usr/local/bin/check-electrum.sh
-# ADD ./check-synced.sh /usr/local/bin/check-synced.sh
-# RUN chmod a+x /usr/local/bin/check-synced.sh
 
 
 # ----

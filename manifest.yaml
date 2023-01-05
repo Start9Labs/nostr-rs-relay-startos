@@ -1,6 +1,6 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.7.12
+version: 0.7.16
 release-notes: |
   * Initial release of nostr-rs-relay for embassyOS
 license: mit
@@ -24,27 +24,11 @@ main:
   args: []
   mounts:
     main: /data
-health-checks: {}
-  # electrum:
-  #   name: Electrum RPC Interface
-  #   success-message: The electrum RPC interface is alive and responding to basic commands.
-  #   type: docker
-  #   image: main
-  #   entrypoint: "check-electrum.sh"
-  #   args: []
-  #   inject: true
-  #   system: false
-  #   io-format: json
-  # synced:
-  #   name: Synced
-  #   success-message: The indexes are built and the electrum interface is fully operational. You may now connect a wallet.
-  #   type: docker
-  #   image: main
-  #   entrypoint: "check-synced.sh"
-  #   args: []
-  #   inject: true
-  #   system: false
-  #   io-format: json
+health-checks:
+  main:
+    name: Websocket Server
+    success-message: The Nostr websocket server is alive and listening for connections.
+    type: script
 config:
   get:
     type: script
