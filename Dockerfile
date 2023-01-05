@@ -19,8 +19,7 @@ RUN cargo auditable build --release --locked
 
 FROM docker.io/library/debian:bullseye-20221205-slim
 
-# ARG APP=/usr/src/app
-ARG APP=/home/appuser
+ARG APP=/usr/src/app
 ARG APP_DATA=/data
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata sqlite3 libc6 \
@@ -38,8 +37,6 @@ RUN groupadd $APP_USER \
 
 COPY --from=builder /nostr-rs-relay/target/release/nostr-rs-relay ${APP}/nostr-rs-relay
 COPY ./nostr-rs-relay/config.toml ${APP}/config.toml
-RUN mkdir -p /home/appuser/.config/nostr
-COPY ./config.json /home/appuser/.config/nostr/config.json
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
