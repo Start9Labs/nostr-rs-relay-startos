@@ -1,5 +1,8 @@
-# Instructions for Hello World
+# Instructions for Nostr RS Relay
 
-Instructions go here. These appear to the user in the UI on the Service page under **Instructions**.
+To use your NOSTR relay, go into Properties and copy your
+`NOSTR Relay Websocket URL` and paste it into any NOSTR client that supports Tor
+relays, including Hamstr on embassyOS.
 
-You are allowed to include basic [Markdown formatting](https://www.markdownguide.org/basic-syntax).
+For more information about the NOSTR protocol, relays, and clients, visit
+https://github.com/nostr-protocol/nostr
