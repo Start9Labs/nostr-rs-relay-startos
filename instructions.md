@@ -1,8 +1,7 @@
-# Instructions for Nostr RS Relay
+# Instructions
 
-To use your NOSTR relay, go into Properties and copy your
-`NOSTR Relay Websocket URL` and paste it into any NOSTR client that supports Tor
-relays, including Hamstr on embassyOS.
+To use your Nostr relay, go into Properties and copy your
+`Nostr Relay Websocket URL` and paste it into any Nostr client that supports connecting over Tor.
 
-For more information about the NOSTR protocol, relays, and clients, visit
+For more information about the Nostr protocol, relays, and clients, visit
 https://github.com/nostr-protocol/nostr
