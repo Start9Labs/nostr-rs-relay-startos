@@ -1,6 +1,6 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.7.16
+version: 0.8.2
 release-notes: |
   * Initial release of nostr-rs-relay for embassyOS
 license: mit

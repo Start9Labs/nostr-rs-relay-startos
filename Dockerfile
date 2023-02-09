@@ -59,5 +59,6 @@ WORKDIR ${APP}
 
 ENV RUST_LOG=trace,nostr_rs_relay=trace
 ENV APP_DATA=${APP_DATA}
+ENV APP=${APP}
 
 # CMD ./nostr-rs-relay --db ${APP_DATA}

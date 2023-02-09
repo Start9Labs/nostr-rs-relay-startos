@@ -19,6 +19,14 @@ else
 	embassy-cli package install $(PKG_ID).s9pk
 endif
 
+# for rebuilding just the arm image. will include docker-images/x86_64.tar into the s9pk if it exists
+arm: docker-images/aarch64.tar scripts/embassy.js
+	embassy-sdk pack
+
+# for rebuilding just the x86 image. will include docker-images/aarch64.tar into the s9pk if it exists
+x86: docker-images/x86_64.tar scripts/embassy.js
+	embassy-sdk pack
+
 clean:
 	rm -rf docker-images
 	rm -f image.tar
