@@ -57,7 +57,7 @@ RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
 # USER $APP_USER
 WORKDIR ${APP}
 
-ENV RUST_LOG=trace,nostr_rs_relay=trace
+ENV RUST_LOG=info,nostr_rs_relay=info
 ENV APP_DATA=${APP_DATA}
 ENV APP=${APP}
 

@@ -15,6 +15,9 @@ export const setConfig: T.ExpectedExports.setConfig = async (
   configToml.info.relay_url = `ws://${config["tor-address"]}`;
   delete configToml["lan-address"];
   delete configToml["tor-address"];
+  if (typeof configToml.authorization["pubkey_whitelist"] !== 'undefined' && configToml.authorization["pubkey_whitelist"].length === 0) {
+    delete configToml.authorization["pubkey_whitelist"];
+  }
 
   await effects.createDir({
     path: "start9",
