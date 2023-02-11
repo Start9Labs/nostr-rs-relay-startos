@@ -1,5 +1,5 @@
-import { compat, types as T } from "../deps.ts";
-import { setConfigMatcher } from "./getConfig.ts";
+import { compat, matches, types as T, TOML } from "../deps.ts";
+import { SetConfig, setConfigMatcher } from "./getConfig.ts";
 
 // const { string, boolean, shape } = matches;
 
@@ -32,8 +32,8 @@ export const setConfig: T.ExpectedExports.setConfig = async (
   });
 
   await effects.writeFile({
-    path: "config.config.tmp",
-    toWrite: config.stringify(config),
+    path: "config.toml.tmp",
+    toWrite: TOML.stringify(config),
     volumeId: "main",
   });
 
