@@ -21,6 +21,8 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
   },
   "relay-type": {
     "type": "union",
+    "name": "Relay Type",
+    "warning": "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
     "tag": {
       "id": "type",
       "name": "Relay Type",
@@ -30,7 +32,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
         "public": "Public"
       },
     },
-    "warning": "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
     "default": "private",
     "variants": {
       "private": {
@@ -38,11 +39,10 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
           "name": "Pubkey Whitelist (hex)",
           "description": "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
           "type": "list",
+          // "nullable": true,
           "range": "[1,*)",
           "subtype": "string",
           "spec": {
-            "masked": false,
-            "copyable": true,
             "placeholder": "hex (not npub) pubkey",
             "pattern": "[0-9a-fA-F]{64}",
             "pattern-description": "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
@@ -64,8 +64,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
               "placeholder": "Bob's Public Relay",
               "pattern": ".{3,32}",
               "pattern-description": "Must be at least 3 character and no more than 32 characters",
-              "masked": false,
-              "copyable": true,
             },
             "description": {
               "name": "Relay Description",
@@ -76,8 +74,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
               "pattern": ".{6,256}",
               "pattern-description":
                 "Must be at least 6 character and no more than 256 characters",
-              "masked": false,
-              "copyable": true,
             },
             "pubkey": {
               "name": "Admin contact pubkey (hex)",
@@ -87,8 +83,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
               "placeholder": "hex (not npub) pubkey",
               "pattern": "[0-9a-fA-F]{64}",
               "pattern-description": "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
-              "masked": false,
-              "copyable": true,
             },
             "contact": {
               "name": "Admin contact email",
@@ -97,8 +91,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
               "nullable": true,
               "pattern": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
               "pattern-description": "Must be a valid email address.",
-              "masked": false,
-              "copyable": true,
             },
           },
         },
@@ -131,7 +123,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
               "name": "Max Blocking Threads",
               "description": "Maximum number of blocking threads used for database connections.",
               "type": "number",
-              "nullable": false,
+              "nullable": true,
               "range": "[0,*)",
               "integral": true,
               "units": "threads",
@@ -141,44 +133,40 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher({
               "name": "Max Event Size",
               "description": "Limit the maximum size of an EVENT message. Set to 0 for unlimited",
               "type": "number",
-              "nullable": false,
+              "nullable": true,
               "range": "[0,*)",
               "integral": true,
               "units": "bytes",
-              "default": 128000,
             },
             "max_ws_message_bytes": {
               "name": "Max Websocket Message Size",
               "description": "Maximum WebSocket message in bytes.",
               "type": "number",
-              "nullable": false,
+              "nullable": true,
               "range": "[0,*)",
               "integral": true,
               "units": "bytes",
-              "default": 128000
             },
             "max_ws_frame_bytes": {
               "name": "Max Websocket Frame Size",
               "description": "Maximum WebSocket frame size in bytes.",
               "type": "number",
-              "nullable": false,
+              "nullable": true,
               "range": "[0,*)",
               "integral": true,
               "units": "bytes",
-              "default": 128000
             },
             "event_kind_blacklist": {
               "name": "Event Kind Blacklist",
               "description": "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
+              "nullable": true,
               "type": "list",
               "range": "[0,*)",
               "subtype": "number",
               "spec": {
-                "placeholder": "2",
-                "range": "[0,*)",
-                "integral": true,
+                "placeholder": 2,
               },
-              "default": Array<string>() // [] as string []
+              "default": Array<number>() // [] as string []
             }
           }
         },

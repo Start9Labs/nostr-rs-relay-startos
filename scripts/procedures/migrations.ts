@@ -21,6 +21,22 @@ export const migration: T.ExpectedExports.migration = compat.migrations
                 { version: "0.8.2", type: "down" },
             ),
       },
+        "0.8.2.1": {
+            up: compat.migrations.updateConfig(
+                (_config) => {
+                    return {};
+                },
+                false,
+                { version: "0.8.2.1", type: "up" },
+            ),
+            down: compat.migrations.updateConfig(
+                (_config) => {
+                    return {};
+                },
+                false,
+                { version: "0.8.2.1", type: "down" },
+            ),
+      },
     },
-    "0.8.2",
+    "0.8.2.1",
 );
