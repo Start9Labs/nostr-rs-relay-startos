@@ -1,4 +1,4 @@
-import { compat, matches, types as T, TOML } from "../deps.ts";
+import { compat, matches, TOML, types as T } from "../deps.ts";
 import { SetConfig, setConfigMatcher } from "./getConfig.ts";
 
 // const { string, boolean, shape } = matches;
@@ -7,19 +7,20 @@ export const setConfig: T.ExpectedExports.setConfig = async (
   effects: T.Effects,
   input: T.Config,
 ) => {
-  const config = setConfigMatcher.unsafeCast(input) as any;
-  // await checkConfigRules(config);
-
-  config.network = { address:"0.0.0.0", port: 8080 };
+  const config = input as any;
+  effects.error(JSON.stringify(input));
+  config.network = { address: "0.0.0.0", port: 8080 };
   config.options = { reject_future_seconds: 1800 };
   config.info = { relay_url: `ws://${config["tor-address"]}` };
 
   const relayTypeUnion = config["relay-type"];
-  if (relayTypeUnion.type === 'private') {
-    config.authorization = { "pubkey_whitelist": relayTypeUnion["pubkey_whitelist"] };
-  } else if (relayTypeUnion.type === 'public') {
-    config.info = { ...config.info, ...relayTypeUnion.info }
-    config.limits = relayTypeUnion.limits
+  if (relayTypeUnion.type === "private") {
+    config.authorization = {
+      "pubkey_whitelist": relayTypeUnion["pubkey_whitelist"],
+    };
+  } else if (relayTypeUnion.type === "public") {
+    config.info = { ...config.info, ...relayTypeUnion.info };
+    config.limits = relayTypeUnion.limits;
   }
 
   delete config["lan-address"];
