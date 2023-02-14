@@ -179,12 +179,13 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "name": "Event Kind Blacklist",
                 "description":
                   "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
-                "nullable": true,
                 "type": "list",
                 "range": "[0,*)",
                 "subtype": "number",
                 "spec": {
-                  "placeholder": 2,
+                  "integral": true,
+                  "placeholder": 30023,
+                  "range": '(0,100000]',
                 },
                 "default": Array<number>(), // [] as number []
               },
