@@ -1,6 +1,6 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.8.2
+version: 0.8.2.1
 release-notes: |
   * Initial release of nostr-rs-relay for embassyOS
 license: mit
@@ -57,55 +57,11 @@ interfaces:
       - electrum
 alerts: {}
 dependencies: {}
-  # btc-rpc-proxy:
-  #   version: ">=0.3.2.1 <0.4.0"
-  #   requirement:
-  #     type: "opt-out"
-  #     how: Set "Bitcoin Core" to 'Bitcoin Core'"
-  #   description: Provides bitcoin rpc interface needed for info about fees, blockchain, mempool, network, and transactions. Can also use bitcoind for rpc interface, or an external node for both.
-  #   config:
-  #     check:
-  #       type: script
-  #     auto-configure:
-  #       type: script
-  # bitcoind:
-  #   version: ">=0.21.1.2 <26.0.0"
-  #   requirement:
-  #     type: "opt-out"
-  #     how: Set "Bitcoin Core" type to "External"
-  #   description: Needed for peer interface and rpc interface. Can also use btc-rpc-proxy for rpc interface, or an external node for both.
-  #   config:
-  #     check:
-  #       type: script
-  #     auto-configure:
-  #       type: script
 backup:
   create:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: compat
-    args:
-      - duplicity
-      - create
-      - /mnt/backup
-      - /data
-    mounts:
-      BACKUP: /mnt/backup
-      main: /data
+    type: script
   restore:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: compat
-    args:
-      - duplicity
-      - restore
-      - /mnt/backup
-      - /data
-    mounts:
-      BACKUP: /mnt/backup
-      main: /data
+    type: script
 migrations:
   from:
     "*":

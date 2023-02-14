@@ -1,33 +1,43 @@
-import { compat, matches, types as T, TOML } from "../deps.ts";
-import { SetConfig, setConfigMatcher } from "./getConfig.ts";
-
-// const { string, boolean, shape } = matches;
+import { compat, TOML, types as T } from "../deps.ts";
 
 export const setConfig: T.ExpectedExports.setConfig = async (
   effects: T.Effects,
   input: T.Config,
 ) => {
-  const config = setConfigMatcher.unsafeCast(input);
-//   await checkConfigRules(config);
-  const configToml = config as any;
-  configToml.network = { address:"0.0.0.0", port: 8080 };
-  configToml.options = { reject_future_seconds: 1800 };
-  configToml.info.relay_url = `ws://${config["tor-address"]}`;
-  delete configToml["lan-address"];
-  delete configToml["tor-address"];
-  if (typeof configToml.authorization["pubkey_whitelist"] !== 'undefined' && configToml.authorization["pubkey_whitelist"].length === 0) {
-    delete configToml.authorization["pubkey_whitelist"];
+  const config: any = {
+    network: {
+      address: "0.0.0.0",
+      port: 8080
+    },
+    options: {
+      reject_future_seconds: 1800
+    },
+    info: {
+      relay_url: `ws://${input["tor-address"]}`
+    }
+  };
+
+  const relayTypeUnion = input["relay-type"] as any;
+  if (relayTypeUnion.type === "private") {
+    config.authorization = {
+      "pubkey_whitelist": relayTypeUnion["pubkey_whitelist"]
+    };
+  } else if (relayTypeUnion.type === "public") {
+    config.info = { ...config.info, ...relayTypeUnion.info };
+    config.limits = relayTypeUnion.limits;
   }
+
+  const volumeId = "main"
 
   await effects.createDir({
     path: "start9",
-    volumeId: "main",
+    volumeId,
   });
 
   await effects.writeFile({
     path: "config.toml.tmp",
-    toWrite: TOML.stringify(configToml),
-    volumeId: "main",
+    toWrite: TOML.stringify(config),
+    volumeId,
   });
 
   return await compat.setConfig(effects, input);
