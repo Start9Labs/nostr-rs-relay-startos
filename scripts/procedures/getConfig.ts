@@ -43,7 +43,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
             "description":
               "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
             "type": "list",
-            // "nullable": true,
             "range": "[1,*)",
             "subtype": "string",
             "spec": {
@@ -70,6 +69,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "pattern": ".{3,32}",
                 "pattern-description":
                   "Must be at least 3 character and no more than 32 characters",
+                "masked": false
               },
               "description": {
                 "name": "Relay Description",
@@ -80,6 +80,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "pattern": ".{6,256}",
                 "pattern-description":
                   "Must be at least 6 character and no more than 256 characters",
+                "masked": false
               },
               "pubkey": {
                 "name": "Admin contact pubkey (hex)",
@@ -91,6 +92,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "pattern": "[0-9a-fA-F]{64}",
                 "pattern-description":
                   "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+                "masked": false
               },
               "contact": {
                 "name": "Admin contact email",
@@ -99,6 +101,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "nullable": true,
                 "pattern": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
                 "pattern-description": "Must be a valid email address.",
+                "masked": false
               },
             },
           },
@@ -113,7 +116,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "description":
                   "Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection.",
                 "type": "number",
-                "nullable": true,
+                "nullable": false,
                 "range": "[1,*)",
                 "integral": true,
                 "default": 2,
@@ -124,7 +127,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "description":
                   "Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service.",
                 "type": "number",
-                "nullable": true,
+                "nullable": false,
                 "range": "[1,*)",
                 "integral": true,
                 "default": 10,
@@ -135,7 +138,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "description":
                   "Maximum number of blocking threads used for database connections.",
                 "type": "number",
-                "nullable": true,
+                "nullable": false,
                 "range": "[0,*)",
                 "integral": true,
                 "units": "threads",
@@ -146,28 +149,31 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "description":
                   "Limit the maximum size of an EVENT message. Set to 0 for unlimited",
                 "type": "number",
-                "nullable": true,
+                "nullable": false,
                 "range": "[0,*)",
                 "integral": true,
                 "units": "bytes",
+                "default": 131072,
               },
               "max_ws_message_bytes": {
                 "name": "Max Websocket Message Size",
                 "description": "Maximum WebSocket message in bytes.",
                 "type": "number",
-                "nullable": true,
+                "nullable": false,
                 "range": "[0,*)",
                 "integral": true,
                 "units": "bytes",
+                "default": 131072,
               },
               "max_ws_frame_bytes": {
                 "name": "Max Websocket Frame Size",
                 "description": "Maximum WebSocket frame size in bytes.",
                 "type": "number",
-                "nullable": true,
+                "nullable": false,
                 "range": "[0,*)",
                 "integral": true,
                 "units": "bytes",
+                "default": 131072,
               },
               "event_kind_blacklist": {
                 "name": "Event Kind Blacklist",
@@ -180,7 +186,7 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
                 "spec": {
                   "placeholder": 2,
                 },
-                "default": Array<number>(), // [] as string []
+                "default": Array<number>(), // [] as number []
               },
             },
           },

@@ -23,15 +23,24 @@ export const migration: T.ExpectedExports.migration = compat.migrations
       },
         "0.8.2.1": {
             up: compat.migrations.updateConfig(
-                (_config) => {
-                    return {};
+                (config: any) => {
+                    return {
+                        "relay-type": {
+                            type: "private",
+                            pubkey_whitelist: config.authorization.pubkey_whitelist
+                        }
+                    };
                 },
                 false,
                 { version: "0.8.2.1", type: "up" },
             ),
             down: compat.migrations.updateConfig(
                 (_config) => {
-                    return {};
+                    return {
+                        info: {},
+                        limits: { "event_kind_blacklist": [] },
+                        authorization: { "pubkey_whitelist": [] }
+                    };
                 },
                 false,
                 { version: "0.8.2.1", type: "down" },

@@ -1,41 +1,43 @@
-import { compat, matches, TOML, types as T } from "../deps.ts";
-import { SetConfig, setConfigMatcher } from "./getConfig.ts";
-
-// const { string, boolean, shape } = matches;
+import { compat, TOML, types as T } from "../deps.ts";
 
 export const setConfig: T.ExpectedExports.setConfig = async (
   effects: T.Effects,
   input: T.Config,
 ) => {
-  const config = input as any;
-  effects.error(JSON.stringify(input));
-  config.network = { address: "0.0.0.0", port: 8080 };
-  config.options = { reject_future_seconds: 1800 };
-  config.info = { relay_url: `ws://${config["tor-address"]}` };
+  const config: any = {
+    network: {
+      address: "0.0.0.0",
+      port: 8080
+    },
+    options: {
+      reject_future_seconds: 1800
+    },
+    info: {
+      relay_url: `ws://${input["tor-address"]}`
+    }
+  };
 
-  const relayTypeUnion = config["relay-type"];
+  const relayTypeUnion = input["relay-type"] as any;
   if (relayTypeUnion.type === "private") {
     config.authorization = {
-      "pubkey_whitelist": relayTypeUnion["pubkey_whitelist"],
+      "pubkey_whitelist": relayTypeUnion["pubkey_whitelist"]
     };
   } else if (relayTypeUnion.type === "public") {
     config.info = { ...config.info, ...relayTypeUnion.info };
     config.limits = relayTypeUnion.limits;
   }
 
-  delete config["lan-address"];
-  delete config["tor-address"];
-  delete config["relay-type"];
+  const volumeId = "main"
 
   await effects.createDir({
     path: "start9",
-    volumeId: "main",
+    volumeId,
   });
 
   await effects.writeFile({
     path: "config.toml.tmp",
     toWrite: TOML.stringify(config),
-    volumeId: "main",
+    volumeId,
   });
 
   return await compat.setConfig(effects, input);
