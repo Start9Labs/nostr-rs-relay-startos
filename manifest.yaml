@@ -54,7 +54,6 @@ interfaces:
     protocols:
       - tcp
       - http
-      - electrum
 alerts: {}
 dependencies: {}
 backup:
