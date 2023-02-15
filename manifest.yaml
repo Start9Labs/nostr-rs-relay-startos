@@ -1,6 +1,6 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.8.2.1
+version: 0.8.2.2
 release-notes: |
   * Initial release of nostr-rs-relay for embassyOS
 license: mit
@@ -46,10 +46,6 @@ interfaces:
     tor-config:
       port-mapping:
         80: "8080"
-    lan-config:
-      443:
-        ssl: true
-        internal: 8080
     ui: false
     protocols:
       - tcp

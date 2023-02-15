@@ -41,7 +41,7 @@ export const properties: T.ExpectedExports.properties = async ( effects: T.Effec
     result: {
       version: 2,
       data: {
-        "Nostr relay websocket URL": {
+        "Relay websocket URL": {
           type: "string",
           value: `ws://${config["tor-address"]}`,
           description: "Share this URL with anyone who wants to connect to your relay over Tor.",

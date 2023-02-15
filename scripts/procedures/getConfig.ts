@@ -11,15 +11,6 @@ export const [getConfig, setConfigMatcher] = compat.getConfigAndMatcher(
       "target": "tor-address",
       "interface": "websocket",
     },
-    "lan-address": {
-      "name": "Tor Address",
-      "description": "The LAN address for the websocket server.",
-      "type": "pointer",
-      "subtype": "package",
-      "package-id": "nostr",
-      "target": "lan-address",
-      "interface": "websocket",
-    },
     "relay-type": {
       "type": "union",
       "name": "Relay Type",
