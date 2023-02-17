@@ -1,8 +1,8 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.8.2.1
+version: 0.8.2.2
 release-notes: |
-  * Initial release of nostr-rs-relay for embassyOS
+  * Update instructions to include tips for using Nostr clients
 license: mit
 wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-wrapper"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
