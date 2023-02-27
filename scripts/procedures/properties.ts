@@ -8,7 +8,8 @@ const noPropertiesFound: T.ResultType<T.Properties> = {
     data: {
       "Not Ready": {
         type: "string",
-        value: "Could not find properties. Nostr RS Relay might still be starting...",
+        value:
+          "Could not find properties. Nostr RS Relay might still be starting...",
         qr: false,
         copyable: false,
         masked: false,
@@ -20,9 +21,12 @@ const noPropertiesFound: T.ResultType<T.Properties> = {
 
 const configMatcher = shape({
   "tor-address": string,
+  "lan-address": string,
 });
 
-export const properties: T.ExpectedExports.properties = async ( effects: T.Effects ) => {
+export const properties: T.ExpectedExports.properties = async (
+  effects: T.Effects,
+) => {
   if (
     await util.exists(effects, {
       volumeId: "main",
@@ -41,16 +45,26 @@ export const properties: T.ExpectedExports.properties = async ( effects: T.Effec
     result: {
       version: 2,
       data: {
-        "Nostr relay websocket URL": {
+        "Nostr relay websocket URL (Tor, recommended)": {
           type: "string",
           value: `ws://${config["tor-address"]}`,
-          description: "Share this URL with anyone who wants to connect to your relay over Tor.",
+          description:
+            "Share this URL with anyone who wants to connect to your relay over Tor. Remember to enable `network.websocket.allowInsecureFromHTTPS` in `about:config` to be able to access your relay using a client in Firefox or Tor Browser.",
           copyable: true,
           qr: false,
           masked: false,
         },
-      }
-    }
+        "Nostr relay websocket URL (LAN, not recommended)": {
+          type: "string",
+          value: `wss://${config["lan-address"]}`,
+          description:
+            "Use this URL to connect to your relay over LAN. Only for testing purposes.",
+          copyable: true,
+          qr: false,
+          masked: false,
+        },
+      },
+    },
   } as const;
   return properties;
 };
