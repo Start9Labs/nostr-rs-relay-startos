@@ -8,65 +8,21 @@ wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-wrapper"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
 support-site: "https://todo.sr.ht/~gheartsfield/nostr-rs-relay"
 marketing-site: "https://nostr.com/"
-build: ["make"]
 description:
-  short:  A Nostr relay, written in Rust.
+  short: A Nostr relay, written in Rust.
   long: |
     This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite.
 assets:
   license: LICENSE
   icon: icon.png
   instructions: instructions.md
-main:
-  type: docker
-  image: main
-  entrypoint: "docker_entrypoint.sh"
-  args: []
-  mounts:
-    main: /data
-health-checks:
+containers:
   main:
-    name: Websocket Server
-    success-message: The Nostr websocket server is alive and listening for connections.
-    type: script
-config:
-  get:
-    type: script
-  set:
-    type: script
-properties:
-  type: script
+    image: main
+    mounts:
+      main: /data
 volumes:
   main:
     type: data
-interfaces:
-  websocket:
-    name: Websocket Interface
-    description: Nostr websocket relay interface
-    tor-config:
-      port-mapping:
-        80: "8080"
-    lan-config:
-      443:
-        ssl: true
-        internal: 8080
-    ui: false
-    protocols:
-      - tcp
-      - http
 alerts: {}
 dependencies: {}
-backup:
-  create:
-    type: script
-  restore:
-    type: script
-migrations:
-  from:
-    "*":
-      type: script
-      args: ["from"]
-  to:
-    "*":
-      type: script
-      args: ["to"]
