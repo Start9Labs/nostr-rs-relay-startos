@@ -3,7 +3,7 @@ import { ConfigSpec } from "./configSpec";
 import { tomlFile } from "./files/config.toml";
 
 export async function read(
-  effects: Types.Effects,
+  effects: Types.Effects
 ): Promise<Partial<ConfigSpec>> {
   const data = await tomlFile.read(effects);
   if (data == null) return {};

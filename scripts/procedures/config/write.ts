@@ -12,27 +12,33 @@ export async function write(effects: Types.Effects, config: ConfigSpec) {
       reject_future_seconds: 1800,
     },
     info: {
-      relay_url: `ws://${await (effects as any).getTorAddress({
+      relay_url: `ws://${await effects.getServiceTorAddress({
         packageId: "nostr",
-        interface: "main",
+        interfaceName: "main",
       })}`,
     },
   };
   if (config["relay-type"].type === "private") {
-    await tomlFile.write({
-      ...toSave,
-      authorization: {
-        pubkey_whitelist: config["relay-type"].pubkey_whitelist as string[],
+    await tomlFile.write(
+      {
+        ...toSave,
+        authorization: {
+          pubkey_whitelist: config["relay-type"].pubkey_whitelist as string[],
+        },
       },
-    }, effects);
+      effects
+    );
     return;
   }
-  await tomlFile.write({
-    ...toSave,
-    info: {
-      ...toSave.info,
-      ...config["relay-type"].info,
+  await tomlFile.write(
+    {
+      ...toSave,
+      info: {
+        ...toSave.info,
+        ...config["relay-type"].info,
+      },
+      limits: config["relay-type"].limits,
     },
-    limits: config["relay-type"].limits,
-  }, effects);
+    effects
+  );
 }

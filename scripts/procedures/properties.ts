@@ -24,23 +24,25 @@ const configMatcher = shape({
   "lan-address": string,
 });
 
-export const properties: Types.ExpectedExports.properties = async (
-  { effects },
-) => {
+export const properties: Types.ExpectedExports.properties = async ({
+  effects,
+}) => {
   if (
-    await util.exists(effects, {
+    (await util.exists(effects, {
       volumeId: "main",
       path: "start9/config.yaml",
-    }) === false
+    })) === false
   ) {
     return noPropertiesFound;
   }
-  const config = configMatcher.unsafeCast(YAML.parse(
-    await effects.readFile({
-      path: "start9/config.yaml",
-      volumeId: "main",
-    }),
-  ));
+  const config = configMatcher.unsafeCast(
+    YAML.parse(
+      await effects.readFile({
+        path: "start9/config.yaml",
+        volumeId: "main",
+      })
+    )
+  );
   const properties: Types.ResultType<Types.Properties> = {
     result: {
       version: 2,

@@ -31,8 +31,8 @@ const tomlShape = allOf(
         pubkey_whitelist: array(string),
       }),
     }),
-    publicConfig.validator(),
-  ),
+    publicConfig.validator()
+  )
 );
 
 /**

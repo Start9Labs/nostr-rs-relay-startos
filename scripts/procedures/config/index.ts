@@ -1,4 +1,3 @@
-
 import { configSpec } from "./configSpec";
 import { write } from "./write";
 import { read } from "./read";
