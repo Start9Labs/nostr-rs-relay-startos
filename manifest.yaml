@@ -1,8 +1,8 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.8.2.2
+version: 0.8.2.3
 release-notes: |
-  * Update instructions to include tips for using Nostr clients
+  * Hotfix: revert from rsync to duplicity backups
 license: mit
 wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-wrapper"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
@@ -58,9 +58,31 @@ alerts: {}
 dependencies: {}
 backup:
   create:
-    type: script
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - create
+      - /mnt/backup
+      - /data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /data
   restore:
-    type: script
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - restore
+      - /mnt/backup
+      - /data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /data
 migrations:
   from:
     "*":
