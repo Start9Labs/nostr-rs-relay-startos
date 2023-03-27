@@ -1,6 +1,5 @@
 {
-  "include": ["./**/*.ts"],
-  "inputs": ["./index.ts"],
+  "include": ["procedures/**/*.ts", "procedures/index.ts"],
   "compilerOptions": {
     "target": "es2022",
     "module": "None",

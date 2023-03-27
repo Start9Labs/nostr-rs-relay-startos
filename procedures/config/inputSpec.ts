@@ -8,7 +8,7 @@ export const pubkeyWhitelistHexList = List.string({
     masked: null,
     placeholder: "hex (not npub) pubkey",
     pattern: "[0-9a-fA-F]{64}",
-    "pattern-description":
+    patternDescription:
       "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
     textarea: false,
   },
@@ -30,7 +30,7 @@ export const name = Value.string({
   masked: null,
   placeholder: "Bob's Public Relay",
   pattern: ".{3,32}",
-  "pattern-description":
+  patternDescription:
     "Must be at least 3 character and no more than 32 characters",
   textarea: null,
 });
@@ -43,7 +43,7 @@ export const description = Value.string({
   masked: null,
   placeholder: "The best relay in town",
   pattern: ".{6,256}",
-  "pattern-description":
+  patternDescription:
     "Must be at least 6 character and no more than 256 characters",
   textarea: null,
 });
@@ -56,7 +56,7 @@ export const pubkey = Value.string({
   masked: null,
   placeholder: "hex (not npub) pubkey",
   pattern: "[0-9a-fA-F]{64}",
-  "pattern-description":
+  patternDescription:
     "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
   textarea: null,
 });
@@ -69,24 +69,21 @@ export const contact = Value.string({
   masked: null,
   placeholder: null,
   pattern: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
-  "pattern-description": "Must be a valid email address.",
+  patternDescription: "Must be a valid email address.",
   textarea: null,
 });
 export const relayInfoSpec = Config.of({
-  name: name,
-  description: description,
-  pubkey: pubkey,
-  contact: contact,
+  name,
+  description,
+  pubkey,
+  contact,
 });
 export const info = Value.object({
   name: "Relay Info",
   description: "General public info about your relay",
   warning: null,
   default: null,
-  "display-as": null,
-  "unique-by": null,
   spec: relayInfoSpec,
-  "value-names": {},
 });
 export const messagesPerSec = Value.number({
   name: "Messages Per Second Limit",
@@ -188,15 +185,12 @@ export const limits = Value.object({
     "Data limits to protect your relay from using too many resources",
   warning: null,
   default: null,
-  "display-as": null,
-  "unique-by": null,
   spec: limitsSpec,
-  "value-names": {},
 });
-export const publicConfig = Config.of({ info: info, limits: limits });
+export const publicConfig = Config.of({ info, limits });
 export const relayTypeVariants = Variants.of({
-  private: personalConfig,
-  public: publicConfig,
+  private: { name: "Private", spec: personalConfig },
+  public: { name: "Public", spec: publicConfig },
 });
 export const relayType = Value.union({
   name: "Relay Type",
@@ -205,20 +199,9 @@ export const relayType = Value.union({
     "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
   default: "private",
   variants: relayTypeVariants,
-  tag: {
-    id: "type",
-    name: "Relay Type",
-    description:
-      "Personal or Public. A personal relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
-    warning: null,
-    "variant-names": { private: "Personal", public: "Public" },
-  },
-  "display-as": null,
-  "unique-by": null,
-  "variant-names": null,
 });
-export const configSpec = Config.of({
-  "relay-type": relayType,
+export const inputSpec = Config.of({
+  relayType,
 });
-export const matchConfigSpec = configSpec.validator();
-export type ConfigSpec = typeof matchConfigSpec._TYPE;
+export const matchConfigSpec = inputSpec.validator();
+export type InputSpec = typeof matchConfigSpec._TYPE;

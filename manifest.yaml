@@ -1,8 +1,8 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.8.2.2
+version: 0.8.8
 release-notes: |
-  * Update instructions to include tips for using Nostr clients
+  * Bug fixes and performance improvements
 license: mit
 wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-wrapper"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
@@ -14,8 +14,8 @@ description:
     This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite.
 assets:
   license: LICENSE
-  icon: icon.png
-  instructions: instructions.md
+  icon: assets/icon.png
+  instructions: assets/instructions.md
 containers:
   main:
     image: main

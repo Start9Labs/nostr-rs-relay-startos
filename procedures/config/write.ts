@@ -1,8 +1,8 @@
 import { Types } from "start-sdk";
-import { ConfigSpec } from "./configSpec";
-import { tomlFile } from "./files/config.toml";
+import { InputSpec } from "./inputSpec";
+import { tomlFile } from "./file-models/config.toml";
 
-export async function write(effects: Types.Effects, config: ConfigSpec) {
+export async function write(effects: Types.Effects, inputSpec: InputSpec) {
   const toSave = {
     network: {
       address: "0.0.0.0",
@@ -18,12 +18,15 @@ export async function write(effects: Types.Effects, config: ConfigSpec) {
       })}`,
     },
   };
-  if (config["relay-type"].type === "private") {
+
+  const relayType = inputSpec.relayType
+
+  if ("private" in relayType) {
     await tomlFile.write(
       {
         ...toSave,
         authorization: {
-          pubkey_whitelist: config["relay-type"].pubkey_whitelist as string[],
+          pubkey_whitelist: relayType.private.pubkey_whitelist as string[],
         },
       },
       effects
@@ -35,9 +38,9 @@ export async function write(effects: Types.Effects, config: ConfigSpec) {
       ...toSave,
       info: {
         ...toSave.info,
-        ...config["relay-type"].info,
+        ...relayType.public.info,
       },
-      limits: config["relay-type"].limits,
+      limits: relayType.public.limits,
     },
     effects
   );

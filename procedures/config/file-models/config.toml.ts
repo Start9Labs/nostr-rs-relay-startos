@@ -1,9 +1,8 @@
 import { matches } from "start-sdk";
-import { FileHelper } from "start-sdk/util/index";
-import { publicConfig } from "../configSpec";
+import { FileHelper } from "start-sdk/lib/util";
+import { publicConfig } from "../inputSpec";
 
-const { object, array, string, number, boolean, anyOf, allOf, literals } =
-  matches;
+const { object, array, string, number, anyOf, allOf } = matches;
 // todo Move things into sdk of health, and get the types
 // new effect health, getTorAddress
 // Raw file update

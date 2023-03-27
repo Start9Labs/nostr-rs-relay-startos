@@ -1,5 +1,5 @@
-import { healthUtil, Types as T } from "start-sdk";
-import healthRunner from "start-sdk/health/healthRunner";
+import { healthUtil } from "start-sdk";
+import healthRunner from "start-sdk/lib/health/healthRunner";
 
 export default healthRunner(
   "Relay Available",
