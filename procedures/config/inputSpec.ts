@@ -1,22 +1,22 @@
 import { configBuilder } from "start-sdk";
 const { Config, Value, List, Variants } = configBuilder;
 
-export const pubkeyWhitelistHexList = List.string({
-  name: "Pubkey Whitelist (hex)",
-  range: "[1,*)",
-  spec: {
-    masked: null,
+export const pubkeyWhitelistHexList = List.string(
+  {
+    name: "Pubkey Whitelist (hex)",
+    range: "[1,*)",
+    default: [],
+    description:
+      "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
+    warning: null,
+  },
+  {
     placeholder: "hex (not npub) pubkey",
     pattern: "[0-9a-fA-F]{64}",
     patternDescription:
       "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
-    textarea: false,
-  },
-  default: [],
-  description:
-    "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
-  warning: null,
-});
+  }
+);
 export const pubkeyWhitelist = Value.list(pubkeyWhitelistHexList);
 export const personalConfig = Config.of({
   pubkey_whitelist: pubkeyWhitelist,
@@ -26,51 +26,43 @@ export const name = Value.string({
   default: null,
   description: "Your relay's human-readable identifier",
   warning: null,
-  nullable: true,
-  masked: null,
+  required: false,
   placeholder: "Bob's Public Relay",
   pattern: ".{3,32}",
-  patternDescription:
-    "Must be at least 3 character and no more than 32 characters",
-  textarea: null,
+  patternDescription: "Must be at least 3 character and no more than 32 characters",
 });
 export const description = Value.string({
   name: "Relay Description",
   default: null,
   description: "A more detailed description for your relay",
   warning: null,
-  nullable: true,
-  masked: null,
+  required: false,
   placeholder: "The best relay in town",
   pattern: ".{6,256}",
-  patternDescription:
-    "Must be at least 6 character and no more than 256 characters",
-  textarea: null,
+  patternDescription: "Must be at least 6 character and no more than 256 characters",
 });
 export const pubkey = Value.string({
   name: "Admin contact pubkey (hex)",
   default: null,
   description: "The Nostr hex (not npub) pubkey of the relay administrator",
   warning: null,
-  nullable: true,
-  masked: null,
+  required: false,
+
   placeholder: "hex (not npub) pubkey",
   pattern: "[0-9a-fA-F]{64}",
   patternDescription:
     "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
-  textarea: null,
 });
 export const contact = Value.string({
   name: "Admin contact email",
   default: null,
   description: "The email address of the relay administrator",
   warning: null,
-  nullable: true,
-  masked: null,
+  required: false,
+
   placeholder: null,
   pattern: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
   patternDescription: "Must be a valid email address.",
-  textarea: null,
 });
 export const relayInfoSpec = Config.of({
   name,
@@ -91,7 +83,7 @@ export const messagesPerSec = Value.number({
   description:
     "Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection.",
   warning: null,
-  nullable: false,
+  required: true,
   range: "[1,*)",
   integral: true,
   units: "messages/sec",
@@ -103,7 +95,7 @@ export const subscriptionsPerMin = Value.number({
   description:
     "Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service.",
   warning: null,
-  nullable: false,
+  required: true,
   range: "[1,*)",
   integral: true,
   units: "subscriptions",
@@ -112,10 +104,9 @@ export const subscriptionsPerMin = Value.number({
 export const maxBlockingThreads = Value.number({
   name: "Max Blocking Threads",
   default: 16,
-  description:
-    "Maximum number of blocking threads used for database connections.",
+  description: "Maximum number of blocking threads used for database connections.",
   warning: null,
-  nullable: false,
+  required: true,
   range: "[0,*)",
   integral: true,
   units: "threads",
@@ -124,10 +115,9 @@ export const maxBlockingThreads = Value.number({
 export const maxEventBytes = Value.number({
   name: "Max Event Size",
   default: 131072,
-  description:
-    "Limit the maximum size of an EVENT message. Set to 0 for unlimited",
+  description: "Limit the maximum size of an EVENT message. Set to 0 for unlimited",
   warning: null,
-  nullable: false,
+  required: true,
   range: "[0,*)",
   integral: true,
   units: "bytes",
@@ -138,7 +128,7 @@ export const maxWsMessageBytes = Value.number({
   default: 131072,
   description: "Maximum WebSocket message in bytes.",
   warning: null,
-  nullable: false,
+  required: true,
   range: "[0,*)",
   integral: true,
   units: "bytes",
@@ -149,26 +139,28 @@ export const maxWsFrameBytes = Value.number({
   default: 131072,
   description: "Maximum WebSocket frame size in bytes.",
   warning: null,
-  nullable: false,
+  required: true,
   range: "[0,*)",
   integral: true,
   units: "bytes",
   placeholder: null,
 });
-export const eventKindBlacklistList = List.number({
-  name: "Event Kind Blacklist",
-  range: "[0,*)",
-  spec: {
+export const eventKindBlacklistList = List.number(
+  {
+    name: "Event Kind Blacklist",
+    range: "[0,*)",
+    default: [],
+    description:
+      "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
+    warning: null,
+  },
+  {
     range: "(0,100000]",
     integral: true,
     units: null,
     placeholder: "30023",
-  },
-  default: [],
-  description:
-    "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
-  warning: null,
-});
+  }
+);
 export const eventKindBlacklist = Value.list(eventKindBlacklistList);
 export const limitsSpec = Config.of({
   messages_per_sec: messagesPerSec,
@@ -181,8 +173,7 @@ export const limitsSpec = Config.of({
 });
 export const limits = Value.object({
   name: "Limits",
-  description:
-    "Data limits to protect your relay from using too many resources",
+  description: "Data limits to protect your relay from using too many resources",
   warning: null,
   default: null,
   spec: limitsSpec,
@@ -192,14 +183,17 @@ export const relayTypeVariants = Variants.of({
   private: { name: "Private", spec: personalConfig },
   public: { name: "Public", spec: publicConfig },
 });
-export const relayType = Value.union({
-  name: "Relay Type",
-  description: null,
-  warning:
-    "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
-  default: "private",
-  variants: relayTypeVariants,
-});
+export const relayType = Value.union(
+  {
+    name: "Relay Type",
+    description: null,
+    warning:
+      "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
+    default: "private",
+    required: false,
+  },
+  relayTypeVariants
+);
 export const inputSpec = Config.of({
   relayType,
 });
