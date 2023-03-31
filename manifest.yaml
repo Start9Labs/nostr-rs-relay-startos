@@ -1,6 +1,6 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.8.8
+version: 0.8.8.1
 release-notes: |
   * Bug fixes and performance improvements
 license: mit
