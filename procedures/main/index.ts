@@ -1,6 +1,8 @@
 import { Types } from "start-sdk";
 import relayAvailable from "./health-checks/relayAvailable";
 import { Effects } from "start-sdk/lib/types";
+import * as matches from "ts-matches";
+import { matchConfigSpec } from "../config/inputSpec";
 
 export const main: Types.ExpectedExports.main = async ({ effects }) => {
   const runningHealth = relayAvailable.create(effects).start();
@@ -80,27 +82,22 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
   // @Matt suggestions
   const iface = await (effects as any).exportInterface({
     name: "Websocket",
-    id: 'websocket',
+    id: "websocket",
     description: "Nostr clients use this interface for connecting to the relay",
     internalPort: 8080,
     ui: false,
-    path: '',
+    path: "",
   });
   const torAddress = iface.bindTor({
-    id: 'tor',
+    id: "tor",
     protocol: "wss",
     externalPort: 443,
-  })
+  });
   const lanAddresses = iface.bindLan({
-    id: 'lan',
+    id: "lan",
     protocol: "wss",
-  })
-  await iface.exportAddresses([
-    torAddress,
-    lanAddresses.ip,
-    lanAddresses.local,
-  ])
-
+  });
+  await iface.exportAddresses([torAddress, lanAddresses.ip, lanAddresses.local]);
 
   await effects.shell("chown -R $APP_USER:$APP_USER $APP_DATA");
 
@@ -114,7 +111,12 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
 function todo(): any {
   throw new Error("not implemented");
 }
-
+type NetworkInterface = any;
+class NetworkInterfaceBuilder {
+  constructor(readonly value: any) {}
+}
+type HealthRunner = any;
+type Daemon = any;
 /**
  * This will deal with setting in the hooks to config
  * During the start of the service it will call
@@ -130,32 +132,66 @@ function todo(): any {
  * During the shutdown:
  *  shutdown
  */
-const mainOf: <Config, Interfaces, Health, Running>(options: {
-  initializeInterfaces(options: { effects: Effects; config: Config }): Promise<Interfaces>;
-  initializeHealthServices(options: { effects: Effects; config: Config }): Promise<Health>;
+const mainOf: <
+  Config,
+  I extends Record<string, NetworkInterface>,
+  H extends Record<string, HealthRunner>,
+  R extends Record<string, Daemon>
+>(options: {
+  configValidator: matches.Parser<unknown, Config>;
 
-  initialize(options: { effects: Effects; config: Config; interfaces: Interfaces; health: Health }): Promise<void>;
-  startService(options: { effects: Effects; config: Config; interfaces: Interfaces; health: Health }): Promise<Running>;
-  shutdownService(options: {
-    effects: Effects;
-    config: Config;
-    interfaces: Interfaces;
-    health: Health;
-    running: Running;
-  }): Promise<void>;
+  initializeInterfaces(options: { effects: Effects; config: Config }): Promise<I>;
+  initializeHealthServices(options: { effects: Effects; config: Config }): Promise<H>;
+
+  initialize(options: { effects: Effects; config: Config; interfaces: I; health: H }): Promise<void>;
+  startService(options: { effects: Effects; config: Config; interfaces: I; health: H }): Promise<R>;
+  shutdownService(options: { effects: Effects; config: Config; interfaces: I; health: H; running: R }): Promise<void>;
   restartService(options: {
     effects: Effects;
     config: Config;
-    interfaces: Interfaces;
-    health: Health;
-    running: Running;
-  }): Promise<["osRestartMe"] | ["restarted", Running]>;
+    interfaces: I;
+    health: H;
+    running: R;
+  }): Promise<["osRestartMe"] | ["restarted", R]>;
 }) => Types.ExpectedExports.main = todo();
 export const main2: Types.ExpectedExports.main = mainOf({
-  async initializeInterfaces({}) {},
-  async initializeHealthServices({ effects }) {
+  configValidator: matchConfigSpec,
+  async initializeInterfaces({ effects }) {
+    let iface = new NetworkInterfaceBuilder({
+      name: "Websocket",
+      id: "websocket",
+      description: "Nostr clients use this interface for connecting to the relay",
+      internalPort: 8080,
+      ui: false,
+      path: "",
+      effects,
+    }) as any;
+    iface = iface.tor("tor").protocol("wss", 443).protocol("https", 443).protocol("http", 80).protocol("ws", 80);
+
+    iface.build("tor", "myLan");
+
+    const torAddress = await iface.bindTor({
+      id: "tor",
+      // protocols: {}[("wss", "ws")],
+      externalPort: [443, 80],
+    });
+    const torAddress2 = await iface.bindTor({
+      id: "tor2",
+      protocol: "http",
+      externalPort: 80,
+    });
+    const lanAddresses = await iface.bindLan({
+      id: "lan",
+      protocol: "wss",
+    });
+    return { main: await iface.exposeAddresses([torAddress, lanAddresses.ip, lanAddresses.local]) };
+  },
+  async initializeHealthServices({ effects, config }) {
+    if (config.relayType.unionSelectKey == "private") {
+      config.relayType.pubkey_whitelist;
+    }
     return {
-      health: relayAvailable.create(effects).start(),
+      heal4th: relayAvailable.create(effects).start(),
     };
   },
   async initialize() {},
@@ -168,7 +204,8 @@ export const main2: Types.ExpectedExports.main = mainOf({
 
     return effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") });
   },
-  async shutdownService({ running }) {
+  async shutdownService({ running, health }) {
+    health.heal4th.stop();
     await running.term();
   },
   async restartService({ effects, running }) {
