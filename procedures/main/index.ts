@@ -77,6 +77,31 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
     showType: "both", // default 'both'    // 'both', 'local', 'ip'
   });
 
+  // @Matt suggestions
+  const iface = await (effects as any).exportInterface({
+    name: "Websocket",
+    id: 'websocket',
+    description: "Nostr clients use this interface for connecting to the relay",
+    internalPort: 8080,
+    ui: false,
+    path: '',
+  });
+  const torAddress = iface.bindTor({
+    id: 'tor',
+    protocol: "wss",
+    externalPort: 443,
+  })
+  const lanAddresses = iface.bindLan({
+    id: 'lan',
+    protocol: "wss",
+  })
+  await iface.exportAddresses([
+    torAddress,
+    lanAddresses.ip,
+    lanAddresses.local,
+  ])
+
+
   await effects.shell("chown -R $APP_USER:$APP_USER $APP_DATA");
 
   await effects.shell("su - $APP_USER > /dev/null 2>&1");
