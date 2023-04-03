@@ -157,7 +157,7 @@ const mainOf: <
 export const main2: Types.ExpectedExports.main = mainOf({
   configValidator: matchConfigSpec,
   async initializeInterfaces({ effects }) {
-    let iface1 = new NetworkInterfaceBuilder({
+    let iface = new NetworkInterfaceBuilder({
       name: "Websocket",
       id: "websocket",
       description: "Nostr clients use this interface for connecting to the relay",
@@ -167,51 +167,45 @@ export const main2: Types.ExpectedExports.main = mainOf({
       effects,
     }) as any;
     /**
-     * finds or creates a random Tor hostname by ID
-     * returns the hostname, exclusive of the protocol
-     * e.g. "privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion"
+     * finds or creates a random Tor hostname by ID and returns the hostname builder
      */
-    const torHostname1 = iface1.getTorHostname('torHost1');
+    const torHostname1 = iface.getTorHostname('torHost1');
     /**
-     * initializes a Tor host with the chosen protocol, hostname, and external port
-     * the ID can be used to later retrieve the address
-     * returns the address
+     * initializes a Tor host with the chosen protocol, hostname, and external port and returns the address string
+     * 
      * e.g. http://privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion
+     * 
+     * the ID can be used to later retrieve the address
      */
-    const torAddress1 = await torHostname1.bindTor({
-      id: "torAddress1",
-      protocol: "ws",
-      externalPort: 80,
-    });
-    const torAddress2 = await torHostname1.bindTor({
-      id: "torAddress2",
-      protocol: 'wss',
+    const torAddress = await torHostname1.bindTor({
+      id: "torAddress",
+      protocol: "wss",
       externalPort: 443,
     });
     /**
-     * initializes a LAN host with the chosen protocol and random port
-     * the ID can be used to later retrieve the address record
-     * returns both LAN addresses (IP and .local)
+     * initializes a LAN host with the chosen protocol and random port and returns both LAN addresses (IP and .local)
+     *
      * e.g. { ip: https://192.168.1.9:5959, local: https://adjective-noun.local:5959 }
+     * 
+     * the ID can be used to later retrieve the address record
      */
-    const lanAddresses1 = await iface1.bindLan({
-      id: "lanAddresses1",
+    const lanAddresses = await iface.bindLan({
+      id: "lanAddresses",
       protocol: "wss",
     });
     /**
-     * determines addresses that will be exposed to the user for this interface
-     * order matters
+     * determines addresses that will be exposed to the user for this interface. Order is preserved.
      */
-    iface1.exposeAddresses([torAddress1, torAddress2, lanAddresses1.ip, lanAddresses1.local]);
-    // return the array of network interfaces
-    return [iface1];
+    iface.exposeAddresses([torAddress, lanAddresses.ip, lanAddresses.local]);
+
+    return [iface];
   },
   async initializeHealthServices({ effects, config }) {
-    if (config.relayType.unionSelectKey == "private") {
+    if (config.relayType.unionSelectKey == "personal") {
       config.relayType.pubkey_whitelist;
     }
     return {
-      heal4th: relayAvailable.create(effects).start(),
+      health: relayAvailable.create(effects).start(),
     };
   },
   async initialize() {},
@@ -225,7 +219,7 @@ export const main2: Types.ExpectedExports.main = mainOf({
     return effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") });
   },
   async shutdownService({ running, health }) {
-    health.heal4th.stop();
+    health.health.stop();
     await running.term();
   },
   async restartService({ effects, running }) {

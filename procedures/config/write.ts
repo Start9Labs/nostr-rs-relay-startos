@@ -12,21 +12,18 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
       reject_future_seconds: 1800,
     },
     info: {
-      relay_url: `ws://${await effects.getServiceTorAddress({
-        packageId: "nostr",
-        interfaceName: "main",
-      })}`,
+      relay_url: await effects.getInterface('websocket').getAddress('torAddress'),
     },
   };
 
   const relayType = inputSpec.relayType
 
-  if ("private" in relayType) {
+  if (relayType.unionSelectKey === 'personal') {
     await tomlFile.write(
       {
         ...toSave,
         authorization: {
-          pubkey_whitelist: relayType.private.pubkey_whitelist as string[],
+          pubkey_whitelist: relayType.pubkey_whitelist,
         },
       },
       effects
@@ -38,9 +35,9 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
       ...toSave,
       info: {
         ...toSave.info,
-        ...relayType.public.info,
+        ...relayType.info,
       },
-      limits: relayType.public.limits,
+      limits: relayType.limits,
     },
     effects
   );
