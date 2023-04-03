@@ -1,5 +1,6 @@
 import { Types } from "start-sdk";
 import relayAvailable from "./health-checks/relayAvailable";
+import { Effects } from "start-sdk/lib/types";
 
 export const main: Types.ExpectedExports.main = async ({ effects }) => {
   const runningHealth = relayAvailable.create(effects).start();
@@ -84,3 +85,72 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
 
   await effects.shell("./nostr-rs-relay --db /data");
 };
+
+function todo(): any {
+  throw new Error("not implemented");
+}
+
+/**
+ * This will deal with setting in the hooks to config
+ * During the start of the service it will call
+ * 1. initializeInterfaces
+ * 2. initializeHealthServices
+ * 3. initialize
+ * 4. startService
+ *
+ * During the register restart events (like the config does):
+ *  restartService: If this returns restarted, it lets us know we did the restart
+ *    if this returns osRestartMe, we are going to do a full restart on the main, and we will call the stop -> start
+ *
+ * During the shutdown:
+ *  shutdown
+ */
+const mainOf: <Config, Interfaces, Health, Running>(options: {
+  initializeInterfaces(options: { effects: Effects; config: Config }): Promise<Interfaces>;
+  initializeHealthServices(options: { effects: Effects; config: Config }): Promise<Health>;
+
+  initialize(options: { effects: Effects; config: Config; interfaces: Interfaces; health: Health }): Promise<void>;
+  startService(options: { effects: Effects; config: Config; interfaces: Interfaces; health: Health }): Promise<Running>;
+  shutdownService(options: {
+    effects: Effects;
+    config: Config;
+    interfaces: Interfaces;
+    health: Health;
+    running: Running;
+  }): Promise<void>;
+  restartService(options: {
+    effects: Effects;
+    config: Config;
+    interfaces: Interfaces;
+    health: Health;
+    running: Running;
+  }): Promise<["osRestartMe"] | ["restarted", Running]>;
+}) => Types.ExpectedExports.main = todo();
+export const main2: Types.ExpectedExports.main = mainOf({
+  async initializeInterfaces({}) {},
+  async initializeHealthServices({ effects }) {
+    return {
+      health: relayAvailable.create(effects).start(),
+    };
+  },
+  async initialize() {},
+  async startService({ effects }) {
+    await effects.shell("chown -R $APP_USER:$APP_USER $APP_DATA");
+
+    await effects.shell("su - $APP_USER > /dev/null 2>&1");
+
+    await effects.shell("cp $APP_DATA/config.toml.tmp $APP/config.toml");
+
+    return effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") });
+  },
+  async shutdownService({ running }) {
+    await running.term();
+  },
+  async restartService({ effects, running }) {
+    await running.term();
+
+    await effects.shell("cp $APP_DATA/config.toml.tmp $APP/config.toml");
+
+    return ["restarted", effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") })];
+  },
+});
