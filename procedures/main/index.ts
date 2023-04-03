@@ -111,7 +111,7 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
 function todo(): any {
   throw new Error("not implemented");
 }
-type NetworkInterface = any;
+type NetworkInterface = any
 class NetworkInterfaceBuilder {
   constructor(readonly value: any) {}
 }
@@ -157,7 +157,7 @@ const mainOf: <
 export const main2: Types.ExpectedExports.main = mainOf({
   configValidator: matchConfigSpec,
   async initializeInterfaces({ effects }) {
-    let iface = new NetworkInterfaceBuilder({
+    let iface1 = new NetworkInterfaceBuilder({
       name: "Websocket",
       id: "websocket",
       description: "Nostr clients use this interface for connecting to the relay",
@@ -166,25 +166,45 @@ export const main2: Types.ExpectedExports.main = mainOf({
       path: "",
       effects,
     }) as any;
-    iface = iface.tor("tor").protocol("wss", 443).protocol("https", 443).protocol("http", 80).protocol("ws", 80);
-
-    iface.build("tor", "myLan");
-
-    const torAddress = await iface.bindTor({
-      id: "tor",
-      // protocols: {}[("wss", "ws")],
-      externalPort: [443, 80],
-    });
-    const torAddress2 = await iface.bindTor({
-      id: "tor2",
-      protocol: "http",
+    /**
+     * finds or creates a random Tor hostname by ID
+     * returns the hostname, exclusive of the protocol
+     * e.g. "privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion"
+     */
+    const torHostname1 = iface1.getTorHostname('torHost1');
+    /**
+     * initializes a Tor host with the chosen protocol, hostname, and external port
+     * the ID can be used to later retrieve the address
+     * returns the address
+     * e.g. http://privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion
+     */
+    const torAddress1 = await torHostname1.bindTor({
+      id: "torAddress1",
+      protocol: "ws",
       externalPort: 80,
     });
-    const lanAddresses = await iface.bindLan({
-      id: "lan",
+    const torAddress2 = await torHostname1.bindTor({
+      id: "torAddress2",
+      protocol: 'wss',
+      externalPort: 443,
+    });
+    /**
+     * initializes a LAN host with the chosen protocol and random port
+     * the ID can be used to later retrieve the address record
+     * returns both LAN addresses (IP and .local)
+     * e.g. { ip: https://192.168.1.9:5959, local: https://adjective-noun.local:5959 }
+     */
+    const lanAddresses1 = await iface1.bindLan({
+      id: "lanAddresses1",
       protocol: "wss",
     });
-    return { main: await iface.exposeAddresses([torAddress, lanAddresses.ip, lanAddresses.local]) };
+    /**
+     * determines addresses that will be exposed to the user for this interface
+     * order matters
+     */
+    iface1.exposeAddresses([torAddress1, torAddress2, lanAddresses1.ip, lanAddresses1.local]);
+    // return the array of network interfaces
+    return [iface1];
   },
   async initializeHealthServices({ effects, config }) {
     if (config.relayType.unionSelectKey == "private") {
