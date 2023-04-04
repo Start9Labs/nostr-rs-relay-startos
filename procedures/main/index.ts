@@ -4,6 +4,8 @@ import { Effects } from "start-sdk/lib/types";
 import * as matches from "ts-matches";
 import { matchConfigSpec } from "../config/inputSpec";
 
+// --------------------------------------------------------------
+// This is the lowest level of main
 export const main: Types.ExpectedExports.main = async ({ effects }) => {
   const runningHealth = relayAvailable.create(effects).start();
   const config = await effects.getServiceConfig();
@@ -108,6 +110,9 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
   await effects.shell("./nostr-rs-relay --db /data");
 };
 
+// --------------------------------------------------------------
+// Library Code for main 2
+
 function todo(): any {
   throw new Error("not implemented");
 }
@@ -155,6 +160,9 @@ const mainOf: <
     running: R;
   }): Promise<["osRestartMe"] | ["restarted", R]>;
 }) => Types.ExpectedExports.main = todo();
+
+// --------------------------------------------------------------
+// This is the main 2 which uses a single builder to make the main instead of a single giant function
 export const main2: Types.ExpectedExports.main = mainOf({
   configValidator: matchConfigSpec,
   async initializeInterfaces({ effects }) {
@@ -232,6 +240,8 @@ export const main2: Types.ExpectedExports.main = mainOf({
   },
 });
 
+// --------------------------------------------------------------
+// Library Code for main 3
 class Builder<T> {
   static of<T>(t: T) {
     return new Builder(t);
@@ -341,6 +351,9 @@ function mainOf3(
 ): Types.ExpectedExports.main {
   return todo();
 }
+
+// --------------------------------------------------------------
+// The is the implementation of main 3, which uses smaller builders to then compose into a final main builder
 
 const initializeInterfaces = MainInitializeInterface.of(matchConfigSpec, async ({ effects, config }) => {
   let iface = new NetworkInterfaceBuilder({
