@@ -111,12 +111,13 @@ export const main: Types.ExpectedExports.main = async ({ effects }) => {
 function todo(): any {
   throw new Error("not implemented");
 }
-type NetworkInterface = any
+type NetworkInterface = any;
 class NetworkInterfaceBuilder {
   constructor(readonly value: any) {}
 }
 type HealthRunner = any;
 type Daemon = any;
+
 /**
  * This will deal with setting in the hooks to config
  * During the start of the service it will call
@@ -169,12 +170,12 @@ export const main2: Types.ExpectedExports.main = mainOf({
     /**
      * finds or creates a random Tor hostname by ID and returns the hostname builder
      */
-    const torHostname1 = iface.getTorHostname('torHost1');
+    const torHostname1 = iface.getTorHostname("torHost1");
     /**
      * initializes a Tor host with the chosen protocol, hostname, and external port and returns the address string
-     * 
+     *
      * e.g. http://privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion
-     * 
+     *
      * the ID can be used to later retrieve the address
      */
     const torAddress = await torHostname1.bindTor({
@@ -186,7 +187,7 @@ export const main2: Types.ExpectedExports.main = mainOf({
      * initializes a LAN host with the chosen protocol and random port and returns both LAN addresses (IP and .local)
      *
      * e.g. { ip: https://192.168.1.9:5959, local: https://adjective-noun.local:5959 }
-     * 
+     *
      * the ID can be used to later retrieve the address record
      */
     const lanAddresses = await iface.bindLan({
@@ -230,3 +231,218 @@ export const main2: Types.ExpectedExports.main = mainOf({
     return ["restarted", effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") })];
   },
 });
+
+class Builder<T> {
+  static of<T>(t: T) {
+    return new Builder(t);
+  }
+  constructor(readonly value: T) {}
+
+  build(): T {
+    return this.value;
+  }
+}
+
+/** Used as indicating what the initialization of the interfaces does */
+class MainInitializeInterface {
+  static of<C, I extends Record<string, NetworkInterface>>(
+    _validator: matches.Parser<unknown, C>,
+    fn: (options: { effects: Effects; config: C }) => Promise<I>
+  ) {
+    return Builder.of([new MainInitializeInterface(), fn] as const);
+  }
+}
+
+/** Health daemons ran during the initialization to know the health of the service */
+class MainInitializeHealthDaemons {
+  static of<C, H extends Record<string, HealthRunner>>(
+    _validator: matches.Parser<unknown, C>,
+    fn: (options: { effects: Effects; config: C }) => Promise<H>
+  ) {
+    return Builder.of([new MainInitializeHealthDaemons(), fn] as const);
+  }
+}
+
+type ReturnTypePromise<A> = A extends (...args: any) => Promise<infer B> ? B : [A];
+
+class MainInitialize {
+  static of<C, D, I>(
+    _validator: matches.Parser<unknown, C>,
+    _healthDaemons: Builder<readonly [MainInitializeHealthDaemons, D]>,
+    _interfaces: Builder<readonly [MainInitializeInterface, I]>,
+    fn: (options: {
+      effects: Effects;
+      config: C;
+      interfaces: ReturnTypePromise<I>;
+      health: ReturnTypePromise<D>;
+    }) => Promise<void>
+  ) {
+    return Builder.of([new MainInitialize(), fn] as const);
+  }
+}
+class MainStartService {
+  static of<C, H, I, R>(
+    _validator: matches.Parser<unknown, C>,
+    _healthDaemons: Builder<readonly [MainInitializeHealthDaemons, H]>,
+    _interfaces: Builder<readonly [MainInitializeInterface, I]>,
+    fn: (options: {
+      effects: Effects;
+      config: C;
+      interfaces: ReturnTypePromise<I>;
+      health: ReturnTypePromise<H>;
+    }) => Promise<R>
+  ) {
+    return Builder.of([new MainStartService(), fn] as const);
+  }
+}
+class MainShutdownService {
+  static of<C, H, I, R>(
+    _validator: matches.Parser<unknown, C>,
+    _healthDaemons: Builder<readonly [MainInitializeHealthDaemons, H]>,
+    _interfaces: Builder<readonly [MainInitializeInterface, I]>,
+    _running: Builder<readonly [MainStartService, R]>,
+    fn: (options: {
+      effects: Effects;
+      config: C;
+      interfaces: ReturnTypePromise<I>;
+      health: ReturnTypePromise<H>;
+      running: ReturnTypePromise<R>;
+    }) => Promise<void>
+  ) {
+    return Builder.of([new MainShutdownService(), fn] as const);
+  }
+}
+class MainRestartService {
+  static of<C, H, I, R>(
+    _validator: matches.Parser<unknown, C>,
+    _healthDaemons: Builder<readonly [MainInitializeHealthDaemons, H]>,
+    _interfaces: Builder<readonly [MainInitializeInterface, I]>,
+    _running: Builder<readonly [MainStartService, R]>,
+    fn: (options: {
+      effects: Effects;
+      config: C;
+      interfaces: ReturnTypePromise<I>;
+      health: ReturnTypePromise<H>;
+      running: ReturnTypePromise<R>;
+    }) => Promise<["osRestartMe"] | ["restarted", ReturnTypePromise<R>]>
+  ) {
+    return Builder.of([new MainRestartService(), fn] as const);
+  }
+}
+
+function mainOf3(
+  validator: matches.Parser<unknown, unknown>,
+  healthDaemons: Builder<readonly [MainInitializeHealthDaemons, unknown]>,
+  interfaces: Builder<readonly [MainInitializeInterface, unknown]>,
+  initialize: Builder<readonly [MainInitialize, unknown]>,
+  running: Builder<readonly [MainStartService, unknown]>,
+  shutdown: Builder<readonly [MainShutdownService, unknown]>,
+  restart: Builder<readonly [MainRestartService, unknown]>
+): Types.ExpectedExports.main {
+  return todo();
+}
+
+const initializeInterfaces = MainInitializeInterface.of(matchConfigSpec, async ({ effects, config }) => {
+  let iface = new NetworkInterfaceBuilder({
+    name: "Websocket",
+    id: "websocket",
+    description: "Nostr clients use this interface for connecting to the relay",
+    internalPort: 8080,
+    ui: false,
+    path: "",
+    effects,
+  }) as any;
+  /**
+   * finds or creates a random Tor hostname by ID and returns the hostname builder
+   */
+  const torHostname1 = iface.getTorHostname("torHost1");
+  /**
+   * initializes a Tor host with the chosen protocol, hostname, and external port and returns the address string
+   *
+   * e.g. http://privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion
+   *
+   * the ID can be used to later retrieve the address
+   */
+  const torAddress = await torHostname1.bindTor({
+    id: "torAddress",
+    protocol: "wss",
+    externalPort: 443,
+  });
+  /**
+   * initializes a LAN host with the chosen protocol and random port and returns both LAN addresses (IP and .local)
+   *
+   * e.g. { ip: https://192.168.1.9:5959, local: https://adjective-noun.local:5959 }
+   *
+   * the ID can be used to later retrieve the address record
+   */
+  const lanAddresses = await iface.bindLan({
+    id: "lanAddresses",
+    protocol: "wss",
+  });
+  /**
+   * determines addresses that will be exposed to the user for this interface. Order is preserved.
+   */
+  iface.exposeAddresses([torAddress, lanAddresses.ip, lanAddresses.local]);
+
+  return [iface];
+});
+
+const initializeHealthDaemons = MainInitializeHealthDaemons.of(matchConfigSpec, async ({ effects, config }) => {
+  if (config.relayType.unionSelectKey == "personal") {
+    config.relayType.pubkey_whitelist;
+  }
+  return {
+    health: relayAvailable.create(effects).start(),
+  };
+});
+
+const initialize = MainInitialize.of(matchConfigSpec, initializeHealthDaemons, initializeInterfaces, async () => {});
+const startService = MainStartService.of(
+  matchConfigSpec,
+  initializeHealthDaemons,
+  initializeInterfaces,
+  async ({ effects }) => {
+    await effects.shell("chown -R $APP_USER:$APP_USER $APP_DATA");
+
+    await effects.shell("su - $APP_USER > /dev/null 2>&1");
+
+    await effects.shell("cp $APP_DATA/config.toml.tmp $APP/config.toml");
+
+    return effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") });
+  }
+);
+
+const initializeShutdownService = MainShutdownService.of(
+  matchConfigSpec,
+  initializeHealthDaemons,
+  initializeInterfaces,
+  startService,
+  async ({ health, running }) => {
+    health.health.stop();
+    await running.term();
+  }
+);
+
+const initializeRestartService = MainRestartService.of(
+  matchConfigSpec,
+  initializeHealthDaemons,
+  initializeInterfaces,
+  startService,
+  async ({ effects, running }) => {
+    await running.term();
+
+    await effects.shell("cp $APP_DATA/config.toml.tmp $APP/config.toml");
+
+    return ["restarted", effects.runDaemon({ command: "./nostr-rs-relay", args: "--db /data".split(" ") })];
+  }
+);
+
+export const main3 = mainOf3(
+  matchConfigSpec,
+  initializeHealthDaemons,
+  initializeInterfaces,
+  initialize,
+  startService,
+  initializeShutdownService,
+  initializeRestartService
+);
