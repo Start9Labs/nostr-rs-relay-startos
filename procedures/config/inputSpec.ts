@@ -16,7 +16,7 @@ export const pubkeyWhitelistHexList = List.string(
   }
 );
 export const pubkeyWhitelist = Value.list(pubkeyWhitelistHexList);
-export const personalConfig = Config.of({
+export const privateConfig = Config.of({
   pubkey_whitelist: pubkeyWhitelist,
 });
 export const name = Value.string({
@@ -149,13 +149,13 @@ export const limits = Value.object({
 });
 export const publicConfig = Config.of({ info, limits });
 export const relayTypeVariants = Variants.of({
-  personal: { name: "Personal", spec: personalConfig },
+  private: { name: "Private", spec: privateConfig },
   public: { name: "Public", spec: publicConfig },
 });
 export const relayType = Value.union(
   {
     name: "Relay Type",
-    description: "Personal or public. A personal relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
+    description: "Private or public. A private relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
     warning:
       "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
     required: false,

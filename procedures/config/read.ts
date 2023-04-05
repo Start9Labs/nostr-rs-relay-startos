@@ -10,7 +10,7 @@ export async function read(
   if ("authorization" in data) {
     return {
       relayType: {
-        unionSelectKey: 'personal',
+        unionSelectKey: 'private',
         pubkey_whitelist: data.authorization.pubkey_whitelist,
       },
     };

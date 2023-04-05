@@ -12,13 +12,13 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
       reject_future_seconds: 1800,
     },
     info: {
-      relay_url: await effects.getInterface('websocket').getAddress('torAddress'),
+      relay_url: await effects.getInterface('websocket').getTorAddress('wss'),
     },
   };
 
   const relayType = inputSpec.relayType
 
-  if (relayType.unionSelectKey === 'personal') {
+  if (relayType.unionSelectKey === 'private') {
     await tomlFile.write(
       {
         ...toSave,

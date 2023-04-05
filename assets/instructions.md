@@ -20,17 +20,17 @@ Nostr relay.
 
 ## Initial Config
 
-It is highly recommended that you run a _personal_ relay, not a public one.
+It is highly recommended that you run a _private_ relay, not a public one.
 Private will be the default option when you open the config for the first time.
 You will not be able to save the config until you follow the instructions below.
 
-### Running a personal relay
+### Running a private relay
 
-Personal relays act as a personal backup for your posts, follows, messages,
-settings, etc. Without a personal relay, there is no guaranteeing these things
+Private relays act as a private backup for your posts, follows, messages,
+settings, etc. Without a private relay, there is no guaranteeing these things
 will be saved anywhere, and they could disappear at any time.
 
-With a personal relay, only the whitelisted pubkeys will be permitted to post and
+With a private relay, only the whitelisted pubkeys will be permitted to post and
 save content to your relay. So, at minimum, you must whitelist your own pubkey
 in hex format. The config will refuse to save until there is at least one pubkey
 in the whitelist.
@@ -40,7 +40,7 @@ https://damus.io/key to convert your npub to hex.
 
 ### Running a public relay
 
-In contrast to a personal relay, a public relay does not include a whitelist, so
+In contrast to a private relay, a public relay does not include a whitelist, so
 it allows any pubkey to post. It is not recommended to run a public relay unless
 you understand the risks and configure it with the proper protections. The main
 risk you need to avoid is malicious clients spamming your relay and causing your

@@ -5,114 +5,7 @@ import * as matches from "ts-matches";
 import { matchConfigSpec } from "../config/inputSpec";
 
 // --------------------------------------------------------------
-// This is the lowest level of main
-export const main: Types.ExpectedExports.main = async ({ effects }) => {
-  const runningHealth = relayAvailable.create(effects).start();
-  const config = await effects.getServiceConfig();
-
-  // interfaces:
-  //   websocket:
-  //     name: Websocket Interface
-  //     description: Nostr websocket relay interface
-  //     tor-config:
-  //       port-mapping:
-  //         80: "8080"
-  //     lan-config:
-  //       443:
-  //         ssl: true
-  //         internal: 8080
-  //     ui: false
-  //     protocols:
-  //       - tcp
-  //       - http
-  // TODO BLUJ
-  // Want ws://onionaddress.onion
-  const websocket = await effects.bindTor({
-    name: "websocket",
-    internalPort: 8080,
-    externalPort: 80,
-  });
-  const ip = await (effects as any).getLocalIp();
-  // Want wss://localIp:port
-  /** TODO BLUJ rename the bindLocal to bindPort */
-  const port = await (effects as any).bindPort({
-    name: "websocket",
-    internalPort: 8080,
-  });
-
-  const constructOrigin = (hostName: string, protocol: "http" | "https" | "wss" | "ws") => `${protocol}://${hostName}`;
-  const constructPortOrigin = (port: number, ip: string, protocol: "http" | "https" | "wss" | "ws") =>
-    `${protocol}://${ip}:${port}`;
-
-  await effects.exportAddress({
-    name: "Onions (websocket)",
-    description: "When you want to be able to point your client to a relay",
-    href: constructOrigin(websocket, "ws"),
-    id: "websocketTor",
-  });
-  await effects.exportAddress({
-    name: "Local Network Address",
-    description: "When you want to be able to point your client to a relay",
-    href: constructPortOrigin(port, ip, "wss"),
-    id: "websocketPort",
-  });
-
-  await (effects as any).exportOnion({
-    name: "Onions (websocket)",
-    description: "When you want to be able to point your client to a relay",
-    internalPort: 8080,
-    externalPort: 80,
-    protocol: "ws",
-    hostId: "1",
-    id: "websocketTor",
-  });
-  // Based on the showIp and the showLocal, is what we would send to the ui interfaces screen
-  // {
-  //   ip: 'https://192.24:65',
-  //   local: 'https://smart.local:65',
-  // },
-  await (effects as any).exportPort({
-    name: "Port (websocket)",
-    description: "When you want to be able to point your client to a relay",
-    internalPort: 8080,
-    protocol: "ws",
-    hostId: "1",
-    id: "websocketTor",
-    showType: "both", // default 'both'    // 'both', 'local', 'ip'
-  });
-
-  // @Matt suggestions
-  const iface = await (effects as any).exportInterface({
-    name: "Websocket",
-    id: "websocket",
-    description: "Nostr clients use this interface for connecting to the relay",
-    internalPort: 8080,
-    ui: false,
-    path: "",
-  });
-  const torAddress = iface.bindTor({
-    id: "tor",
-    protocol: "wss",
-    externalPort: 443,
-  });
-  const lanAddresses = iface.bindLan({
-    id: "lan",
-    protocol: "wss",
-  });
-  await iface.exportAddresses([torAddress, lanAddresses.ip, lanAddresses.local]);
-
-  await effects.shell("chown -R $APP_USER:$APP_USER $APP_DATA");
-
-  await effects.shell("su - $APP_USER > /dev/null 2>&1");
-
-  await effects.shell("cp $APP_DATA/config.toml.tmp $APP/config.toml");
-
-  await effects.shell("./nostr-rs-relay --db /data");
-};
-
-// --------------------------------------------------------------
-// Library Code for main 2
-
+// Library Code for main
 function todo(): any {
   throw new Error("not implemented");
 }
@@ -138,7 +31,7 @@ type Daemon = any;
  * During the shutdown:
  *  shutdown
  */
-const mainOf: <
+const mainOf:<
   Config,
   I extends Record<string, NetworkInterface>,
   H extends Record<string, HealthRunner>,
@@ -163,54 +56,58 @@ const mainOf: <
 
 // --------------------------------------------------------------
 // This is the main 2 which uses a single builder to make the main instead of a single giant function
-export const main2: Types.ExpectedExports.main = mainOf({
+export const main: Types.ExpectedExports.main = mainOf({
   configValidator: matchConfigSpec,
   async initializeInterfaces({ effects }) {
+    /**
+     * returns a random Tor hostname
+     */
+    const torHostname = (effects as any).getTorHostname('torHostname')
+    /**
+     * initializes a Tor host with the chosen internal and external ports
+     * e.g. "privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion"
+     */
+    const torBinding = (effects as any).bindTor(torHostname, 8080, 80)
+    /**
+     * creates a Tor origin with the given protocol
+     * e.g. "https://privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion"
+     */
+    const torOrigin = torBinding.createOrigin("ws")
+    /**
+     * initializes a LAN host with the given internal port at a random external port
+     * e.g. 192.168.1.9:5959
+     */
+    const lanBinding = (effects as any).bindLan(8080);
+    /**
+     * creates LAN origins (IP and .local) with the given protocol
+     * 
+     * e.g. { ip: https://192.168.1.9:5959, local: https://adjective-noun.local:5959 }
+     */
+    const lanOrigins = lanBinding.createOrigins("wss")
+    /**
+     * initializes an interface, aka a collection of web addresses that all return the same resource
+     */
     let iface = new NetworkInterfaceBuilder({
       name: "Websocket",
       id: "websocket",
       description: "Nostr clients use this interface for connecting to the relay",
-      internalPort: 8080,
       ui: false,
+      basic: null,
       path: "",
-      effects,
+      search: {}
     }) as any;
     /**
-     * finds or creates a random Tor hostname by ID and returns the hostname builder
+     * creates addresses and makes them available to the end user. Order matters.
+     * 
+     * e.g. [https://useranme:password@privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion/admin?queryparam=1234, https://username:password@192.168.1.9:5959/admin?queryparam=1234]
      */
-    const torHostname1 = iface.getTorHostname("torHost1");
-    /**
-     * initializes a Tor host with the chosen protocol, hostname, and external port and returns the address string
-     *
-     * e.g. http://privacy34kn4ez3y3nijweec6w4g54i3g54sdv7r5mr6soma3w4begyd.onion
-     *
-     * the ID can be used to later retrieve the address
-     */
-    const torAddress = await torHostname1.bindTor({
-      id: "torAddress",
-      protocol: "wss",
-      externalPort: 443,
-    });
-    /**
-     * initializes a LAN host with the chosen protocol and random port and returns both LAN addresses (IP and .local)
-     *
-     * e.g. { ip: https://192.168.1.9:5959, local: https://adjective-noun.local:5959 }
-     *
-     * the ID can be used to later retrieve the address record
-     */
-    const lanAddresses = await iface.bindLan({
-      id: "lanAddresses",
-      protocol: "wss",
-    });
-    /**
-     * determines addresses that will be exposed to the user for this interface. Order is preserved.
-     */
-    iface.exposeAddresses([torAddress, lanAddresses.ip, lanAddresses.local]);
+    iface.exportAddresses([torOrigin, lanOrigins.local])
 
-    return [iface];
+    // return the created interfaces
+    return [iface]
   },
   async initializeHealthServices({ effects, config }) {
-    if (config.relayType.unionSelectKey == "personal") {
+    if (config.relayType.unionSelectKey == "private") {
       config.relayType.pubkey_whitelist;
     }
     return {
@@ -241,7 +138,7 @@ export const main2: Types.ExpectedExports.main = mainOf({
 });
 
 // --------------------------------------------------------------
-// Library Code for main 3
+// Library Code for main 2
 class Builder<T> {
   static of<T>(t: T) {
     return new Builder(t);
@@ -340,7 +237,7 @@ class MainRestartService {
   }
 }
 
-function mainOf3(
+function mainOf2(
   validator: matches.Parser<unknown, unknown>,
   healthDaemons: Builder<readonly [MainInitializeHealthDaemons, unknown]>,
   interfaces: Builder<readonly [MainInitializeInterface, unknown]>,
@@ -401,7 +298,7 @@ const initializeInterfaces = MainInitializeInterface.of(matchConfigSpec, async (
 });
 
 const initializeHealthDaemons = MainInitializeHealthDaemons.of(matchConfigSpec, async ({ effects, config }) => {
-  if (config.relayType.unionSelectKey == "personal") {
+  if (config.relayType.unionSelectKey == "private") {
     config.relayType.pubkey_whitelist;
   }
   return {
@@ -450,7 +347,7 @@ const initializeRestartService = MainRestartService.of(
   }
 );
 
-export const main3 = mainOf3(
+export const main2 = mainOf2(
   matchConfigSpec,
   initializeHealthDaemons,
   initializeInterfaces,
@@ -459,3 +356,53 @@ export const main3 = mainOf3(
   initializeShutdownService,
   initializeRestartService
 );
+
+export const main3: Types.ExpectedExports.main = async (
+  { effects, started },
+) => {
+  initializeInterface(effects, "websocket")
+    .bindTor({ internal: 8080, external: 80 })
+    .bindLanPortForward({ internal: 8080 })
+    .exportAll({
+      name: "Websocket",
+      description:
+        "Nostr clients use this interface for connecting to the relay",
+      ui: false,
+      address: ({ hostname, type }) => {
+        if (type == "tor") {
+          return `ws://${hostname}`;
+        } else {
+          return `wss://${hostname}`;
+        }
+      },
+    });
+
+  await effects.shell("chown -R $APP_USER:$APP_USER $APP_DATA");
+  await effects.shell("su - $APP_USER > /dev/null 2>&1");
+  await effects.shell("cp $APP_DATA/config.toml.tmp $APP/config.toml");
+  const daemon = effects.runDaemon({
+    command: "./nostr-rs-relay",
+    args: "--db /data".split(" "),
+  });
+
+  healthCheck(effects, {
+    name: "Websocket Live",
+    trigger: cooldownTrigger(0), // emits 0 ms after previous fn completes
+    fn: checkPortIsListening(8080),
+    onFirstSuccess: () => {
+      this.trigger = cooldownTrigger(30000); // emits 30s after previous fn completes
+      started(() => daemon.term());
+    }, // optional
+  });
+
+  healthCheck(effects, {
+    name: "Relay is Private",
+    trigger: configTrigger(), // emits every time config is changed
+    fn: (config) => {
+      if (!config.private) throw new Error("Relay is not Private");
+      else return "Relay is Private";
+    }, // input type here is determined by trigger
+  });
+};
+
+
