@@ -1,4 +1,4 @@
-import { InputSpecRaw } from 'start-sdk/lib/config/config-types'
+import { InputSpecRaw } from "start-sdk/lib/config/configTypesRaw"
 
 export const spec: InputSpecRaw = {
   relayType: {

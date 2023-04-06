@@ -23,22 +23,24 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
       {
         ...toSave,
         authorization: {
-          pubkey_whitelist: relayType.pubkey_whitelist,
+          pubkey_whitelist: relayType.unionValueKey.pubkey_whitelist,
         },
       },
       effects
     );
     return;
-  }
-  await tomlFile.write(
-    {
-      ...toSave,
-      info: {
-        ...toSave.info,
-        ...relayType.info,
+  } else {
+    const { info, limits } = relayType.unionValueKey
+    await tomlFile.write(
+      {
+        ...toSave,
+        info: {
+          ...toSave.info,
+          ...info,
+        },
+        limits,
       },
-      limits: relayType.limits,
-    },
-    effects
-  );
+      effects
+    );
+  }
 }

@@ -11,7 +11,9 @@ export async function read(
     return {
       relayType: {
         unionSelectKey: 'private',
-        pubkey_whitelist: data.authorization.pubkey_whitelist,
+        unionValueKey: {
+          pubkey_whitelist: data.authorization.pubkey_whitelist,
+        }
       },
     };
   }
@@ -19,8 +21,10 @@ export async function read(
   return {
     relayType: {
       unionSelectKey: 'public',
-      info: data.info,
-      limits: data.limits,
+      unionValueKey: {
+        info: data.info,
+        limits: data.limits,
+      }
     },
   };
 }
