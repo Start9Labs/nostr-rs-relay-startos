@@ -6,12 +6,6 @@ import { NetworkBuilder, NetworkInterfaceBuilder, runningMain } from "start-sdk/
 import exportInterfaces from "start-sdk/lib/mainFn/exportInterfaces";
 import { sh } from "start-sdk/lib/util";
 
-// Network
-// -------
-
-// Main
-// -------
-
 export const main: Types.ExpectedExports.main = runningMain(async ({ effects, started }) => {
   // **** Interface ****
   const networkBuilder = NetworkBuilder.of(effects);
@@ -41,10 +35,7 @@ export const main: Types.ExpectedExports.main = runningMain(async ({ effects, st
   await effects.runCommand(sh("chown -R $APP_USER:$APP_USER $APP_DATA"));
   await effects.runCommand(sh("su - $APP_USER > /dev/null 2>&1"));
   await effects.runCommand(sh("cp $APP_DATA/config.toml.tmp $APP/config.toml"));
-  const daemonReceipt = effects.runDaemon({
-    command: "./nostr-rs-relay",
-    args: "--db /data".split(" "),
-  });
+  const daemonReceipt = effects.runDaemon(sh("./nostr-rs-relay --db /data"));
 
   // **** Additional Health Checks (optional) ****
 
