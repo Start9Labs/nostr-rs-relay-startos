@@ -2,7 +2,7 @@ import { Types } from "start-sdk";
 import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
 
-export async function write(effects: Types.Effects, inputSpec: InputSpec) {
+export async function write({ effects, input }: { effects: Types.Effects; input: InputSpec }) {
   const toSave = {
     network: {
       address: "0.0.0.0",
@@ -12,13 +12,13 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
       reject_future_seconds: 1800,
     },
     info: {
-      relay_url: `ws://${await effects.getServiceTorHostname('torHostname')}`,
+      relay_url: `ws://${await effects.getServiceTorHostname("torHostname")}`,
     },
   };
 
-  const relayType = inputSpec.relayType
+  const relayType = input.relayType;
 
-  if (relayType.unionSelectKey === 'private') {
+  if (relayType.unionSelectKey === "private") {
     await tomlFile.write(
       {
         ...toSave,
@@ -30,7 +30,7 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
     );
     return;
   } else {
-    const { info, limits } = relayType.unionValueKey
+    const { info, limits } = relayType.unionValueKey;
     await tomlFile.write(
       {
         ...toSave,

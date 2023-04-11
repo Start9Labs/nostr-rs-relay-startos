@@ -50,7 +50,7 @@ export const contact = Value.string({
   required: false,
   pattern: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
   patternDescription: "Must be a valid email address.",
-  inputmode: 'email',
+  inputmode: "email",
 });
 export const relayInfoSpec = Config.of({
   name,
@@ -58,11 +58,13 @@ export const relayInfoSpec = Config.of({
   pubkey,
   contact,
 });
-export const info = Value.object({
-  name: "Relay Info",
-  description: "General public info about your relay",
-  spec: relayInfoSpec,
-});
+export const info = Value.object(
+  {
+    name: "Relay Info",
+    description: "General public info about your relay",
+  },
+  relayInfoSpec
+);
 export const messagesPerSec = Value.number({
   name: "Messages Per Second Limit",
   default: 2,
@@ -142,11 +144,13 @@ export const limitsSpec = Config.of({
   max_ws_frame_bytes: maxWsFrameBytes,
   event_kind_blacklist: eventKindBlacklist,
 });
-export const limits = Value.object({
-  name: "Limits",
-  description: "Data limits to protect your relay from using too many resources",
-  spec: limitsSpec,
-});
+export const limits = Value.object(
+  {
+    name: "Limits",
+    description: "Data limits to protect your relay from using too many resources",
+  },
+  limitsSpec
+);
 export const publicConfig = Config.of({ info, limits });
 export const relayTypeVariants = Variants.of({
   private: { name: "Private", spec: privateConfig },
@@ -155,7 +159,8 @@ export const relayTypeVariants = Variants.of({
 export const relayType = Value.union(
   {
     name: "Relay Type",
-    description: "Private or public. A private relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
+    description:
+      "Private or public. A private relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
     warning:
       "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
     required: false,
