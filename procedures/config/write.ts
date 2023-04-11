@@ -12,7 +12,7 @@ export async function write(effects: Types.Effects, inputSpec: InputSpec) {
       reject_future_seconds: 1800,
     },
     info: {
-      relay_url: await effects.getInterface('websocket').getTorAddress('wss'),
+      relay_url: `ws://${await effects.getServiceTorHostname('torHostname')}`,
     },
   };
 
