@@ -1,8 +1,6 @@
 import { Types } from "start-sdk";
-import { readyCheck } from "start-sdk/lib/health";
 import { checkPortListening } from "start-sdk/lib/health/checkFns";
-import { changeOnFirstSuccess, cooldownTrigger } from "start-sdk/lib/health/trigger";
-import { NetworkBuilder, NetworkInterfaceBuilder, runningMain } from "start-sdk/lib/mainFn";
+import { Daemons, NetworkBuilder, NetworkInterfaceBuilder, runningMain } from "start-sdk/lib/mainFn";
 import exportInterfaces from "start-sdk/lib/mainFn/exportInterfaces";
 
 export const main: Types.ExpectedExports.main = runningMain(async ({ effects, started }) => {
@@ -38,24 +36,21 @@ export const main: Types.ExpectedExports.main = runningMain(async ({ effects, st
 
   // **** Additional Health Checks (optional) ****
 
-  // **** Primary Health Check (required) ****
-  const readyReceipt = readyCheck({
+  // Return ready receipt
+  return Daemons.of({
     effects,
     started,
     interfaceReceipt,
     healthReceipts: [],
-    daemonReceipt,
-    name: "Websocket Live",
-    trigger: changeOnFirstSuccess({
-      beforeFirstSuccess: cooldownTrigger(0),
-      afterFirstSuccess: cooldownTrigger(30000),
-    }),
-    fn: () => checkPortListening(effects, 8080, {}),
-    onFirstSuccess() {
-      return () => daemonReceipt.term();
+  }).addDaemon({
+    id: "ws",
+    command: "./nostr-rs-relay --db /data",
+    ready: {
+      display: {
+        name: "Websocket Live",
+        message: "The websocket is live",
+      },
+      fn: () => checkPortListening(effects, 8080, {}),
     },
   });
-
-  // Return ready receipt
-  return readyReceipt;
 });
