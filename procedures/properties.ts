@@ -1,3 +1,3 @@
-import { Types } from "start-sdk";
+import { setupPropertiesExport } from "start-sdk/lib/properties";
 
-export const properties: Types.ExpectedExports.properties = async () => (null)
+export const properties = setupPropertiesExport(async () => {});

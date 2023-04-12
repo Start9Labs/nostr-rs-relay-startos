@@ -10,6 +10,6 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "start-sdk": "0.4.0-lib0.charlie14"
+    "start-sdk": "0.4.0-lib0.charlie16"
   }
 }
