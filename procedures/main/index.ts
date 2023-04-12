@@ -4,7 +4,14 @@ import { Daemons, NetworkBuilder, NetworkInterfaceBuilder, runningMain } from "s
 import exportInterfaces from "start-sdk/lib/mainFn/exportInterfaces";
 
 export const main: Types.ExpectedExports.main = runningMain(async ({ effects, started }) => {
+  // **** Setup ***
+
+  await effects.runCommand("chown -R $APP_USER:$APP_USER $APP_DATA");
+  await effects.runCommand("su - $APP_USER > /dev/null 2>&1");
+  await effects.runCommand("cp $APP_DATA/config.toml.tmp $APP/config.toml");
+
   // **** Interface ****
+
   const networkBuilder = NetworkBuilder.of(effects);
   const torHostname = networkBuilder.getTorHostName("torHostname");
   const registeredPort = networkBuilder.getPort("port");
@@ -28,15 +35,9 @@ export const main: Types.ExpectedExports.main = runningMain(async ({ effects, st
 
   const interfaceReceipt = exportInterfaces(ifaceAddresses);
 
-  // **** Daemons ***
-  await effects.runCommand("chown -R $APP_USER:$APP_USER $APP_DATA");
-  await effects.runCommand("su - $APP_USER > /dev/null 2>&1");
-  await effects.runCommand("cp $APP_DATA/config.toml.tmp $APP/config.toml");
-  const daemonReceipt = effects.runDaemon("./nostr-rs-relay --db /data");
+  // **** Health Checks (optional) ****
 
-  // **** Additional Health Checks (optional) ****
-
-  // Return ready receipt
+  // **** Daemons ****
   return Daemons.of({
     effects,
     started,

@@ -3,14 +3,7 @@ import { FileHelper } from "start-sdk/lib/util";
 import { publicConfig } from "../inputSpec";
 
 const { object, array, string, number, anyOf, allOf } = matches;
-// todo Move things into sdk of health, and get the types
-// new effect health, getTorAddress
-// Raw file update
-// Move location of that helper
-// ConfigFiles uses shape instead of validator
-// FileHelper instead of configFile
 
-// Raw toFile fromFile
 const tomlShape = allOf(
   object({
     network: object({
@@ -34,7 +27,4 @@ const tomlShape = allOf(
   )
 );
 
-/**
- * This is a TOML file that is used to configure the relay.
- */
 export const tomlFile = FileHelper.toml("config.toml", "main", tomlShape);

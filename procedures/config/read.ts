@@ -1,11 +1,12 @@
-import { Types } from "start-sdk";
 import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
 import { Effects } from "start-sdk/lib/types";
 
-export async function read({ effects }: { effects: Effects }): Promise<Partial<InputSpec>> {
+export async function read({ effects }: { effects: Effects }): Promise<InputSpec> {
   const data = await tomlFile.read(effects);
-  if (data == null) return {};
+
+  if (data == null) return {} as InputSpec;
+
   if ("authorization" in data) {
     return {
       relayType: {
