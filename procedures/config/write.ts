@@ -44,3 +44,5 @@ export async function write({ effects, input }: { effects: Types.Effects; input:
     );
   }
 }
+
+export type WriteReturn = ReturnType<typeof write> extends Promise<infer T> ? T : never;

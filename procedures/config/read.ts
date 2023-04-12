@@ -1,8 +1,9 @@
 import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
 import { Effects } from "start-sdk/lib/types";
+import { WriteReturn } from "./write";
 
-export async function read({ effects }: { effects: Effects }): Promise<InputSpec> {
+export async function read({ effects }: { effects: Effects; config: WriteReturn }): Promise<InputSpec> {
   const data = await tomlFile.read(effects);
 
   if (data == null) return {} as InputSpec;
