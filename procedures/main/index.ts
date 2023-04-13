@@ -1,9 +1,10 @@
 import { Types } from "start-sdk";
-import { checkPortListening } from "start-sdk/lib/health/checkFns";
 import { Daemons, NetworkBuilder, NetworkInterfaceBuilder, runningMain } from "start-sdk/lib/mainFn";
 import exportInterfaces from "start-sdk/lib/mainFn/exportInterfaces";
+import { utils } from "start-sdk/lib/util";
 
 export const main: Types.ExpectedExports.main = runningMain(async ({ effects, started }) => {
+  const { checkPortListening } = utils(effects);
   // **** Setup ***
 
   await effects.runCommand("chown -R $APP_USER:$APP_USER $APP_DATA");
@@ -51,7 +52,7 @@ export const main: Types.ExpectedExports.main = runningMain(async ({ effects, st
         name: "Websocket Live",
         message: "The websocket is live",
       },
-      fn: () => checkPortListening(effects, 8080, {}),
+      fn: () => checkPortListening(8080, {}),
     },
   });
 });

@@ -1,8 +1,10 @@
 import { Types } from "start-sdk";
 import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
+import { utils } from "start-sdk/lib/util";
 
 export async function write({ effects, input }: { effects: Types.Effects; input: InputSpec }) {
+  const { writeFile } = utils(effects);
   const toSave = {
     network: {
       address: "0.0.0.0",
@@ -19,29 +21,23 @@ export async function write({ effects, input }: { effects: Types.Effects; input:
   const relayType = input.relayType;
 
   if (relayType.unionSelectKey === "private") {
-    await tomlFile.write(
-      {
-        ...toSave,
-        authorization: {
-          pubkey_whitelist: relayType.unionValueKey.pubkey_whitelist,
-        },
+    await writeFile(tomlFile, {
+      ...toSave,
+      authorization: {
+        pubkey_whitelist: relayType.unionValueKey.pubkey_whitelist,
       },
-      effects
-    );
+    });
     return;
   } else {
     const { info, limits } = relayType.unionValueKey;
-    await tomlFile.write(
-      {
-        ...toSave,
-        info: {
-          ...toSave.info,
-          ...info,
-        },
-        limits,
+    await writeFile(tomlFile, {
+      ...toSave,
+      info: {
+        ...toSave.info,
+        ...info,
       },
-      effects
-    );
+      limits,
+    });
   }
 }
 
