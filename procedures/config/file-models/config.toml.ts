@@ -1,4 +1,4 @@
-import { matches } from "start-sdk";
+import { matches } from "start-sdk/lib";
 import { FileHelper } from "start-sdk/lib/util";
 import { publicConfig } from "../inputSpec";
 

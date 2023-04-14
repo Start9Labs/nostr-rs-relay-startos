@@ -1,9 +1,9 @@
-import { Types } from "start-sdk";
 import { Daemons, NetworkBuilder, NetworkInterfaceBuilder, runningMain } from "start-sdk/lib/mainFn";
 import exportInterfaces from "start-sdk/lib/mainFn/exportInterfaces";
+import { ExpectedExports } from "start-sdk/lib/types";
 import { utils } from "start-sdk/lib/util";
 
-export const main: Types.ExpectedExports.main = runningMain(async ({ effects, started }) => {
+export const main: ExpectedExports.main = runningMain(async ({ effects, started }) => {
   const { checkPortListening } = utils(effects);
   // **** Setup ***
 

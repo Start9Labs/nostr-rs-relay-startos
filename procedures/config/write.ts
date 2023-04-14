@@ -1,9 +1,9 @@
-import { Types } from "start-sdk";
 import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
 import { utils } from "start-sdk/lib/util";
+import { Effects } from "start-sdk/lib/types";
 
-export async function write({ effects, input }: { effects: Types.Effects; input: InputSpec }) {
+export async function write({ effects, input }: { effects: Effects; input: InputSpec }) {
   const { writeFile } = utils(effects);
   const toSave = {
     network: {

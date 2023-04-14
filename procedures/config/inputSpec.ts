@@ -1,4 +1,4 @@
-import { configBuilder } from "start-sdk";
+import { configBuilder } from "start-sdk/lib";
 const { Config, Value, List, Variants } = configBuilder;
 
 export const pubkeyWhitelistHexList = List.string(
