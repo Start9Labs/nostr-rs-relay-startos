@@ -27,7 +27,6 @@ export async function write({ effects, input }: { effects: Effects; input: Input
         pubkey_whitelist: relayType.unionValueKey.pubkey_whitelist,
       },
     });
-    return;
   } else {
     const { info, limits } = relayType.unionValueKey;
     await writeFile(tomlFile, {
@@ -39,6 +38,9 @@ export async function write({ effects, input }: { effects: Effects; input: Input
       limits,
     });
   }
+  return {
+    config: input,
+  };
 }
 
-export type WriteReturn = ReturnType<typeof write> extends Promise<infer T> ? T : never;
+export type WriteReturn = Awaited<ReturnType<typeof write>>["config"];
