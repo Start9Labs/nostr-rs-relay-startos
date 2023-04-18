@@ -38,9 +38,7 @@ export async function write({ effects, input }: { effects: Effects; input: Input
       limits,
     });
   }
-  return {
-    config: input,
-  };
+  return input;
 }
 
-export type WriteReturn = Awaited<ReturnType<typeof write>>["config"];
+export type WriteReturn = Awaited<ReturnType<typeof write>>;

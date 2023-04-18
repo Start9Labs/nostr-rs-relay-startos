@@ -9,4 +9,5 @@ export const { getConfig, setConfig } = setupConfigExports({
   spec: inputSpec,
   write,
   read,
+  async dependencies() {},
 });
