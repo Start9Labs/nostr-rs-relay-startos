@@ -1,12 +1,15 @@
-import { InputSpecRaw } from "start-sdk/lib/config/configTypesRaw"
+import { InputSpec } from "start-sdk/lib/config/configTypes";
 
-export const spec: InputSpecRaw = {
+export const spec: InputSpec = {
   relayType: {
     type: "union",
     name: "Relay Type",
-    warning: "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
-    description: "Private or public. A private relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
+    warning:
+      "Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.",
+    description:
+      "Private or public. A private relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.",
     required: false,
+    default: null,
     variants: {
       private: {
         name: "Private",
@@ -14,16 +17,22 @@ export const spec: InputSpecRaw = {
           pubkey_whitelist: {
             type: "list",
             name: "Pubkey Whitelist (hex)",
-            description: "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
+            description:
+              "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
             range: "[1,*)",
+            default: [],
+            warning: null,
             spec: {
               type: "string",
+              inputmode: "text",
+              masked: false,
               placeholder: "hex (not npub) pubkey",
               pattern: "[0-9a-fA-F]{64}",
-              patternDescription: "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+              patternDescription:
+                "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
             },
           },
-        }
+        },
       },
       public: {
         name: "Public",
@@ -32,6 +41,7 @@ export const spec: InputSpecRaw = {
             name: "Relay Info",
             description: "General public info about your relay",
             type: "object",
+            warning: null,
             spec: {
               name: {
                 type: "string",
@@ -41,6 +51,10 @@ export const spec: InputSpecRaw = {
                 placeholder: "Bob's Public Relay",
                 pattern: ".{3,32}",
                 patternDescription: "Must be at least 3 character and no more than 32 characters",
+                masked: false,
+                default: null,
+                inputmode: "text",
+                warning: null,
               },
               description: {
                 type: "string",
@@ -50,6 +64,10 @@ export const spec: InputSpecRaw = {
                 placeholder: "The best relay in town",
                 pattern: ".{6,256}",
                 patternDescription: "Must be at least 6 character and no more than 256 characters",
+                masked: false,
+                default: null,
+                inputmode: "text",
+                warning: null,
               },
               pubkey: {
                 type: "string",
@@ -58,7 +76,12 @@ export const spec: InputSpecRaw = {
                 required: false,
                 placeholder: "hex (not npub) pubkey",
                 pattern: "[0-9a-fA-F]{64}",
-                patternDescription: "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+                patternDescription:
+                  "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+                masked: false,
+                default: null,
+                inputmode: "text",
+                warning: null,
               },
               contact: {
                 type: "string",
@@ -67,6 +90,11 @@ export const spec: InputSpecRaw = {
                 required: false,
                 pattern: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
                 patternDescription: "Must be a valid email address.",
+                masked: false,
+                default: null,
+                inputmode: "text",
+                warning: null,
+                placeholder: null,
               },
             },
           },
@@ -74,26 +102,33 @@ export const spec: InputSpecRaw = {
             type: "object",
             name: "Limits",
             description: "Data limits to protect your relay from using too many resources",
+            warning: null,
             spec: {
               messages_per_sec: {
                 type: "number",
                 name: "Messages Per Second Limit",
-                description: "Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection.",
+                description:
+                  "Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection.",
                 required: true,
                 range: "[1,*)",
                 integral: true,
                 default: 2,
                 units: "messages/sec",
+                placeholder: null,
+                warning: null,
               },
               subscriptions_per_min: {
                 name: "Subscriptions Per Minute Limit",
-                description: "Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service.",
+                description:
+                  "Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service.",
                 type: "number",
                 required: true,
                 range: "[1,*)",
                 integral: true,
                 default: 10,
                 units: "subscriptions",
+                placeholder: null,
+                warning: null,
               },
               max_blocking_threads: {
                 name: "Max Blocking Threads",
@@ -104,6 +139,8 @@ export const spec: InputSpecRaw = {
                 integral: true,
                 units: "threads",
                 default: 16,
+                placeholder: null,
+                warning: null,
               },
               max_event_bytes: {
                 name: "Max Event Size",
@@ -114,6 +151,8 @@ export const spec: InputSpecRaw = {
                 integral: true,
                 units: "bytes",
                 default: 131072,
+                placeholder: null,
+                warning: null,
               },
               max_ws_message_bytes: {
                 name: "Max Websocket Message Size",
@@ -124,6 +163,8 @@ export const spec: InputSpecRaw = {
                 integral: true,
                 units: "bytes",
                 default: 131072,
+                placeholder: null,
+                warning: null,
               },
               max_ws_frame_bytes: {
                 name: "Max Websocket Frame Size",
@@ -134,21 +175,29 @@ export const spec: InputSpecRaw = {
                 integral: true,
                 units: "bytes",
                 default: 131072,
+                placeholder: null,
+                warning: null,
               },
               event_kind_blacklist: {
                 type: "list",
                 name: "Event Kind Blacklist",
-                description: "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
+                description:
+                  "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
+                range: "[0,*)",
+                default: [],
+                warning: null,
                 spec: {
                   type: "number",
                   integral: true,
-                  placeholder: '30023',
+                  placeholder: "30023",
+                  range: "[0,*)",
+                  units: null,
                 },
               },
             },
           },
-        }
+        },
       },
     },
   },
-}
+};

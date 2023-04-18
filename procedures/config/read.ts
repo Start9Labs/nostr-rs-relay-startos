@@ -3,8 +3,10 @@ import { tomlFile } from "./file-models/config.toml";
 import { Effects } from "start-sdk/lib/types";
 import { WriteReturn } from "./write";
 import { utils } from "start-sdk/lib/util";
+import { Read } from "start-sdk/lib/config/setupConfigExports";
+import { ConfigType } from ".";
 
-export async function read({ effects }: { effects: Effects; config: WriteReturn }): Promise<InputSpec> {
+export const read: Read<ConfigType, WriteReturn> = async ({ effects }) => {
   const { readFile } = utils(effects);
   const data = await readFile(tomlFile);
 
@@ -30,4 +32,4 @@ export async function read({ effects }: { effects: Effects; config: WriteReturn 
       },
     },
   };
-}
+};
