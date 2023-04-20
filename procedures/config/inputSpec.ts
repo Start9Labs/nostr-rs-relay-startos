@@ -1,55 +1,60 @@
 import { configBuilder } from "start-sdk/lib";
 const { Config, Value, List, Variants } = configBuilder;
 
-export const pubkeyWhitelistHexList = List.string(
+export const pubkeyWhitelistHexList = List.text(
   {
     name: "Pubkey Whitelist (hex)",
-    range: "[1,*)",
+    minLength: 1,
     description:
       "A list of pubkeys that are permitted to publish through your relay. A minimum, you need to enter your own Nostr hex (not npub) pubkey. Go to https://damus.io/key/ to convert from npub to hex.",
   },
   {
     placeholder: "hex (not npub) pubkey",
-    pattern: "[0-9a-fA-F]{64}",
-    patternDescription:
-      "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+    patterns: [
+      {
+        regex: "[0-9a-fA-F]{64}",
+        description:
+          "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+      },
+    ],
   }
 );
 export const pubkeyWhitelist = Value.list(pubkeyWhitelistHexList);
 export const privateConfig = Config.of({
   pubkey_whitelist: pubkeyWhitelist,
 });
-export const name = Value.string({
+export const name = Value.text({
   name: "Relay Name",
   description: "Your relay's human-readable identifier",
   required: false,
   placeholder: "Bob's Public Relay",
-  pattern: ".{3,32}",
-  patternDescription: "Must be at least 3 character and no more than 32 characters",
+  patterns: [{ regex: ".{3,32}", description: "Must be at least 3 character and no more than 32 characters" }],
 });
-export const description = Value.string({
+export const description = Value.text({
   name: "Relay Description",
   description: "A more detailed description for your relay",
   required: false,
   placeholder: "The best relay in town",
-  pattern: ".{6,256}",
-  patternDescription: "Must be at least 6 character and no more than 256 characters",
+  patterns: [{ regex: ".{6,256}", description: "Must be at least 6 character and no more than 256 characters" }],
 });
-export const pubkey = Value.string({
+export const pubkey = Value.text({
   name: "Admin contact pubkey (hex)",
   description: "The Nostr hex (not npub) pubkey of the relay administrator",
   required: false,
   placeholder: "hex (not npub) pubkey",
-  pattern: "[0-9a-fA-F]{64}",
-  patternDescription:
-    "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+  patterns: [
+    {
+      regex: "[0-9a-fA-F]{64}",
+      description:
+        "Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex.",
+    },
+  ],
 });
-export const contact = Value.string({
+export const contact = Value.text({
   name: "Admin contact email",
   description: "The email address of the relay administrator",
   required: false,
-  pattern: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
-  patternDescription: "Must be a valid email address.",
+  patterns: [{ regex: "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+", description: "Must be a valid email address." }],
   inputmode: "email",
 });
 export const relayInfoSpec = Config.of({
@@ -71,8 +76,8 @@ export const messagesPerSec = Value.number({
   description:
     "Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection.",
   required: true,
-  range: "[1,*)",
-  integral: true,
+  min: 1,
+  integer: true,
   units: "msgs/sec",
 });
 export const subscriptionsPerMin = Value.number({
@@ -81,8 +86,8 @@ export const subscriptionsPerMin = Value.number({
   description:
     "Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service.",
   required: true,
-  range: "[1,*)",
-  integral: true,
+  min: 1,
+  integer: true,
   units: "subs/min",
 });
 export const maxBlockingThreads = Value.number({
@@ -90,8 +95,7 @@ export const maxBlockingThreads = Value.number({
   default: 16,
   description: "Maximum number of blocking threads used for database connections.",
   required: true,
-  range: "[0,*)",
-  integral: true,
+  integer: true,
   units: "threads",
 });
 export const maxEventBytes = Value.number({
@@ -99,8 +103,7 @@ export const maxEventBytes = Value.number({
   default: 131072,
   description: "Limit the maximum size of an EVENT message. Set to 0 for unlimited",
   required: true,
-  range: "[0,*)",
-  integral: true,
+  integer: true,
   units: "bytes",
 });
 export const maxWsMessageBytes = Value.number({
@@ -108,8 +111,7 @@ export const maxWsMessageBytes = Value.number({
   default: 131072,
   description: "Maximum WebSocket message in bytes.",
   required: true,
-  range: "[0,*)",
-  integral: true,
+  integer: true,
   units: "bytes",
 });
 export const maxWsFrameBytes = Value.number({
@@ -117,20 +119,17 @@ export const maxWsFrameBytes = Value.number({
   default: 131072,
   description: "Maximum WebSocket frame size in bytes.",
   required: true,
-  range: "[0,*)",
-  integral: true,
+  integer: true,
   units: "bytes",
 });
 export const eventKindBlacklistList = List.number(
   {
     name: "Event Kind Blacklist",
-    range: "[0,*)",
     description:
       "Events with these kinds will be discarded. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds",
   },
   {
-    range: "(0,100000]",
-    integral: true,
+    integer: true,
     placeholder: "30023",
   }
 );

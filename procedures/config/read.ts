@@ -1,12 +1,10 @@
 import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
-import { Effects } from "start-sdk/lib/types";
-import { WriteReturn } from "./write";
 import { utils } from "start-sdk/lib/util";
 import { Read } from "start-sdk/lib/config/setupConfigExports";
 import { ConfigType } from ".";
 
-export const read: Read<ConfigType, WriteReturn> = async ({ effects }) => {
+export const read: Read<ConfigType> = async ({ effects }) => {
   const { readFile } = utils(effects);
   const data = await readFile(tomlFile);
 

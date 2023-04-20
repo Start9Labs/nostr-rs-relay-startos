@@ -2,8 +2,10 @@ import { InputSpec } from "./inputSpec";
 import { tomlFile } from "./file-models/config.toml";
 import { utils } from "start-sdk/lib/util";
 import { Effects } from "start-sdk/lib/types";
+import { Write } from "start-sdk/lib/config/setupConfigExports";
+import { ConfigType } from ".";
 
-export async function write({ effects, input }: { effects: Effects; input: InputSpec }) {
+export const write: Write<ConfigType> = async ({ effects, input }) => {
   const { writeFile } = utils(effects);
   const toSave = {
     network: {
@@ -38,7 +40,4 @@ export async function write({ effects, input }: { effects: Effects; input: Input
       limits,
     });
   }
-  return input;
-}
-
-export type WriteReturn = Awaited<ReturnType<typeof write>>;
+};
