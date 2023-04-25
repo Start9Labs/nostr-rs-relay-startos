@@ -1,5 +1,5 @@
 {
-  "include": ["procedures/**/*.ts", "procedures/index.ts"],
+  "include": ["startos/**/*.ts"],
   "compilerOptions": {
     "target": "es2022",
     "module": "None",

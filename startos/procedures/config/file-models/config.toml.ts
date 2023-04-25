@@ -1,6 +1,6 @@
 import { matches } from "start-sdk/lib";
 import { FileHelper } from "start-sdk/lib/util";
-import { publicConfig } from "../inputSpec";
+import { publicConfig } from "../spec";
 
 const { object, array, string, number, anyOf, allOf } = matches;
 

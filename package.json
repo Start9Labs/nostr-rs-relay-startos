@@ -4,12 +4,18 @@
     "prettier": "prettier --write procedures",
     "check": "tsc --noEmit"
   },
+  "dependencies": {
+    "start-sdk": "0.4.0-lib0.charlie39"
+  },
   "devDependencies": {
     "@vercel/ncc": "^0.36.1",
     "prettier": "^2.8.4",
     "typescript": "^4.9.5"
   },
-  "dependencies": {
-    "start-sdk": "0.4.0-lib0.charlie33"
+  "prettier": {
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true
   }
 }
