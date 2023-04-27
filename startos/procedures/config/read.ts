@@ -14,7 +14,7 @@ export const read: Read<WrapperData, ConfigSpec> = async ({
 }) => {
   const data = await utils.readFile(tomlFile)
 
-  if (data == null) return {}
+  if (data == null) return
 
   if ('authorization' in data) {
     return {
