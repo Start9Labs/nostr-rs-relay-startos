@@ -64,7 +64,7 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
     // Choose which origins to attach to this interface. The resulting addresses will share the attributes of the interface (name, path, search, etc)
     const addressReceipt = await iFace.exportAddresses([
       torOrigin,
-      lanOrigins.ip,
+      ...lanOrigins.ip,
     ])
 
     // Export all address receipts for all interfaces to obtain interface receipt
@@ -87,16 +87,18 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
     return Daemons.of({
       effects,
       started,
-      interfaceReceipt,
-      healthReceipts,
-    }).addDaemon({
-      id: 'ws',
-      command: './nostr-rs-relay --db /data',
+      interfaceReceipt, // Provide the interfaceReceipt to prove it was completed
+      healthReceipts, // Provide the healthReceipts or [] to prove they were at least considered
+    }).addDaemon('ws', {
+      command: './nostr-rs-relay --db /data', // The command to start the daemon
+      requires: [],
       ready: {
         display: 'Websocket Live',
+        // The function to run to determine the health status of the daemon
         fn: () =>
           utils.checkPortListening(8080, {
             successMessage: 'The websocket is live',
+            errorMessage: 'Websocket is unreachable',
           }),
       },
     })

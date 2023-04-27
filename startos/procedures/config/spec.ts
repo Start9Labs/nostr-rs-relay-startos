@@ -102,55 +102,49 @@ export const publicConfig = Config.of({
     Config.of({
       messages_per_sec: Value.number({
         name: 'Messages Per Second Limit',
-        default: 2,
         description:
           'Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection.',
-        required: true,
+        required: { default: 2 },
         min: 1,
         integer: true,
         units: 'msgs/sec',
       }),
       subscriptions_per_min: Value.number({
         name: 'Subscriptions Per Minute Limit',
-        default: 10,
         description:
           'Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service.',
-        required: true,
+        required: { default: 10 },
         min: 1,
         integer: true,
         units: 'subs/min',
       }),
       max_blocking_threads: Value.number({
         name: 'Max Blocking Threads',
-        default: 16,
         description:
           'Maximum number of blocking threads used for database connections.',
-        required: true,
+        required: { default: 16 },
         integer: true,
         units: 'threads',
       }),
       max_event_bytes: Value.number({
         name: 'Max Event Size',
-        default: 131072,
         description:
           'Limit the maximum size of an EVENT message. Set to 0 for unlimited',
-        required: true,
+        required: { default: 131_072 },
         integer: true,
         units: 'bytes',
       }),
       max_ws_message_bytes: Value.number({
         name: 'Max Websocket Message Size',
-        default: 131072,
         description: 'Maximum WebSocket message in bytes.',
-        required: true,
+        required: { default: 131_072 },
         integer: true,
         units: 'bytes',
       }),
       max_ws_frame_bytes: Value.number({
         name: 'Max Websocket Frame Size',
-        default: 131072,
         description: 'Maximum WebSocket frame size in bytes.',
-        required: true,
+        required: { default: 131_072 },
         integer: true,
         units: 'bytes',
       }),
