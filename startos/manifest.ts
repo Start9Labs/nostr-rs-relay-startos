@@ -1,9 +1,9 @@
 import { setupManifest } from 'start-sdk/lib/manifest'
 import { actionsMetadata } from './procedures/actions'
 
-/** 
+/**
  * In this function you define static properties of the service
-*/
+ */
 export const manifest = setupManifest({
   id: 'nostr',
   title: 'Nostr RS Relay',

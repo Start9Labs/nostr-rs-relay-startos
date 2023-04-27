@@ -1,5 +1,4 @@
-nostr.s9pk
-image.tar
+*.s9pk
 procedures/*.js
 node_modules/
 .DS_Store

@@ -8,7 +8,10 @@ import { tomlFile } from './file-models/config.toml'
  *
  * Use this function to gather data from various files and assemble into a valid config to display to the user
  */
-export const read: Read<WrapperData, ConfigSpec> = async ({ effects, utils }) => {
+export const read: Read<WrapperData, ConfigSpec> = async ({
+  effects,
+  utils,
+}) => {
   const data = await utils.readFile(tomlFile)
 
   if (data == null) return {}

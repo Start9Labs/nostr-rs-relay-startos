@@ -1,8 +1,8 @@
-import { matches } from "start-sdk/lib";
-import { FileHelper } from "start-sdk/lib/util";
-import { publicConfig } from "../spec";
+import { matches } from 'start-sdk/lib'
+import { FileHelper } from 'start-sdk/lib/util'
+import { publicConfig } from '../spec'
 
-const { object, array, string, number, anyOf, allOf } = matches;
+const { object, array, string, number, anyOf, allOf } = matches
 
 const tomlShape = allOf(
   object({
@@ -23,8 +23,8 @@ const tomlShape = allOf(
         pubkey_whitelist: array(string),
       }),
     }),
-    publicConfig.validator()
-  )
-);
+    publicConfig.validator(),
+  ),
+)
 
-export const tomlFile = FileHelper.toml("config.toml", "main", tomlShape);
+export const tomlFile = FileHelper.toml('config.toml', 'main', tomlShape)
