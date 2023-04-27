@@ -26,7 +26,7 @@ You will not be able to save the config until you follow the instructions below.
 
 ### Running a private relay
 
-Private relays act as a personal backup for your posts, follows, messages,
+Private relays act as a private backup for your posts, follows, messages,
 settings, etc. Without a private relay, there is no guaranteeing these things
 will be saved anywhere, and they could disappear at any time.
 

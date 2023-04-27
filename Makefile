@@ -20,21 +20,27 @@ else
 endif
 
 # for rebuilding just the arm image. will include docker-images/x86_64.tar into the s9pk if it exists
-arm: docker-images/aarch64.tar scripts/embassy.js
+arm: docker-images/aarch64.tar procedures/embassy.js
 	embassy-sdk pack
 
 # for rebuilding just the x86 image. will include docker-images/aarch64.tar into the s9pk if it exists
-x86: docker-images/x86_64.tar scripts/embassy.js
+x86: docker-images/x86_64.tar procedures/embassy.js
 	embassy-sdk pack
 
 clean:
 	rm -rf docker-images
 	rm -f image.tar
 	rm -f $(PKG_ID).s9pk
-	rm -f scripts/*.js
+	rm -f procedures/*.js
 
-scripts/embassy.js: $(TS_FILES)
-	deno bundle scripts/embassy.ts scripts/embassy.js
+procedures/embassy.js: $(TS_FILES)
+	cd procedures && npm run build
+
+check: $(TS_FILES)
+	cd procedures && npm run check
+	
+fmt: $(TS_FILES)
+	cd procedures && npm run prettier
 
 docker-images/aarch64.tar: Dockerfile docker_entrypoint.sh
 ifeq ($(ARCH),x86_64)
@@ -50,7 +56,7 @@ else
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) --build-arg ARCH=x86_64 --build-arg PLATFORM=amd64 --platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
 endif
 
-$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE scripts/embassy.js docker-images/aarch64.tar docker-images/x86_64.tar
+$(PKG_ID).s9pk: manifest.yaml instructions.md icon.png LICENSE procedures/embassy.js docker-images/aarch64.tar docker-images/x86_64.tar
 ifeq ($(ARCH),aarch64)
 	@echo "embassy-sdk: Preparing aarch64 package ..."
 else ifeq ($(ARCH),x86_64)
