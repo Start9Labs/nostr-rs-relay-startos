@@ -65,10 +65,8 @@ LAN. But, it's your server, and we don't want to tell our users what to do.)
 
 ### Using Firefox with a web client
 
-1. Follow instructions to ensure Firefox is configured to use Tor:
+* Follow instructions to ensure Firefox is configured to use Tor:
    https://docs.start9.com/latest/user-manual/connecting/connecting-tor/tor-firefox/
-2. Go to `about:config` and set `network.websocket.allowInsecureFromHTTPS` to
-   "True"
 
 ### Testing your relay (requires SSH)
 
