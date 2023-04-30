@@ -16,9 +16,12 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
      * In this section, you will fetch any resources or run any commands necessary to run the service
      */
 
-    await effects.runCommand('chown -R $APP_USER:$APP_USER $APP_DATA')
-    await effects.runCommand('su - $APP_USER > /dev/null 2>&1')
-    await effects.runCommand('cp $APP_DATA/config.toml.tmp $APP/config.toml')
+    await effects.runCommand(['chown', '-R', '$APP_USER:$APP_USER $APP_DATA'])
+    await effects.runCommand(['su', '- $APP_USER > /dev/null 2>&1'])
+    await effects.runCommand([
+      'cp',
+      '$APP_DATA/config.toml.tmp $APP/config.toml',
+    ])
 
     /**
      * ======================== Interfaces ========================

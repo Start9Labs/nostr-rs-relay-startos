@@ -18,7 +18,7 @@ export const manifest = setupManifest({
   donationUrl: null,
   description: {
     short: 'A Nostr relay, written in Rust',
-    long: 'Nostr RS Relay currently supports the entire relay protocol and persists data with SQLite',
+    long: 'Gitea is a community managed lightweight code hosting solution.',
   },
   assets: {
     license: 'LICENSE',
