@@ -7,6 +7,7 @@ import exportInterfaces from 'start-sdk/lib/mainFn/exportInterfaces'
 import { ExpectedExports } from 'start-sdk/lib/types'
 import { WrapperData } from '../wrapperData'
 import { HealthReceipt } from 'start-sdk/lib/health'
+import { manifest } from '../manifest'
 
 export const main: ExpectedExports.main = setupMain<WrapperData>(
   async ({ effects, utils, started }) => {
@@ -16,12 +17,7 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
      * In this section, you will fetch any resources or run any commands necessary to run the service
      */
 
-    await effects.runCommand(['chown', '-R', '$APP_USER:$APP_USER $APP_DATA'])
-    await effects.runCommand(['su', '- $APP_USER > /dev/null 2>&1'])
-    await effects.runCommand([
-      'cp',
-      '$APP_DATA/config.toml.tmp $APP/config.toml',
-    ])
+    await effects.console.log('Starting Nostr RS Relay!')
 
     /**
      * ======================== Interfaces ========================
@@ -93,15 +89,15 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
       interfaceReceipt, // Provide the interfaceReceipt to prove it was completed
       healthReceipts, // Provide the healthReceipts or [] to prove they were at least considered
     }).addDaemon('ws', {
-      command: './nostr-rs-relay --db /data', // The command to start the daemon
+      command: ['./nostr-rs-relay', '--db /data'], // The command to start the daemon
       requires: [],
       ready: {
-        display: 'Websocket Live',
+        display: 'Service Ready',
         // The function to run to determine the health status of the daemon
         fn: () =>
           utils.checkPortListening(8080, {
-            successMessage: 'The websocket is live',
-            errorMessage: 'Websocket is unreachable',
+            successMessage: `${manifest.title} is live`,
+            errorMessage: `${manifest.title} is unreachable`,
           }),
       },
     })

@@ -5,7 +5,16 @@ import { migrations } from './migrations'
 /**
  * Here you define arbitrary code that runs once, on fresh install only
  */
-const install = setupInstall<WrapperData>(async ({ effects, utils }) => {})
+const install = setupInstall<WrapperData>(async ({ effects, utils }) => {
+  const appUser = 'appuser'
+
+  await effects.chown({
+    volumeId: 'main',
+    path: '/data',
+    uid: appUser,
+  })
+  await effects.runCommand(['su', `- ${appUser} > /dev/null 2>&1`])
+})
 
 /**
  * Here you define arbitrary code that runs once, on uninstall only

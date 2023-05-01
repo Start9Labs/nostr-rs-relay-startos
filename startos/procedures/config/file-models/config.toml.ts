@@ -2,16 +2,16 @@ import { matches } from 'start-sdk/lib'
 import { FileHelper } from 'start-sdk/lib/util'
 import { publicConfig } from '../spec'
 
-const { object, array, string, number, anyOf, allOf } = matches
+const { object, array, string, natural, anyOf, allOf } = matches
 
 const tomlShape = allOf(
   object({
     network: object({
       address: string,
-      port: number,
+      port: natural,
     }),
     options: object({
-      reject_future_seconds: number,
+      reject_future_seconds: natural,
     }),
     info: object({
       relay_url: string,
