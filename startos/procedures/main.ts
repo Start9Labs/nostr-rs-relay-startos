@@ -25,21 +25,35 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
      * Naming convention reference: https://developer.mozilla.org/en-US/docs/Web/API/Location
      */
 
+    // ------------ Reverse Proxy ------------
+
+    // set up a reverse proxy to enable https for LAN
+    await effects.reverseProxy({
+      bind: {
+        port: 443,
+        ssl: true,
+      },
+      dst: {
+        port: 8080,
+        ssl: false,
+      },
+    })
+
     // ------------ Tor ------------
 
     // Find or generate a random Tor hostname by ID
     const torHostname = utils.torHostName('torHostname')
     // Create a Tor host with the assigned port mapping
-    const torHost = await torHostname.bindTor(8080, 80)
+    const torHostTcp = await torHostname.bindTor(8080, 80)
     // Assign the Tor host a web protocol (e.g. "http", "ws")
-    const torOrigin = torHost.createOrigin('http')
+    const torOriginHttp = torHostTcp.createOrigin('http')
 
     // ------------ LAN ------------
 
     // Create a LAN host with the assigned internal port
-    const lanHost = await utils.bindLan(8080)
+    const lanHost = await utils.bindLan(443)
     // Assign the LAN host a web protocol (e.g. "https", "wss")
-    const lanOrigins = lanHost.createOrigins('https')
+    const lanOriginsHttps = lanHost.createOrigins('https')
 
     // ------------ Interface ----------------
 
@@ -60,8 +74,8 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
 
     // Choose which origins to attach to this interface. The resulting addresses will share the attributes of the interface (name, path, search, etc)
     const addressReceipt = await iFace.exportAddresses([
-      torOrigin,
-      ...lanOrigins.ip,
+      torOriginHttp,
+      ...lanOriginsHttps.ip,
     ])
 
     // Export all address receipts for all interfaces to obtain interface receipt
