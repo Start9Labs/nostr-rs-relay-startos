@@ -1,5 +1,7 @@
-import { configBuilder } from 'start-sdk/lib'
-const { Config, Value, List, Variants } = configBuilder
+import { Config } from 'start-sdk/lib/config/builder/config'
+import { Value } from 'start-sdk/lib/config/builder/value'
+import { List } from 'start-sdk/lib/config/builder/list'
+import { Variants } from 'start-sdk/lib/config/builder/variants'
 
 /**
  * Here you define the config specification that will ultimately present to the user as validated form inputs
@@ -124,6 +126,7 @@ export const publicConfig = Config.of({
           'Maximum number of blocking threads used for database connections.',
         required: { default: 16 },
         integer: true,
+        min: 1,
         units: 'threads',
       }),
       max_event_bytes: Value.number({
@@ -132,6 +135,7 @@ export const publicConfig = Config.of({
           'Limit the maximum size of an EVENT message. Set to 0 for unlimited',
         required: { default: 131_072 },
         integer: true,
+        min: 1,
         units: 'bytes',
       }),
       max_ws_message_bytes: Value.number({
@@ -139,6 +143,7 @@ export const publicConfig = Config.of({
         description: 'Maximum WebSocket message in bytes.',
         required: { default: 131_072 },
         integer: true,
+        min: 1,
         units: 'bytes',
       }),
       max_ws_frame_bytes: Value.number({
@@ -146,6 +151,7 @@ export const publicConfig = Config.of({
         description: 'Maximum WebSocket frame size in bytes.',
         required: { default: 131_072 },
         integer: true,
+        min: 1,
         units: 'bytes',
       }),
       event_kind_blacklist: Value.list(
@@ -157,6 +163,7 @@ export const publicConfig = Config.of({
           },
           {
             integer: true,
+            min: 1,
             placeholder: '30023',
           },
         ),
@@ -174,7 +181,7 @@ export const configSpec = Config.of({
         'Private or public. A private relay (highly recommended) restricts write access to specific pubkeys. Anyone can write to a public relay.',
       warning:
         'Running a public relay carries risk. Your relay can be spammed, resulting in large amounts of disk usage.',
-      required: false,
+      required: { default: null },
     },
     Variants.of({
       private: { name: 'Private', spec: privateConfig },
@@ -183,6 +190,5 @@ export const configSpec = Config.of({
   ),
 })
 
-// These two lines are necessary to satisfy Typescript typings. Do not touch them
-export const matchConfigSpec = configSpec.validator()
-export type ConfigSpec = typeof matchConfigSpec._TYPE
+// This line is necessary to satisfy Typescript. Do not touch it
+export type ConfigSpec = typeof configSpec.validator._TYPE

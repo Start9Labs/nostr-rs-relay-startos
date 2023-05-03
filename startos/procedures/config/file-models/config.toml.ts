@@ -1,6 +1,5 @@
-import { matches } from 'start-sdk/lib'
-import { FileHelper } from 'start-sdk/lib/util'
-import { publicConfig } from '../spec'
+import { matches } from 'start-sdk'
+import FileHelper from 'start-sdk/lib/util/fileHelper'
 
 const { object, array, string, natural, anyOf, allOf } = matches
 
@@ -23,7 +22,23 @@ const tomlShape = allOf(
         pubkey_whitelist: array(string),
       }),
     }),
-    publicConfig.validator(),
+    object({
+      info: object({
+        name: string.optional(),
+        description: string.optional(),
+        pubkey: string.optional(),
+        contact: string.optional(),
+      }),
+      limits: object({
+        messages_per_sec: natural,
+        subscriptions_per_min: natural,
+        max_blocking_threads: natural,
+        max_event_bytes: natural,
+        max_ws_message_bytes: natural,
+        max_ws_frame_bytes: natural,
+        event_kind_blacklist: array(natural),
+      }),
+    }),
   ),
 )
 

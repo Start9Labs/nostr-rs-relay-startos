@@ -49,5 +49,10 @@ export const save: Save<WrapperData, ConfigSpec, Manifest> = async ({
     })
   }
 
-  return effects.setDependencies([])
+  const dependenciesReceipt = await effects.setDependencies([])
+
+  return {
+    dependenciesReceipt,
+    restart: true,
+  }
 }
