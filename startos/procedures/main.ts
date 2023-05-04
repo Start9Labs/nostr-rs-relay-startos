@@ -15,7 +15,7 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
      * In this section, you will fetch any resources or run any commands necessary to run the service
      */
 
-    await effects.console.log('Starting Nostr RS Relay!')
+    console.info('Starting Nostr RS Relay!')
 
     /**
      * ======================== Interfaces ========================

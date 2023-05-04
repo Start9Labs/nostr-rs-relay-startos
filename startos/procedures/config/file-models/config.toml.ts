@@ -42,4 +42,4 @@ const tomlShape = allOf(
   ),
 )
 
-export const tomlFile = FileHelper.toml('config.toml', 'main', tomlShape)
+export const tomlFile = FileHelper.toml('config.toml', tomlShape)
