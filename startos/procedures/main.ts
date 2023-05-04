@@ -1,11 +1,11 @@
-import { setupMain } from 'start-sdk/lib/mainFn'
-import exportInterfaces from 'start-sdk/lib/mainFn/exportInterfaces'
-import { ExpectedExports } from 'start-sdk/lib/types'
+import { setupMain } from '@start9labs/start-sdk/lib/mainFn'
+import exportInterfaces from '@start9labs/start-sdk/lib/mainFn/exportInterfaces'
+import { ExpectedExports } from '@start9labs/start-sdk/lib/types'
 import { WrapperData } from '../wrapperData'
 import { manifest } from '../manifest'
-import { NetworkInterfaceBuilder } from 'start-sdk/lib/mainFn/NetworkInterfaceBuilder'
-import { HealthReceipt } from 'start-sdk/lib/health/HealthReceipt'
-import { Daemons } from 'start-sdk/lib/mainFn/Daemons'
+import { NetworkInterfaceBuilder } from '@start9labs/start-sdk/lib/mainFn/NetworkInterfaceBuilder'
+import { HealthReceipt } from '@start9labs/start-sdk/lib/health/HealthReceipt'
+import { Daemons } from '@start9labs/start-sdk/lib/mainFn/Daemons'
 
 export const main: ExpectedExports.main = setupMain<WrapperData>(
   async ({ effects, utils, started }) => {
@@ -61,7 +61,7 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
     // Addresses are different "routes" to the same destination
 
     // Define the Interface for user display and consumption
-    let iFace = new NetworkInterfaceBuilder({
+    let wsInterface = new NetworkInterfaceBuilder({
       effects,
       name: 'Websocket',
       id: 'websocket',
@@ -73,13 +73,13 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
     })
 
     // Choose which origins to attach to this interface. The resulting addresses will share the attributes of the interface (name, path, search, etc)
-    const addressReceipt = await iFace.exportAddresses([
+    const wsAddressReceipt = await wsInterface.export([
       torOriginHttp,
       ...lanOriginsHttps.ip,
     ])
 
     // Export all address receipts for all interfaces to obtain interface receipt
-    const interfaceReceipt = exportInterfaces(addressReceipt)
+    const interfaceReceipt = exportInterfaces(wsAddressReceipt)
 
     /**
      * ======================== Additional Health Checks (optional) ========================

@@ -1,4 +1,4 @@
-import { setupBackups } from 'start-sdk/lib/backup/setupBackups'
+import { setupBackups } from '@start9labs/start-sdk/lib/backup/setupBackups'
 import { Manifest } from '../manifest'
 
 /**

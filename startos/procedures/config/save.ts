@@ -1,6 +1,6 @@
 import { ConfigSpec } from './spec'
 import { WrapperData } from '../../wrapperData'
-import { Save } from 'start-sdk/lib/config/setupConfig'
+import { Save } from '@start9labs/start-sdk/lib/config/setupConfig'
 import { tomlFile } from './file-models/config.toml'
 import { Manifest } from '../../manifest'
 

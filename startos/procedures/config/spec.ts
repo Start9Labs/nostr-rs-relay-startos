@@ -1,7 +1,7 @@
-import { Config } from 'start-sdk/lib/config/builder/config'
-import { Value } from 'start-sdk/lib/config/builder/value'
-import { List } from 'start-sdk/lib/config/builder/list'
-import { Variants } from 'start-sdk/lib/config/builder/variants'
+import { Config } from '@start9labs/start-sdk/lib/config/builder/config'
+import { Value } from '@start9labs/start-sdk/lib/config/builder/value'
+import { List } from '@start9labs/start-sdk/lib/config/builder/list'
+import { Variants } from '@start9labs/start-sdk/lib/config/builder/variants'
 
 /**
  * Here you define the config specification that will ultimately present to the user as validated form inputs

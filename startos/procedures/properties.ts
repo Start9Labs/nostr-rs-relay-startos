@@ -1,4 +1,4 @@
-import { setupProperties } from 'start-sdk/lib/properties'
+import { setupProperties } from '@start9labs/start-sdk/lib/properties'
 
 /**
  * With access to WrapperData, in this function you determine what to include in the Properties section of the UI
