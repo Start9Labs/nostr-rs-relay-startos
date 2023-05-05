@@ -67,7 +67,7 @@ export const main: ExpectedExports.main = setupMain<WrapperData>(
       id: 'websocket',
       description: 'Nostr clients use this interface to connect to the relay',
       ui: false,
-      basic: null,
+      username: null,
       path: '',
       search: {},
     })
