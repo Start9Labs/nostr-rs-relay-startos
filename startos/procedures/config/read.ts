@@ -1,39 +1,33 @@
-import { ConfigSpec } from './spec'
-import { WrapperData } from '../../wrapperData'
-import { Read } from '@start9labs/start-sdk/lib/config/setupConfig'
+import { sdk } from '../../sdk'
+import { configSpec } from './spec'
 import { tomlFile } from './file-models/config.toml'
 
-/**
- * This function executes on config get
- *
- * Use this function to gather data from various files and assemble into a valid config to display to the user
- */
-export const read: Read<WrapperData, ConfigSpec> = async ({
-  effects,
-  utils,
-}) => {
-  const data = await utils.readFile(tomlFile)
+export const read = sdk.setupConfigRead(
+  configSpec,
+  async ({ effects, utils }) => {
+    const data = await utils.readFile(tomlFile)
 
-  if (data == null) return
+    if (data == null) return
 
-  if ('authorization' in data) {
+    if ('authorization' in data) {
+      return {
+        relayType: {
+          unionSelectKey: 'private' as const,
+          unionValueKey: {
+            pubkey_whitelist: data.authorization.pubkey_whitelist,
+          },
+        },
+      }
+    }
+
     return {
       relayType: {
-        unionSelectKey: 'private',
+        unionSelectKey: 'public' as const,
         unionValueKey: {
-          pubkey_whitelist: data.authorization.pubkey_whitelist,
+          info: data.info,
+          limits: data.limits,
         },
       },
     }
-  }
-
-  return {
-    relayType: {
-      unionSelectKey: 'public',
-      unionValueKey: {
-        info: data.info,
-        limits: data.limits,
-      },
-    },
-  }
-}
+  },
+)

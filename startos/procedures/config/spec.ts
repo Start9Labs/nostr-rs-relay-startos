@@ -1,13 +1,5 @@
-import { Config } from '@start9labs/start-sdk/lib/config/builder/config'
-import { Value } from '@start9labs/start-sdk/lib/config/builder/value'
-import { List } from '@start9labs/start-sdk/lib/config/builder/list'
-import { Variants } from '@start9labs/start-sdk/lib/config/builder/variants'
-
-/**
- * Here you define the config specification that will ultimately present to the user as validated form inputs
- *
- * Most form controls are available, including text, textarea, number, toggle, select, multiselect, list, color, datetime, object (a subform), and union (a conditional subform)
- */
+import { sdk } from '../../sdk'
+const { Config, Value, List, Variants } = sdk
 
 // private config
 export const privateConfig = Config.of({
