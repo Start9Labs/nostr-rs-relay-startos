@@ -1,4 +1,5 @@
 import { sdk } from '../sdk'
+import { setInterfaces } from './interfaces'
 import { migrations } from './migrations'
 
 const install = sdk.setupInstall(async ({ effects, utils }) => {
@@ -14,4 +15,9 @@ const install = sdk.setupInstall(async ({ effects, utils }) => {
 
 const uninstall = sdk.setupUninstall(async ({ effects, utils }) => {})
 
-export const { init, uninit } = sdk.setupInit(migrations, install, uninstall)
+export const { init, uninit } = sdk.setupInit(
+  migrations,
+  install,
+  uninstall,
+  setInterfaces,
+)

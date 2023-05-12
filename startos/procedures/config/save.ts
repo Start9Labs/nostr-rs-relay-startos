@@ -1,6 +1,7 @@
 import { sdk } from '../../sdk'
 import { configSpec } from './spec'
 import { tomlFile } from './file-models/config.toml'
+import { setInterfaces } from '../interfaces'
 
 export const save = sdk.setupConfigSave(
   configSpec,
@@ -42,6 +43,7 @@ export const save = sdk.setupConfigSave(
     const dependenciesReceipt = await effects.setDependencies([])
 
     return {
+      interfacesReceipt: await setInterfaces({ effects, utils, input }),
       dependenciesReceipt,
       restart: true,
     }
