@@ -18,6 +18,8 @@ export const setInterfaces = sdk.setupInterfaces(
       name: 'Relay Websocket',
       id: relayInterfaceId,
       description: 'Nostr clients use this interface to connect to the relay',
+      hasPrimary: false,
+      disabled: false,
       ui: false,
       username: null,
       path: '',
