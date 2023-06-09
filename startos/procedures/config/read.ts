@@ -5,7 +5,7 @@ import { tomlFile } from './file-models/config.toml'
 export const read = sdk.setupConfigRead(
   configSpec,
   async ({ effects, utils }) => {
-    const data = await utils.readFile(tomlFile)
+    const data = await tomlFile.read(effects)
 
     if (data == null) return
 

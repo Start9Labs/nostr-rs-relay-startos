@@ -22,22 +22,28 @@ export const save = sdk.setupConfigSave(
     const relayType = input.relayType
 
     if (relayType.unionSelectKey === 'private') {
-      await utils.writeFile(tomlFile, {
-        ...toSave,
-        authorization: {
-          pubkey_whitelist: relayType.unionValueKey.pubkey_whitelist,
+      await tomlFile.write(
+        {
+          ...toSave,
+          authorization: {
+            pubkey_whitelist: relayType.unionValueKey.pubkey_whitelist,
+          },
         },
-      })
+        effects,
+      )
     } else {
       const { info, limits } = relayType.unionValueKey
-      await utils.writeFile(tomlFile, {
-        ...toSave,
-        info: {
-          ...toSave.info,
-          ...info,
+      await tomlFile.write(
+        {
+          ...toSave,
+          info: {
+            ...toSave.info,
+            ...info,
+          },
+          limits,
         },
-        limits,
-      })
+        effects,
+      )
     }
 
     const dependenciesReceipt = await effects.setDependencies([])
