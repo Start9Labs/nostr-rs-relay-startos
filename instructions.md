@@ -74,7 +74,7 @@ Once you've connected a client to your relay, any events created by your client
 will be stored on your relay, assuming the pubkey that created the event is
 whitelisted (or the relay is set to "public"). You can check that your relay is
 indeed storing events by going into your client relay settings and eliminating
-all relays except your own, sending some events, then SSHing into your Embassy
+all relays except your own, sending some events, then SSHing into your Start9 server
 and entering the following command:
 
 ```
