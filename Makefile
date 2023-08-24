@@ -7,6 +7,14 @@ TS_FILES := $(shell find ./ -name \*.ts)
 
 all: verify
 
+arm:
+	@rm -f docker-images/x86_64.tar
+	@ARCH=aarch64 $(MAKE)
+
+x86:
+	@rm -f docker-images/aarch64.tar
+	@ARCH=x86_64 $(MAKE)
+
 verify: $(PKG_ID).s9pk
 	@embassy-sdk verify s9pk $(PKG_ID).s9pk
 	@echo " Done!"
@@ -14,22 +22,13 @@ verify: $(PKG_ID).s9pk
 
 install:
 ifeq (,$(wildcard ~/.embassy/config.yaml))
-	@echo; echo "You must define \"host: http://embassy-server-name.local\" in ~/.embassy/config.yaml config file first"; echo
+	@echo; echo "You must define \"host: http://server-name.local\" in ~/.embassy/config.yaml config file first"; echo
 else
 	embassy-cli package install $(PKG_ID).s9pk
 endif
 
-# for rebuilding just the arm image. will include docker-images/x86_64.tar into the s9pk if it exists
-arm: docker-images/aarch64.tar scripts/embassy.js
-	embassy-sdk pack
-
-# for rebuilding just the x86 image. will include docker-images/aarch64.tar into the s9pk if it exists
-x86: docker-images/x86_64.tar scripts/embassy.js
-	embassy-sdk pack
-
 clean:
 	rm -rf docker-images
-	rm -f image.tar
 	rm -f $(PKG_ID).s9pk
 	rm -f scripts/*.js
 
