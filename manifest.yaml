@@ -3,6 +3,7 @@ title: "Nostr RS Relay"
 version: 0.8.12
 release-notes: |
   * Latest upstream code update
+  * Instructions update
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-wrapper"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
