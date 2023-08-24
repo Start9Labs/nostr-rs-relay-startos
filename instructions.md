@@ -53,7 +53,7 @@ your own here.
 ### All platforms
 
 1. Follow instructions to ensure your computer or phone is running Tor:
-   https://docs.start9.com/latest/user-manual/connecting/connecting-tor/tor-os/
+   https://docs.start9.com/latest/guides/device-guides/
 2. Go into Properties, copy your `Nostr Relay Websocket URL` (e.g.
    `ws://<address>.onion`), and paste it into your Nostr client.
 
@@ -65,8 +65,8 @@ LAN. But, it's your server, and we don't want to tell our users what to do.)
 
 ### Using Firefox with a web client
 
-* Follow instructions to ensure Firefox is configured to use Tor:
-   https://docs.start9.com/latest/user-manual/connecting/connecting-tor/tor-firefox/
+- Ensure that you configure [Firefox to use Tor](https://docs.start9.com/latest/guides/device-guides/) based on your platform.
+- In Firefox's `about:config` settings, make sure the `network.websocket.allowInsecureFromHTTPS` option is set to `true`. This will enable you to utilize your relays `ws://<address>.onion` address.
 
 ### Testing your relay (requires SSH)
 
