@@ -5,19 +5,6 @@ there is quite a lot of uncertainty as to how to use it properly. Below you'll
 find important information to help you get started without undue confusion and
 risk.
 
-## Creating an account pubkey
-
-Before using your relay, you will need a Nostr account. This is achieved by
-creating a private/public keypair on a Nostr client. There are several to choose
-from. Here are some clients you may want to try:
-
-- Damus (iOS/Mac)
-- Amethyst (Android)
-- Iris.to (Browser)
-
-Once you have your Nostr pubkey, you can proceed to configure your self-hosted
-Nostr relay.
-
 ## Initial Config
 
 It is highly recommended that you run a _private_ relay, not a public one.
@@ -48,25 +35,25 @@ storage drive to full up. We've inlcuded fairly restrictive defaults in your
 config so that you have the best chance of avoiding this risk, but you are on
 your own here.
 
-## Using your relay
+## Connecting to your relay
 
 ### All platforms
 
-1. Follow instructions to ensure your computer or phone is running Tor:
-   https://docs.start9.com/latest/user-manual/connecting/connecting-tor/tor-os/
-2. Go into Properties, copy your `Nostr Relay Websocket URL` (e.g.
-   `ws://<address>.onion`), and paste it into your Nostr client.
+1. Ensure your computer or phone is running Tor:
+   https://docs.start9.com/latest/guides/device-guides/
+2. In Nostr Properties, copy your `Nostr Relay Websocket URL` (e.g.
+   `ws://<address>.onion`), and paste it into your Nostr client relay list.
 
-(Note, the `wss://<address>.local` URL is included in Properties as well. We
-don't recommend using this interface for anything other than sanity checking
-that your relay works and is listening for events. Obvioulsy no one will be able
-to access your .local URL except yourself and anyone else connected to the same
-LAN. But, it's your server, and we don't want to tell our users what to do.)
+*Note: there is also a Local (e.g. `wss://<address>.local`) URL is included in Properties. We
+do not recommend using this interface except to sanity check
+that your relay working in certain cases. No one will be able
+to access your .local URL except you and anyone else connected to the same
+LAN.
 
-### Using Firefox with a web client
+### Using Firefox with Iris or another web client
 
-* Follow instructions to ensure Firefox is configured to use Tor:
-   https://docs.start9.com/latest/user-manual/connecting/connecting-tor/tor-firefox/
+- Ensure that you have [configured Firefox for Tor](https://docs.start9.com/latest/guides/device-guides/)
+- Go into Firefox `about:config` and set `network.websocket.allowInsecureFromHTTPS` to `true`. This is necessary to access you `ws://` URL, since Tor does not use `wss://`
 
 ### Testing your relay (requires SSH)
 
@@ -74,7 +61,7 @@ Once you've connected a client to your relay, any events created by your client
 will be stored on your relay, assuming the pubkey that created the event is
 whitelisted (or the relay is set to "public"). You can check that your relay is
 indeed storing events by going into your client relay settings and eliminating
-all relays except your own, sending some events, then SSHing into your Embassy
+all relays except your own, sending some events, then SSHing into your Start9 server
 and entering the following command:
 
 ```

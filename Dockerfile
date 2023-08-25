@@ -1,5 +1,7 @@
-FROM docker.io/library/rust:1.66.0 as builder
-
+FROM docker.io/library/rust:1-bookworm as builder
+RUN apt-get update \
+    && apt-get install -y cmake protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
 RUN USER=root cargo install cargo-auditable
 RUN USER=root cargo new --bin nostr-rs-relay
 WORKDIR ./nostr-rs-relay
@@ -12,12 +14,14 @@ RUN rm src/*.rs
 
 # copy project source code
 COPY ./nostr-rs-relay/src ./src
+COPY ./nostr-rs-relay/proto ./proto
+COPY ./nostr-rs-relay/build.rs ./build.rs
 
 # build auditable release using locked deps
 RUN rm ./target/release/deps/nostr*relay*
 RUN cargo auditable build --release --locked
 
-FROM docker.io/library/debian:bullseye-20221205-slim
+FROM docker.io/library/debian:bookworm-slim
 
 ARG APP=/usr/src/app
 ARG APP_DATA=/data
