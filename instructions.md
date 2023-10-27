@@ -31,7 +31,7 @@ In contrast to a private relay, a public relay does not include a whitelist, so
 it allows any pubkey to post. It is not recommended to run a public relay unless
 you understand the risks and configure it with the proper protections. The main
 risk you need to avoid is malicious clients spamming your relay and causing your
-storage drive to full up. We've inlcuded fairly restrictive defaults in your
+storage drive to full up. We've included fairly restrictive defaults in your
 config so that you have the best chance of avoiding this risk, but you are on
 your own here.
 
