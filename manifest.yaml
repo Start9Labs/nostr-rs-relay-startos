@@ -2,10 +2,11 @@ id: nostr
 title: "Nostr RS Relay"
 version: 0.8.13
 release-notes: |
-  * switch from OpenSSL to Rustls
-  * update dependencies
-  * fix panic on malformed signature
-  * extend authz to NIP-44 and NIP-59 events
+  * Switch from OpenSSL to Rustls
+  * Update dependencies
+  * Fix panic on malformed signature
+  * Extend authz to NIP-44 and NIP-59 events
+  * Standardized and optimized icon
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-startos"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
