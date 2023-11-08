@@ -2,10 +2,12 @@ id: nostr
 title: "Nostr RS Relay"
 version: 0.8.13
 release-notes: |
-  * Latest upstream code update
-  * Instructions update
+  * switch from OpenSSL to Rustls
+  * update dependencies
+  * fix panic on malformed signature
+  * extend authz to NIP-44 and NIP-59 events
 license: MIT
-wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-wrapper"
+wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-startos"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
 support-site: "https://todo.sr.ht/~gheartsfield/nostr-rs-relay"
 marketing-site: "https://nostr.com/"
