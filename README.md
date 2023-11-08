@@ -1,6 +1,10 @@
-# Wrapper for nostr
+<p align="center">
+  <img src="icon.png" alt="Project Logo" width="21%">
+</p>
 
-This is a nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite. This repository creates the `s9pk` package that is installed to run `nostr` on [StartOS](https://github.com/Start9Labs/start-os/). Learn more about service packaging in the [Developer Docs](https://start9.com/latest/developer-docs/).
+# Nostr RS Relay for StartOS
+
+[Nostr RS Relay](https://git.sr.ht/~gheartsfield/nostr-rs-relay) is a nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite. This repository creates the `s9pk` package that is installed to run `Nostr RS Relay` on [StarOS](https://github.com/Start9Labs/start-os/).
 
 ## Dependencies
 
@@ -8,105 +12,58 @@ Install the system dependencies below to build this project by following the ins
 
 - [docker](https://docs.docker.com/get-docker)
 - [docker-buildx](https://docs.docker.com/buildx/working-with-buildx/)
-- [yq](https://mikefarah.gitbook.io/yq)
-- [deno](https://deno.land/)
+- [start-sdk](https://github.com/Start9Labs/start-os/blob/sdk/backend/install-sdk.sh)
+- [deno](https://deno.land/#installation)
 - [make](https://www.gnu.org/software/make/)
-- [embassy-sdk](https://github.com/Start9Labs/embassy-os/tree/master/backend)
-
-## Build environment
-Prepare your StartOS build environment. In this example we are using Ubuntu 20.04.
-1. Install docker
-```
-curl -fsSL https://get.docker.com -o- | bash
-sudo usermod -aG docker "$USER"
-exec sudo su -l $USER
-```
-2. Set buildx as the default builder
-```
-docker buildx install
-docker buildx create --use
-```
-3. Enable cross-arch emulated builds in docker
-```
-docker run --privileged --rm linuxkit/binfmt:v0.8
-```
-4. Install yq
-```
-sudo snap install yq
-```
-5. Install deno
-```
-sudo snap install deno
-```
-6. Install essentials build packages
-```
-sudo apt-get install -y build-essential openssl libssl-dev libc6-dev clang libclang-dev ca-certificates
-```
-7. Install Rust
-```
-curl https://sh.rustup.rs -sSf | sh
-# Choose nr 1 (default install)
-source $HOME/.cargo/env
-```
-8. Build and install embassy-sdk
-```
-cd ~/ && git clone --recursive https://github.com/Start9Labs/start-os.git
-cd start-os/backend/
-./install-sdk.sh
-embassy-sdk init
-```
-Now you are ready to build the `nostr` package!
+- [yq](https://mikefarah.gitbook.io/yq)
 
 ## Cloning
 
 Clone the project locally:
 
 ```
-git clone https://github.com/Start9Labs/nostr-wrapper.git
-cd nostr-wrapper
+git clone git@github.com:Start9Labs/nostr-rs-relay-startos.git
+cd nostr-rs-relay-startos
 ```
 
 ## Building
 
-To build the `nostr` package for all platforms using embassy-sdk version >=0.3.3, run the following command:
+After setting up your environment, build the `nostr` package by running:
 
 ```
 make
 ```
 
-To build the `nostr` package for a single platform using embassy-sdk version <=0.3.2, run:
+To build the `nostr` package for a single platform, run:
 
 ```
 # for amd64
-make ARCH=x86_64
+make x86
 ```
+
 or
+
 ```
 # for arm64
-make ARCH=aarch64
+make arm
 ```
 
 ## Installing (on StartOS)
 
-Run the following commands to determine successful install:
-> :information_source: Change server-name.local to your servers address
+Before installation, define `host: https://server-name.local` in your `~/.embassy/config.yaml` config file then run the following commands to determine successful install:
+
+> :information_source: Change server-name.local to your Start9 server address
 
 ```
-embassy-cli auth login
-# Enter your StartOS password
-embassy-cli --host https://server-name.local package install nostr.s9pk
-```
-
-If you already have your `embassy-cli` config file setup with a default `host`, you can install simply by running:
-
-```
+start-cli auth login
+#Enter your StartOS password
 make install
 ```
 
-> **Tip:** You can also install the nostr.s9pk using **Sideload Service** under the **System > Manage** section.
+**Tip:** You can also install the `nostr.s9pk` by sideloading it under the **StartOS > System > Sideload a Service** section.
 
 ### Verify Install
 
-Go to your StartOS Services page, select **Nostr**, configure and start the service. Then, verify its interfaces are accessible.
+Via the StartOS web-UI, select Services > **Nostr RS Relay**, configure and start the service. Then, verify its interfaces are accessible.
 
 **Done!**
