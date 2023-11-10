@@ -22,7 +22,7 @@ Install the system dependencies below to build this project by following the ins
 Clone the project locally:
 
 ```
-git clone git@github.com:Start9Labs/nostr-rs-relay-startos.git
+git clone --recursive git@github.com:Start9Labs/nostr-rs-relay-startos.git
 cd nostr-rs-relay-startos
 ```
 

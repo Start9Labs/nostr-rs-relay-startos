@@ -44,7 +44,7 @@ COPY ./nostr-rs-relay/config.toml ${APP}/config.toml
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
-RUN apt update && apt install -y bash curl tini && \
+RUN apt update && apt install -y curl && \
     rm -rf /var/lib/apt/lists/*
 
 ARG PLATFORM
