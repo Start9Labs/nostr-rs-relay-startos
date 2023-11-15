@@ -22,6 +22,9 @@ save content to your relay. So, at minimum, you must whitelist your own pubkey
 in hex format. The config will refuse to save until there is at least one pubkey
 in the whitelist.
 
+Some Nostr clients will not allow you to copy your hex pubkey.
+In that case, visit https://damus.io/key to convert your npub to hex.
+
 Some Nostr clients will allow you to copy your hex pubkey. If not, you can visit
 https://damus.io/key to convert your npub to hex.
 
@@ -65,10 +68,16 @@ all relays except your own, sending some events, then SSHing into your Start9 se
 and entering the following command:
 
 ```
-`sqlite3 /embassy-data/package-data/volumes/nostr/data/main/nostr.db 'select count(*) from event;'`
+`sudo podman exec nostr.embassy sqlite3 /data/nostr.db 'select count(*) from event;'`
 ```
 
 If this displays a number greater than 0, your relay is working.
+
+To list all events (notes) stored on your relay, use the following command:
+
+```
+`sudo podman exec nostr.embassy sqlite3 /data/nostr.db "SELECT content FROM event;" | grep -o 'content":"[^"]*' | awk -F: '{print $1":"$2}'`
+```
 
 ## More
 
