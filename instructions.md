@@ -25,9 +25,6 @@ in the whitelist.
 Some Nostr clients will not allow you to copy your hex pubkey.
 In that case, visit https://damus.io/key to convert your npub to hex.
 
-Some Nostr clients will allow you to copy your hex pubkey. If not, you can visit
-https://damus.io/key to convert your npub to hex.
-
 ### Running a public relay
 
 In contrast to a private relay, a public relay does not include a whitelist, so
