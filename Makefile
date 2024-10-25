@@ -33,7 +33,7 @@ clean:
 	rm -f scripts/*.js
 
 scripts/embassy.js: $(TS_FILES)
-	deno bundle scripts/embassy.ts scripts/embassy.js
+	deno run --allow-read --allow-write --allow-env --allow-net scripts/bundle.ts
 
 docker-images/aarch64.tar: Dockerfile docker_entrypoint.sh
 ifeq ($(ARCH),x86_64)
