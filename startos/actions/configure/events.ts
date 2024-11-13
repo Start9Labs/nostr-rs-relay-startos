@@ -51,20 +51,24 @@ const blacklistSpec = InputSpec.of({
 export const inputSpec = InputSpec.of({
   type: Value.union(
     {
-      name: 'List Type',
-      default: 'blacklist',
+      name: 'Permitted Event Types',
+      default: 'all',
       description:
-        'Decide whether to create a whitelist or blacklist of event kinds. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds',
+        'Permit all event kinds, or create a whitelist or blacklist certain event kinds. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds',
     },
     Variants.of({
+      all: {
+        name: 'Permit all Event Types',
+        spec: InputSpec.of({}),
+      },
       whitelist: {
-        name: 'Whitelist',
+        name: 'Event Type Whitelist',
         spec: whitelistSpec,
         description:
           'A list of event types to permit. All others will be prohibited',
       },
       blacklist: {
-        name: 'Blacklist',
+        name: 'Event Type Blacklist',
         spec: blacklistSpec,
         description:
           'A list of event types to prohibit. All others will be permitted',
@@ -97,21 +101,31 @@ export const configureEvents = sdk.Action.withInput(
     const limits = (await configToml.read.const(effects))?.limits
     if (!limits) return
 
-    return {
-      type: limits.event_kind_allowlist?.length
-        ? {
-            selection: 'whitelist',
-            value: {
-              event_kind_allowlist: limits.event_kind_allowlist.map(String),
-            },
-          }
-        : {
-            selection: 'blacklist',
-            value: {
-              event_kind_blacklist:
-                limits.event_kind_blacklist?.map(String) || [],
-            },
+    if (limits.event_kind_allowlist?.length) {
+      return {
+        type: {
+          selection: 'whitelist',
+          value: {
+            event_kind_allowlist: limits.event_kind_allowlist.map(String),
           },
+        },
+      }
+    } else if (limits.event_kind_blacklist?.length) {
+      return {
+        type: {
+          selection: 'blacklist',
+          value: {
+            event_kind_allowlist: limits.event_kind_blacklist.map(String),
+          },
+        },
+      }
+    } else {
+      return {
+        type: {
+          selection: 'all',
+          value: {},
+        },
+      }
     }
   },
 
@@ -125,10 +139,15 @@ export const configureEvents = sdk.Action.withInput(
                 input.type.value.event_kind_allowlist.map(Number),
               event_kind_blacklist: undefined,
             }
-          : {
-              event_kind_blacklist:
-                input.type.value.event_kind_blacklist.map(Number),
-              event_kind_allowlist: undefined,
-            },
+          : input.type.selection === 'blacklist'
+            ? {
+                event_kind_allowlist: undefined,
+                event_kind_blacklist:
+                  input.type.value.event_kind_blacklist.map(Number),
+              }
+            : {
+                event_kind_allowlist: undefined,
+                event_kind_blacklist: undefined,
+              },
     }),
 )

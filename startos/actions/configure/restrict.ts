@@ -59,18 +59,23 @@ export const inputSpec = InputSpec.of({
       domains_union: Value.union(
         {
           name: 'Domain Permissions',
-          description: 'Optionally permit or prohibit certain domains',
-          default: 'domain_blacklist',
+          description:
+            'Permit all domains, or whitelist/blacklist certain domains',
+          default: 'all',
         },
         Variants.of({
+          all: {
+            name: 'Permit all Domains',
+            spec: InputSpec.of({}),
+          },
           domain_whitelist: {
-            name: 'Permitted Domains',
+            name: 'Domain Whitelist',
             spec: domainWhitelistSpec,
             description:
               'Create a list of permitted domains. All others will be prohibited',
           },
           domain_blacklist: {
-            name: 'Prohibit Domains',
+            name: 'Domain Blacklist',
             spec: domainBlacklistSpec,
             description:
               'Create a list of prohibited domains. All others will be permitted',
@@ -152,6 +157,8 @@ export const configureRestrict = sdk.Action.withInput(
     const { verified_users, authorization } = data
     if (!verified_users || !authorization) return
 
+    // @TODO handle "all" type
+
     return {
       verified_users: {
         ...verified_users,
@@ -176,6 +183,8 @@ export const configureRestrict = sdk.Action.withInput(
   // the execution function
   async ({ effects, input }) => {
     const { domains_union, ...verified_users } = input.verified_users
+
+    // @TODO handle "all" type
 
     return configToml.merge({
       verified_users: {
