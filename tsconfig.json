@@ -1,0 +1,11 @@
+{
+  "include": ["startos/**/*.ts", "startos/versions/v0.9.0.1.ts"],
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

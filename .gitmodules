@@ -1,3 +1,0 @@
-[submodule "nostr-rs-relay"]
-	path = nostr-rs-relay
-	url = https://git.sr.ht/~gheartsfield/nostr-rs-relay

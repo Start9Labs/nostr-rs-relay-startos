@@ -1,5 +1,7 @@
 *.s9pk
-scripts/*.js
+startos/*.js
+node_modules/
 .DS_Store
 .vscode/
 docker-images
+javascript

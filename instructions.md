@@ -1,13 +1,13 @@
 # Instructions
 
-PLEASE READ THESE INSTRUCTIONS CAREFULLY BEFORE USE. Nostr is a new protocol and
-there is quite a lot of uncertainty as to how to use it properly. Below you'll
-find important information to help you get started without undue confusion and
-risk.
+PLEASE READ THESE INSTRUCTIONS CAREFULLY BEFORE USE.
+
+Nostr is a new protocol and there is quite a lot of uncertainty as to how to use it properly.
+Below you'll find important information to help you get started without undue confusion and risk.
 
 ## Initial Config
 
-It is highly recommended that you run a _private_ relay, not a public one.
+It is recommended that you run a _private_ relay, not a public one.
 Private will be the default option when you open the config for the first time.
 You will not be able to save the config until you follow the instructions below.
 
@@ -37,44 +37,21 @@ your own here.
 
 ## Connecting to your relay
 
-### All platforms
-
 1. Ensure your computer or phone is running Tor:
    https://docs.start9.com/latest/guides/device-guides/
-2. In Nostr Properties, copy your `Nostr Relay Websocket URL` (e.g.
+2. In your Interfaces section, copy your `Relay Websocket` URL (e.g.
    `ws://<address>.onion`), and paste it into your Nostr client relay list.
 
-*Note: there is also a Local (e.g. `wss://<address>.local`) URL is included in Properties. We
+\*Note: there is also a Local (e.g. `wss://<address>.local`) URL. We
 do not recommend using this interface except to sanity check
 that your relay working in certain cases. No one will be able
 to access your .local URL except you and anyone else connected to the same
 LAN.
 
-### Using Firefox with Iris or another web client
+### Using Firefox with noStrudel or another web client
 
 - Ensure that you have [configured Firefox for Tor](https://docs.start9.com/latest/guides/device-guides/)
 - Go into Firefox `about:config` and set `network.websocket.allowInsecureFromHTTPS` to `true`. This is necessary to access you `ws://` URL, since Tor does not use `wss://`
-
-### Testing your relay (requires SSH)
-
-Once you've connected a client to your relay, any events created by your client
-will be stored on your relay, assuming the pubkey that created the event is
-whitelisted (or the relay is set to "public"). You can check that your relay is
-indeed storing events by going into your client relay settings and eliminating
-all relays except your own, sending some events, then SSHing into your Start9 server
-and entering the following command:
-
-```
-`sudo podman exec nostr.embassy sqlite3 /data/nostr.db 'select count(*) from event;'`
-```
-
-If this displays a number greater than 0, your relay is working.
-
-To list all events (notes) stored on your relay, use the following command:
-
-```
-`sudo podman exec nostr.embassy sqlite3 /data/nostr.db "SELECT content FROM event;" | grep -o 'content":"[^"]*' | awk -F: '{print $1":"$2}'`
-```
 
 ## More
 
