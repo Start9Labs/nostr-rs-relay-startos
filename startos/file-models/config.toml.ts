@@ -16,7 +16,7 @@ const shape = object({
   info: object(
     {
       relay_url: string, // used. not exposed. @TODO expose this, but how?
-      name: string,
+      name: string.optional().onMismatch('hello'),
       description: string,
       pubkey: string,
       contact: string,
@@ -25,8 +25,8 @@ const shape = object({
       relay_page: string, // @TODO implement with file upload
     },
     [
-      'name',
       'description',
+      'name',
       'pubkey',
       'contact',
       'favicon',
@@ -44,7 +44,7 @@ const shape = object({
   limits: allOf(
     object(
       {
-        messages_per_sec: natural,
+        messages_per_sec: natural.onMismatch(0),
         subscriptions_per_min: natural,
         max_blocking_threads: natural,
         max_event_bytes: natural,
@@ -52,7 +52,7 @@ const shape = object({
         max_ws_frame_bytes: natural,
         broadcast_buffer: natural,
         event_persist_buffer: natural,
-        limit_scrapers: boolean.defaultTo(false), // not used. not exposed.
+        limit_scrapers: boolean, // not used. not exposed.
       },
       [
         'messages_per_sec',
@@ -119,13 +119,14 @@ const shape = object({
   pay_to_relay: allOf(
     object(
       {
-        enabled: boolean,
+        enabled: boolean.onMismatch(false),
+        sign_ups: boolean.onMismatch(false),
+        processor: literals('ClnRest', 'LNBits').onMismatch('ClnRest'),
         admission_cost: natural,
         cost_per_event: natural,
         node_url: string,
-        sign_ups: boolean,
       },
-      ['enabled', 'admission_cost', 'cost_per_event', 'node_url', 'sign_ups'],
+      ['enabled', 'admission_cost', 'cost_per_event', 'node_url'],
     ),
     anyOf(
       object({

@@ -157,8 +157,6 @@ export const configureRestrict = sdk.Action.withInput(
     const { verified_users, authorization } = data
     if (!verified_users || !authorization) return
 
-    // @TODO handle "all" type
-
     return {
       verified_users: {
         ...verified_users,
@@ -169,12 +167,17 @@ export const configureRestrict = sdk.Action.withInput(
                 domain_whitelist: verified_users.domain_whitelist,
               },
             }
-          : {
-              selection: 'domain_blacklist',
-              value: {
-                domain_blacklist: verified_users.domain_blacklist || [],
+          : verified_users.domain_blacklist?.length
+            ? {
+                selection: 'domain_blacklist',
+                value: {
+                  domain_blacklist: verified_users.domain_blacklist,
+                },
+              }
+            : {
+                selection: 'all',
+                value: {},
               },
-            },
       },
       pubkey_whitelist: authorization.pubkey_whitelist,
     }

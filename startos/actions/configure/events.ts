@@ -101,31 +101,25 @@ export const configureEvents = sdk.Action.withInput(
     const limits = (await configToml.read.const(effects))?.limits
     if (!limits) return
 
-    if (limits.event_kind_allowlist?.length) {
-      return {
-        type: {
-          selection: 'whitelist',
-          value: {
-            event_kind_allowlist: limits.event_kind_allowlist.map(String),
-          },
-        },
-      }
-    } else if (limits.event_kind_blacklist?.length) {
-      return {
-        type: {
-          selection: 'blacklist',
-          value: {
-            event_kind_allowlist: limits.event_kind_blacklist.map(String),
-          },
-        },
-      }
-    } else {
-      return {
-        type: {
-          selection: 'all',
-          value: {},
-        },
-      }
+    return {
+      type: limits.event_kind_allowlist?.length
+        ? {
+            selection: 'whitelist',
+            value: {
+              event_kind_allowlist: limits.event_kind_allowlist.map(String),
+            },
+          }
+        : limits.event_kind_blacklist?.length
+          ? {
+              selection: 'blacklist',
+              value: {
+                event_kind_blacklist: limits.event_kind_blacklist.map(String),
+              },
+            }
+          : {
+              selection: 'all',
+              value: {},
+            },
     }
   },
 

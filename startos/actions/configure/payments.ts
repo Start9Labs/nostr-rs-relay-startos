@@ -7,7 +7,7 @@ const { InputSpec, Value, Variants } = sdk
 const inputSpec = InputSpec.of({
   enabled: Value.union(
     {
-      name: 'Enable Pay to Relay',
+      name: 'Pay to Relay',
       default: 'disabled',
     },
     Variants.of({
@@ -149,15 +149,18 @@ export const configurePayments = sdk.Action.withInput(
             selection: 'enabled',
             value: {
               ...pay_to_relay,
-              processor: {
-                selection: pay_to_relay.processor,
-                value:
-                  pay_to_relay.processor === 'ClnRest'
-                    ? {}
-                    : {
-                        api_key: pay_to_relay.api_secret,
+              processor:
+                pay_to_relay.processor === 'LNBits'
+                  ? {
+                      selection: 'LNBits',
+                      value: {
+                        api_secret: pay_to_relay.api_secret,
                       },
-              },
+                    }
+                  : {
+                      selection: 'ClnRest',
+                      value: {},
+                    },
               direct_message: pay_to_relay.direct_message
                 ? {
                     selection: 'enabled',

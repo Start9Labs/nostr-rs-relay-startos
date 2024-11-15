@@ -7,7 +7,7 @@ const { InputSpec, Value } = sdk
 export const inputSpec = InputSpec.of({
   name: Value.text({
     name: 'Name',
-    description: "Your relay's human-readable identifier",
+    description: "Your relay's human-readable name",
     required: false,
     default: null,
     placeholder: "Bob's Public Relay",
@@ -21,7 +21,7 @@ export const inputSpec = InputSpec.of({
   }),
   description: Value.text({
     name: 'Description',
-    description: 'A more detailed description for your relay',
+    description: 'A detailed description for your relay',
     required: false,
     default: null,
     placeholder: 'The best relay in town',
