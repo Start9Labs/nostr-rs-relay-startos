@@ -137,9 +137,7 @@ export const configurePayments = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async function ({
-    effects,
-  }): Promise<typeof inputSpec.validator._TYPE | void> {
+  async function ({ effects }): Promise<typeof inputSpec._PARTIAL | void> {
     const pay_to_relay = (await configToml.read.const(effects))?.pay_to_relay
     if (!pay_to_relay) return
 

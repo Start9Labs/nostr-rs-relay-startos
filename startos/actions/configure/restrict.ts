@@ -148,9 +148,7 @@ export const configureRestrict = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async function ({
-    effects,
-  }): Promise<typeof inputSpec.validator._TYPE | void> {
+  async function ({ effects }): Promise<typeof inputSpec._PARTIAL | void> {
     const data = await configToml.read.const(effects)
     if (!data) return
 
@@ -179,7 +177,7 @@ export const configureRestrict = sdk.Action.withInput(
                 value: {},
               },
       },
-      pubkey_whitelist: authorization.pubkey_whitelist,
+      pubkey_whitelist: [...authorization.pubkey_whitelist],
     }
   },
 
