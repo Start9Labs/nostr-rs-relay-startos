@@ -11,12 +11,12 @@ export const manifest = setupManifest({
   donationUrl: null,
   description: {
     short: 'A Nostr relay, written in Rust',
-    long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, and persists data with SQLite',
+    long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, including pay-to-relay capabilities.',
   },
   assets: [],
   volumes: ['main'],
   images: {
-    main: {
+    'nostr-rs-relay': {
       source: {
         dockerTag: 'scsibug/nostr-rs-relay:0.9.0',
       },
@@ -31,5 +31,18 @@ export const manifest = setupManifest({
     start: null,
     stop: null,
   },
-  dependencies: {},
+  dependencies: {
+    'c-lightning': {
+      description:
+        'Needed if you want to accept relay subscription payments using Core Lightning',
+      optional: true,
+      s9pk: '../c-lightning-startos/c-lightning.s9pk',
+    },
+    lnbits: {
+      description:
+        'Needed if you want to accept relay subscription payments using LNBits',
+      optional: true,
+      s9pk: '../lnbits-startos/lnbits.s9pk',
+    },
+  },
 })

@@ -7,11 +7,10 @@ import { actions } from './actions'
 
 // **** Install ****
 const install = sdk.setupInstall(async ({ effects }) => {
+  // @TODO is this necessary? If so, is this the place/way to do it?
   await sdk.runCommand(
     effects,
-    {
-      id: 'main',
-    },
+    { id: 'nostr-rs-relay' },
     'chown -R $APP_USER:$APP_USER $APP_DATA',
     {},
     'chown',

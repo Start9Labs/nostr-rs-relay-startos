@@ -1,5 +1,6 @@
 import { configToml } from '../../file-models/config.toml'
 import { sdk } from '../../sdk'
+import { nullToUndefined } from '../../utils'
 
 const { InputSpec, Value } = sdk
 
@@ -9,7 +10,7 @@ export const inputSpec = InputSpec.of({
     name: 'Name',
     description: "Your relay's human-readable name",
     required: false,
-    default: null,
+    default: '',
     placeholder: "Bob's Public Relay",
     patterns: [
       {
@@ -18,7 +19,7 @@ export const inputSpec = InputSpec.of({
           'Must be at least 3 character and no more than 32 characters',
       },
     ],
-  }),
+  }).map(nullToUndefined),
   description: Value.text({
     name: 'Description',
     description: 'A detailed description for your relay',
@@ -32,7 +33,7 @@ export const inputSpec = InputSpec.of({
           'Must be at least 6 character and no more than 256 characters',
       },
     ],
-  }),
+  }).map(nullToUndefined),
   pubkey: Value.text({
     name: 'Admin Pubkey',
     description: 'The Nostr hex pubkey (not npub) of the relay administrator',
@@ -46,14 +47,14 @@ export const inputSpec = InputSpec.of({
           'Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex',
       },
     ],
-  }),
+  }).map(nullToUndefined),
   contact: Value.text({
     name: 'Admin Contact URI',
     description: 'Contact URI of the relay administrator',
     required: false,
     default: null,
     placeholder: 'mailto:contact@example.com',
-  }),
+  }).map(nullToUndefined),
 })
 
 export const configureInfo = sdk.Action.withInput(

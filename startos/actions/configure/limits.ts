@@ -1,5 +1,6 @@
 import { configToml } from '../../file-models/config.toml'
 import { sdk } from '../../sdk'
+import { nullToUndefined } from '../../utils'
 
 const { InputSpec, Value } = sdk
 
@@ -14,7 +15,7 @@ export const inputSpec = InputSpec.of({
     min: 1,
     integer: true,
     units: 'msgs/sec',
-  }),
+  }).map(nullToUndefined),
   subscriptions_per_min: Value.number({
     name: 'Subscriptions Per Minute Limit',
     description:
@@ -24,7 +25,7 @@ export const inputSpec = InputSpec.of({
     min: 1,
     integer: true,
     units: 'subs/min',
-  }),
+  }).map(nullToUndefined),
   max_blocking_threads: Value.number({
     name: 'Max Blocking Threads',
     description:
@@ -34,7 +35,7 @@ export const inputSpec = InputSpec.of({
     integer: true,
     min: 1,
     units: 'threads',
-  }),
+  }).map(nullToUndefined),
   max_event_bytes: Value.number({
     name: 'Max Event Size',
     description:
@@ -44,7 +45,7 @@ export const inputSpec = InputSpec.of({
     integer: true,
     min: 1,
     units: 'bytes',
-  }),
+  }).map(nullToUndefined),
   max_ws_message_bytes: Value.number({
     name: 'Max Websocket Message Size',
     description: 'Maximum WebSocket message in bytes',
@@ -53,7 +54,7 @@ export const inputSpec = InputSpec.of({
     integer: true,
     min: 1,
     units: 'bytes',
-  }),
+  }).map(nullToUndefined),
   max_ws_frame_bytes: Value.number({
     name: 'Max Websocket Frame Size',
     description: 'Maximum WebSocket frame size in bytes',
@@ -62,7 +63,7 @@ export const inputSpec = InputSpec.of({
     integer: true,
     min: 1,
     units: 'bytes',
-  }),
+  }).map(nullToUndefined),
   broadcast_buffer: Value.number({
     name: 'Broadcast Buffer Size',
     description:
@@ -72,7 +73,7 @@ export const inputSpec = InputSpec.of({
     integer: true,
     min: 1,
     units: 'events',
-  }),
+  }).map(nullToUndefined),
   event_persist_buffer: Value.number({
     name: 'Event Persistence Buffer',
     description:
@@ -82,7 +83,7 @@ export const inputSpec = InputSpec.of({
     integer: true,
     min: 1,
     units: 'events',
-  }),
+  }).map(nullToUndefined),
 })
 
 export const configureLimits = sdk.Action.withInput(

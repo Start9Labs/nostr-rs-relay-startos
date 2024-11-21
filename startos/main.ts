@@ -17,7 +17,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Daemons ========================
    */
   return sdk.Daemons.of(effects, started, healthReceipts).addDaemon('primary', {
-    image: { id: 'main' },
+    image: { id: 'nostr-rs-relay' },
     command: ['./nostr-rs-relay', '--db', '/data'],
     mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
     ready: {

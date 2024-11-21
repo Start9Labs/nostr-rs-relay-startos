@@ -1,6 +1,7 @@
 import { Patterns } from '@start9labs/start-sdk/base/lib/util'
 import { configToml } from '../../file-models/config.toml'
 import { sdk } from '../../sdk'
+import { nullToUndefined } from '../../utils'
 
 const { InputSpec, Value, List, Variants } = sdk
 
@@ -85,19 +86,19 @@ export const inputSpec = InputSpec.of({
       verify_expiration: Value.text({
         name: 'Verify Expiration',
         description:
-          'Consider an pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time.  Note, if the domain provides a successful response that omits the account, verification is immediately revoked',
+          'Consider an pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time. Note, if the domain provides a successful response that omits the account, verification is immediately revoked',
         required: false,
         default: null,
-        patterns: [], // enforce "number unit"
-      }),
+        patterns: [], // enforce "number unit", e.g. "2 weeks"
+      }).map(nullToUndefined),
       verify_update_frequency: Value.text({
         name: 'Verify Update Frequency',
         description:
           'How long to wait between verification attempts for a specific author',
         required: false,
         default: null,
-        patterns: [], // enforce "number unit"
-      }),
+        patterns: [], // enforce "number unit", e.g. "2 weeks"
+      }).map(nullToUndefined),
       max_consecutive_failures: Value.number({
         name: 'Max Consecutive Failures',
         description:
@@ -106,7 +107,7 @@ export const inputSpec = InputSpec.of({
         default: 20,
         integer: true,
         min: 1,
-      }),
+      }).map(nullToUndefined),
     }),
   ),
   pubkey_whitelist: Value.list(
@@ -148,7 +149,7 @@ export const configureRestrict = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async function ({ effects }): Promise<typeof inputSpec._PARTIAL | void> {
+  async function ({ effects }) {
     const data = await configToml.read.const(effects)
     if (!data) return
 
@@ -177,7 +178,7 @@ export const configureRestrict = sdk.Action.withInput(
                 value: {},
               },
       },
-      pubkey_whitelist: [...authorization.pubkey_whitelist],
+      pubkey_whitelist: [...(authorization.pubkey_whitelist || [])],
     }
   },
 
@@ -190,7 +191,20 @@ export const configureRestrict = sdk.Action.withInput(
     return configToml.merge({
       verified_users: {
         ...verified_users,
-        ...domains_union.value,
+        ...(domains_union.selection === 'domain_whitelist'
+          ? {
+              domain_whitelist: domains_union.value.domain_whitelist,
+              domain_blacklist: undefined,
+            }
+          : domains_union.selection === 'domain_blacklist'
+            ? {
+                domain_whitelist: undefined,
+                domain_blacklist: domains_union.value.domain_blacklist,
+              }
+            : {
+                domain_whitelist: undefined,
+                domain_blacklist: undefined,
+              }),
       },
       authorization: { pubkey_whitelist: input.pubkey_whitelist },
     })

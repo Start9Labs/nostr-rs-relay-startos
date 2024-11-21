@@ -137,7 +137,7 @@ export const configurePayments = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async function ({ effects }): Promise<typeof inputSpec._PARTIAL | void> {
+  async function ({ effects }) {
     const pay_to_relay = (await configToml.read.const(effects))?.pay_to_relay
     if (!pay_to_relay) return
 
@@ -181,14 +181,16 @@ export const configurePayments = sdk.Action.withInput(
   },
 
   // the execution function
-  async ({ effects, input }) =>
-    configToml.merge({
+  async ({ effects, input }) => {
+    const path = '/nostr/read-only-rune'
+
+    return configToml.merge({
       pay_to_relay: Object.assign(
         input,
         input.processor.selection === 'ClnRest'
           ? {
               processor: 'ClnRest',
-              rune_path: '', // @TODO insert path to CLN rune
+              rune_path: `/cln/${path}`, // @TODO insert path to CLN rune
             }
           : {
               processor: 'LNBits',
@@ -203,5 +205,6 @@ export const configurePayments = sdk.Action.withInput(
               direct_message: false,
             },
       ),
-    }),
+    })
+  },
 )
