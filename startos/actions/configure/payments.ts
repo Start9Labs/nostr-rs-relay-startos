@@ -144,37 +144,37 @@ export const configurePayments = sdk.Action.withInput(
     return {
       enabled: pay_to_relay.enabled
         ? {
-            selection: 'enabled',
+            selection: 'enabled' as const,
             value: {
               ...pay_to_relay,
               processor:
                 pay_to_relay.processor === 'LNBits'
                   ? {
-                      selection: 'LNBits',
+                      selection: 'LNBits' as const,
                       value: {
                         api_secret: pay_to_relay.api_secret,
                       },
                     }
                   : {
-                      selection: 'ClnRest',
+                      selection: 'ClnRest' as const,
                       value: {},
                     },
               direct_message: pay_to_relay.direct_message
                 ? {
-                    selection: 'enabled',
+                    selection: 'enabled' as const,
                     value: {
                       terms_message: pay_to_relay.terms_message,
                       secret_key: pay_to_relay.secret_key,
                     },
                   }
                 : {
-                    selection: 'disabled',
+                    selection: 'disabled' as const,
                     value: {},
                   },
             },
           }
         : {
-            selection: 'disabled',
+            selection: 'disabled' as const,
             value: {},
           },
     }
@@ -182,15 +182,12 @@ export const configurePayments = sdk.Action.withInput(
 
   // the execution function
   async ({ effects, input }) => {
-    const path = '/nostr/read-only-rune'
-
     return configToml.merge({
       pay_to_relay: Object.assign(
         input,
         input.processor.selection === 'ClnRest'
           ? {
               processor: 'ClnRest',
-              rune_path: `/cln/${path}`, // @TODO insert path to CLN rune
             }
           : {
               processor: 'LNBits',

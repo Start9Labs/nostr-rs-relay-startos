@@ -12,8 +12,8 @@ const {
   anyOf,
 } = matches
 
-const clnNodeUrl = 'c-lightning.startos'
-const lnbitsNodeUrl = 'lnbits.startos'
+const clnNodeUrl = 'c-lightning.startos' // @TODO get actual value
+const lnbitsNodeUrl = 'lnbits.startos' // @TODO get actual value
 const clnRunePath = ''
 
 const shape = object({

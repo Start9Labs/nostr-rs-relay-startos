@@ -10,7 +10,7 @@ export const inputSpec = InputSpec.of({
     name: 'Name',
     description: "Your relay's human-readable name",
     required: false,
-    default: '',
+    default: null,
     placeholder: "Bob's Public Relay",
     patterns: [
       {

@@ -161,32 +161,30 @@ export const configureRestrict = sdk.Action.withInput(
         ...verified_users,
         domains_union: verified_users.domain_whitelist?.length
           ? {
-              selection: 'domain_whitelist',
+              selection: 'domain_whitelist' as const,
               value: {
                 domain_whitelist: verified_users.domain_whitelist,
               },
             }
           : verified_users.domain_blacklist?.length
             ? {
-                selection: 'domain_blacklist',
+                selection: 'domain_blacklist' as const,
                 value: {
                   domain_blacklist: verified_users.domain_blacklist,
                 },
               }
             : {
-                selection: 'all',
+                selection: 'all' as const,
                 value: {},
               },
       },
-      pubkey_whitelist: [...(authorization.pubkey_whitelist || [])],
+      pubkey_whitelist: authorization.pubkey_whitelist,
     }
   },
 
   // the execution function
   async ({ effects, input }) => {
     const { domains_union, ...verified_users } = input.verified_users
-
-    // @TODO handle "all" type
 
     return configToml.merge({
       verified_users: {
