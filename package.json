@@ -6,9 +6,9 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@start9labs/start-sdk": "0.3.6-alpha.22",
-    "c-lightning-startos": "git+https://github.com/Start9Labs/hello-world-startos.git#0d1d1a649da2f237daeeda4d1f8593ca1168bf0a",
-    "lnbits-startos": "git+https://github.com/Start9Labs/hello-world-startos.git#0d1d1a649da2f237daeeda4d1f8593ca1168bf0a"
+    "@start9labs/start-sdk": "0.3.6-alpha.23",
+    "c-lightning-startos": "git+https://github.com/Start9Labs/hello-world-startos.git#cb2087a53edf7821e2254fde67fcf48999d1adb4",
+    "lnbits-startos": "git+https://github.com/Start9Labs/hello-world-startos.git#cb2087a53edf7821e2254fde67fcf48999d1adb4"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",

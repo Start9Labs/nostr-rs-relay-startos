@@ -6,6 +6,14 @@ const { InputSpec, Value } = sdk
 
 // input spec
 export const inputSpec = InputSpec.of({
+  relay_url: Value.text({
+    name: 'Relay URL',
+    description: 'The advertised URL for your public relay',
+    required: false,
+    default: null,
+    placeholder: 'https://my-relay.xyz',
+    patterns: [sdk.patterns.url],
+  }).map(nullToUndefined),
   name: Value.text({
     name: 'Name',
     description: "Your relay's human-readable name",

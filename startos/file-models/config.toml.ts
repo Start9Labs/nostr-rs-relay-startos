@@ -2,7 +2,7 @@ import { FileHelper, matches } from '@start9labs/start-sdk'
 
 const {
   object,
-  array,
+  arrayOf,
   string,
   natural,
   boolean,
@@ -18,11 +18,7 @@ const clnRunePath = ''
 
 const shape = object({
   info: object({
-    relay_url: string
-      .nullable()
-      .optional()
-      .map((a) => a || undefined)
-      .onMismatch(undefined), // used. not exposed. @TODO expose this, but how?
+    relay_url: string.optional().onMismatch(undefined), // used. not exposed. @TODO expose this, but how?
     name: string.optional().onMismatch(undefined),
     description: string.optional().onMismatch(undefined),
     pubkey: string.optional().onMismatch(undefined),
@@ -56,17 +52,17 @@ const shape = object({
         event_kind_blacklist: literal(undefined),
       }),
       object({
-        event_kind_allowlist: array(natural).onMismatch([]),
+        event_kind_allowlist: arrayOf(natural).onMismatch([]),
         event_kind_blacklist: literal(undefined),
       }),
       object({
         event_kind_allowlist: literal(undefined),
-        event_kind_blacklist: array(natural).onMismatch([]),
+        event_kind_blacklist: arrayOf(natural).onMismatch([]),
       }),
     ),
   ),
   authorization: object({
-    pubkey_whitelist: array(string).optional().onMismatch(undefined),
+    pubkey_whitelist: arrayOf(string).optional().onMismatch(undefined),
     nip42_auth: boolean.optional().onMismatch(undefined), // not used. not exposed.
     nip42_dms: boolean.optional().onMismatch(undefined), // not used. not exposed.
   }),
@@ -85,12 +81,12 @@ const shape = object({
         domain_blacklist: literal(undefined),
       }),
       object({
-        domain_whitelist: array(string).onMismatch([]),
+        domain_whitelist: arrayOf(string).onMismatch([]),
         domain_blacklist: literal(undefined),
       }),
       object({
         domain_whitelist: literal(undefined),
-        domain_blacklist: array(string).onMismatch([]),
+        domain_blacklist: arrayOf(string).onMismatch([]),
       }),
     ),
   ),
