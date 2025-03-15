@@ -11,7 +11,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Additional Health Checks ========================
    */
-  const healthReceipts: T.HealthReceipt[] = []
+  const healthReceipts: T.HealthCheck[] = []
 
   /**
    * ======================== Daemons ========================

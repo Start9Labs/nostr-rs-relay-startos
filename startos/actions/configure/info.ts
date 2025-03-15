@@ -86,5 +86,5 @@ export const configureInfo = sdk.Action.withInput(
   async ({ effects }) => configToml.read.const(effects).then((d) => d?.info),
 
   // the execution function
-  async ({ effects, input }) => configToml.merge({ info: input }),
+  async ({ effects, input }) => configToml.merge(effects, { info: input }),
 )

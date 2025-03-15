@@ -108,5 +108,5 @@ export const configureLimits = sdk.Action.withInput(
   async ({ effects }) => configToml.read.const(effects)?.then((d) => d?.limits),
 
   // the execution function
-  async ({ effects, input }) => configToml.merge({ limits: input }),
+  async ({ effects, input }) => configToml.merge(effects, { limits: input }),
 )

@@ -125,7 +125,7 @@ export const configureEvents = sdk.Action.withInput(
 
   // the execution function
   async ({ effects, input }) =>
-    configToml.merge({
+    configToml.merge(effects, {
       limits:
         input.type.selection === 'whitelist'
           ? {

@@ -186,7 +186,7 @@ export const configureRestrict = sdk.Action.withInput(
   async ({ effects, input }) => {
     const { domains_union, ...verified_users } = input.verified_users
 
-    return configToml.merge({
+    return configToml.merge(effects, {
       verified_users: {
         ...verified_users,
         ...(domains_union.selection === 'domain_whitelist'

@@ -181,5 +181,7 @@ export const configurePayments = sdk.Action.withInput(
   },
 
   // the execution function
-  async ({ effects, input }) => {},
+  async ({ effects, input }) => {
+    // @TODO
+  },
 )

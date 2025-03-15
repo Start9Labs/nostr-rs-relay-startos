@@ -13,7 +13,6 @@ export const manifest = setupManifest({
     short: 'A Nostr relay, written in Rust',
     long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, including pay-to-relay capabilities.',
   },
-  assets: [],
   volumes: ['main'],
   images: {
     'nostr-rs-relay': {
