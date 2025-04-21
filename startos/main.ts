@@ -17,9 +17,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Daemons ========================
    */
   return sdk.Daemons.of(effects, started, healthReceipts).addDaemon('primary', {
-    subcontainer: { imageId: 'nostr-rs-relay' },
+    subcontainer: await sdk.SubContainer.of(
+      effects,
+      { imageId: 'nostr-rs-relay' },
+      sdk.Mounts.of().addVolume('main', null, '/data', false),
+      'nostr-rs-relay-sub',
+    ),
     command: ['./nostr-rs-relay', '--db', '/data'],
-    mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
     ready: {
       display: 'Relay Listening',
       fn: () =>
