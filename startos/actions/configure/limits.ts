@@ -1,4 +1,4 @@
-import { configToml } from '../../file-models/config.toml'
+import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 import { nullToUndefined } from '../../utils'
 
@@ -105,7 +105,7 @@ export const configureLimits = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async ({ effects }) => configToml.read.const(effects)?.then((d) => d?.limits),
+  async ({ effects }) => configToml.read((c) => c.limits).const(effects),
 
   // the execution function
   async ({ effects, input }) => configToml.merge(effects, { limits: input }),

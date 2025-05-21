@@ -130,4 +130,10 @@ const shape = object({
   ),
 })
 
-export const configToml = FileHelper.toml('config.toml', shape)
+export const configToml = FileHelper.toml(
+  {
+    volumeId: 'main',
+    subpath: '/config.toml',
+  },
+  shape,
+)

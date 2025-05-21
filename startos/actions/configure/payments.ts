@@ -1,4 +1,4 @@
-import { configToml } from '../../file-models/config.toml'
+import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 
 const { InputSpec, Value, Variants } = sdk
@@ -138,7 +138,9 @@ export const configurePayments = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async function ({ effects }) {
-    const pay_to_relay = (await configToml.read.const(effects))?.pay_to_relay
+    const pay_to_relay = await configToml
+      .read((c) => c.pay_to_relay)
+      .const(effects)
     if (!pay_to_relay) return
 
     return {

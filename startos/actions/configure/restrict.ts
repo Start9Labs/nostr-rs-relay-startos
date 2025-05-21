@@ -1,5 +1,5 @@
 import { Patterns } from '@start9labs/start-sdk/base/lib/util'
-import { configToml } from '../../file-models/config.toml'
+import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 import { nullToUndefined } from '../../utils'
 
@@ -150,7 +150,7 @@ export const configureRestrict = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async function ({ effects }) {
-    const data = await configToml.read.const(effects)
+    const data = await configToml.read().const(effects)
     if (!data) return
 
     const { verified_users, authorization } = data

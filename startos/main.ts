@@ -20,7 +20,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     subcontainer: await sdk.SubContainer.of(
       effects,
       { imageId: 'nostr-rs-relay' },
-      sdk.Mounts.of().addVolume('main', null, '/data', false),
+      sdk.Mounts.of().mountVolume({
+        volumeId: 'main',
+        subpath: null,
+        mountpoint: '/data',
+        readonly: false,
+      }),
       'nostr-rs-relay-sub',
     ),
     command: ['./nostr-rs-relay', '--db', '/data'],

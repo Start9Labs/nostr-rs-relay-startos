@@ -1,4 +1,4 @@
-import { configToml } from '../../file-models/config.toml'
+import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 
 const { InputSpec, Value, List, Variants } = sdk
@@ -98,7 +98,7 @@ export const configureEvents = sdk.Action.withInput(
   async function ({
     effects,
   }): Promise<typeof inputSpec.validator._TYPE | void> {
-    const limits = (await configToml.read.const(effects))?.limits
+    const limits = await configToml.read((c) => c.limits).const(effects)
     if (!limits) return
 
     return {
