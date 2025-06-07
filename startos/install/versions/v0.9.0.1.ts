@@ -1,5 +1,5 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
-import { rmdir } from 'fs/promises'
+import { rm } from 'fs/promises'
 
 export const v_0_9_0_1 = VersionInfo.of({
   version: '0.9.0:1',
@@ -7,7 +7,9 @@ export const v_0_9_0_1 = VersionInfo.of({
   migrations: {
     up: async ({ effects }) => {
       // remove old start9 dir
-      await rmdir('/root/start9')
+      await rm('media/startos/volumes/main/start9', { recursive: true }).catch(
+        console.error,
+      )
     },
     down: IMPOSSIBLE,
   },

@@ -28,7 +28,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       }),
       'nostr-rs-relay-sub',
     ),
-    command: ['./nostr-rs-relay', '--db', '/data'],
+    exec: { command: ['./nostr-rs-relay', '--db', '/data'] },
     ready: {
       display: 'Relay Listening',
       fn: () =>
