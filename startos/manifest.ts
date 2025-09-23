@@ -16,7 +16,7 @@ export const manifest = setupManifest({
   marketingSite: 'https://nostr.com/',
   donationUrl: null,
     docsUrl:
-    'https://github.com/Start9Labs/nostr-rs-relay/blob/master/instructions.md',
+    'https://github.com/Start9Labs/nostr-rs-relay/blob/update/040/docs/README.md',
   description: {
     short: 'A Nostr relay, written in Rust',
     long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, including pay-to-relay capabilities.',

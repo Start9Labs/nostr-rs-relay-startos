@@ -6,7 +6,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Setup ========================
    */
-  console.info('Starting nostr-rs-relay!')
+  console.info('[i] Starting nostr-rs-relay!')
 
   /**
    * ======================== Additional Health Checks ========================
