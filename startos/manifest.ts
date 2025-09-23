@@ -46,13 +46,19 @@ export const manifest = setupManifest({
       description:
         'Needed if you want to accept relay subscription payments using Core Lightning',
       optional: true,
-      s9pk: null,
+      metadata: {
+        title: 'Core Lightning',
+        icon: 'https://raw.githubusercontent.com/Start9Labs/cln-startos/refs/heads/master/icon.png',
+      },
     },
     lnbits: {
       description:
         'Needed if you want to accept relay subscription payments using LNBits',
       optional: true,
-      s9pk: null,
+      metadata: {
+        title: 'LNBits',
+        icon: 'https://raw.githubusercontent.com/Start9Labs/lnbits-startos/refs/heads/master/icon.png',
+      },
     },
   },
 })
