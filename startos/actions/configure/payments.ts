@@ -5,86 +5,89 @@ const { InputSpec, Value, Variants } = sdk
 
 // input spec
 const inputSpec = InputSpec.of({
-  pay_to_relay: Value.union(
-    {
-      name: 'Pay to Relay',
-      default: 'disabled',
-    },
-    Variants.of({
-      disabled: {
-        name: 'Disabled',
+  enabled: Value.toggle({
+    name: 'Pay to Relay',
+    default: false,
+  }),
+  sign_ups: Value.toggle({
+    name: 'Sign Ups',
+    description: 'Whether or not new sign ups should be allowed',
+    default: true,
+  }),
+  processor: Value.union({
+    name: 'Processor',
+    default: 'ClnRest',
+    variants: Variants.of({
+      ClnRest: {
+        name: 'ClnRest',
         spec: InputSpec.of({}),
       },
-      enabled: {
-        name: 'Enabled',
+      LNBits: {
+        name: 'LNBits',
         spec: InputSpec.of({
-          sign_ups: Value.toggle({
-            name: 'Sign Ups',
-            description: 'Whether or not new sign ups should be allowed',
-            default: true,
+          api_secret: Value.text({
+            name: 'API Secret',
+            description: 'Your LNBits API secret',
+            required: true,
+            default: null,
+            masked: true,
           }),
-          processor: Value.union(
-            {
-              name: 'Processor',
-              default: 'ClnRest',
-            },
-            Variants.of({
-              ClnRest: {
-                name: 'ClnRest',
-                spec: InputSpec.of({}),
-              },
-              LNBits: {
-                name: 'LNBits',
-                spec: InputSpec.of({
-                  api_secret: Value.text({
-                    name: 'API Secret',
-                    description: 'Your LNBits API secret',
-                    required: true,
-                    default: null,
-                    masked: true,
-                  }),
-                }),
-              },
+        }),
+      },
+    }),
+  }),
+  admission_cost: Value.number({
+    name: 'Admission Cost',
+    description: 'The cost to be admitted to the relay',
+    required: false,
+    default: null,
+    integer: true,
+    units: 'Sats',
+    min: 1,
+  }),
+  cost_per_event: Value.number({
+    name: 'Cost Per Event',
+    description: 'The cost per post',
+    required: false,
+    default: null,
+    integer: true,
+    units: 'Sats',
+    min: 1,
+  }),
+  direct_message_object: Value.object(
+    {
+      name: 'Welcome Message',
+    },
+    InputSpec.of({
+      direct_message: Value.union({
+        name: 'Send Message on Signup',
+        description:
+          'Optionally send a welcome message to new customers when they sign up',
+        default: 'disabled',
+        variants: Variants.of({
+          disabled: {
+            name: 'Disabled',
+            spec: InputSpec.of({}),
+          },
+          enabled: {
+            name: 'Enabled',
+            spec: InputSpec.of({
+              secret_key: Value.text({
+                name: 'Secret Key (nsec)',
+                description:
+                  'The Nostr private key (nsec) from which to send the direct message',
+                required: true,
+                default: null,
+              }),
             }),
-          ),
-          admission_cost: Value.number({
-            name: 'Admission Cost',
-            description: 'The cost to be admitted to the relay',
-            required: false,
-            default: null,
-            integer: true,
-            units: 'Sats',
-            min: 1,
-          }),
-          cost_per_event: Value.number({
-            name: 'Cost Per Event',
-            description: 'The cost per post',
-            required: false,
-            default: null,
-            integer: true,
-            units: 'Sats',
-            min: 1,
-          }),
-          direct_message: Value.union(
-            {
-              name: 'Direct Message on Signup',
-              description: 'Optionally send a direct message to new customers',
-              default: 'disabled',
-            },
-            Variants.of({
-              disabled: {
-                name: 'Disabled',
-                spec: InputSpec.of({}),
-              },
-              enabled: {
-                name: 'Enabled',
-                spec: InputSpec.of({
-                  terms_message: Value.textarea({
-                    name: 'Terms of Service',
-                    description:
-                      'The message to send to new customers on signup',
-                    required: true,
-                    default: `
+          },
+        }),
+      }),
+      terms_message: Value.textarea({
+        name: 'Terms of Service',
+        description: 'The message to send to new customers on signup',
+        required: true,
+        default: `
 This service (and supporting services) are provided "as is", without warranty of any kind, express or implied.
 
 By using this service, you agree:
@@ -101,20 +104,14 @@ By using this service, you agree:
 * You may be exposed to content that you might find triggering or distasteful
 * The relay operator is not liable for content produced by users of the relay,
 `,
-                  }),
-                  secret_key: Value.text({
-                    name: 'Secret Key (nsec)',
-                    description:
-                      'The Nostr private key (nsec) from which to send the direct message',
-                    required: true,
-                    default: null,
-                  }),
-                }),
-              },
-            }),
-          ),
-        }),
-      },
+      }),
+      secret_key: Value.text({
+        name: 'Secret Key (nsec)',
+        description:
+          'The Nostr private key (nsec) from which to send the direct message',
+        required: true,
+        default: null,
+      }),
     }),
   ),
 })
@@ -144,46 +141,58 @@ export const configurePayments = sdk.Action.withInput(
     if (!pay_to_relay) return
 
     return {
-      pay_to_relay: pay_to_relay.enabled
-        ? {
-            selection: 'enabled' as const,
-            value: {
-              ...pay_to_relay,
-              processor:
-                pay_to_relay.processor === 'LNBits'
-                  ? {
-                      selection: 'LNBits' as const,
-                      value: {
-                        api_secret: pay_to_relay.api_secret,
-                      },
-                    }
-                  : {
-                      selection: 'ClnRest' as const,
-                      value: {},
-                    },
-              direct_message: pay_to_relay.direct_message
-                ? {
-                    selection: 'enabled' as const,
-                    value: {
-                      terms_message: pay_to_relay.terms_message,
-                      secret_key: pay_to_relay.secret_key,
-                    },
-                  }
-                : {
-                    selection: 'disabled' as const,
-                    value: {},
-                  },
+      ...pay_to_relay,
+      processor:
+        pay_to_relay.processor === 'LNBits'
+          ? {
+              selection: 'LNBits' as const,
+              value: {
+                api_secret: pay_to_relay.api_secret,
+              },
+            }
+          : {
+              selection: 'ClnRest' as const,
+              value: {},
             },
-          }
-        : {
-            selection: 'disabled' as const,
-            value: {},
-          },
+      direct_message_object: {
+        direct_message: pay_to_relay.direct_message
+          ? {
+              selection: 'enabled' as const,
+              value: {
+                secret_key: pay_to_relay.secret_key,
+              },
+            }
+          : {
+              selection: 'disabled' as const,
+              value: {},
+            },
+        terms_message: pay_to_relay.terms_message,
+      },
     }
   },
 
   // the execution function
   async ({ effects, input }) => {
-    // @TODO
+    configToml.merge(effects, {
+      pay_to_relay: {
+        ...(input.direct_message_object.direct_message.selection === 'enabled'
+          ? {
+              direct_message: true,
+              secret_key: input.direct_message_object.secret_key,
+            }
+          : {
+              direct_message: false,
+              secret_key: undefined,
+            }),
+        ...(input.processor.selection === 'ClnRest'
+          ? {
+              processor: 'ClnRest',
+            }
+          : {
+              processor: 'LNBits',
+              api_secret: input.processor.value.api_secret,
+            }),
+      },
+    })
   },
 )

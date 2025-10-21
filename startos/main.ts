@@ -1,6 +1,13 @@
+import { configToml } from './fileModels/config.toml'
 import { sdk } from './sdk'
-import { T } from '@start9labs/start-sdk'
-import { relayInterfacePort } from './utils'
+import {
+  clnMountpoint,
+  lnbitsMountpoint,
+  mainMount,
+  relayInterfacePort,
+} from './utils'
+import { manifest as clnManifest } from 'c-lightning-startos/startos/manifest'
+import { manifest as lnbitsManifest } from 'lnbits-startos/startos/manifest'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -8,10 +15,32 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
   console.info('[i] Starting nostr-rs-relay!')
 
-  /**
-   * ======================== Additional Health Checks ========================
-   */
-  const healthReceipts: T.HealthCheck[] = []
+  const depResult = await sdk.checkDependencies(effects)
+  depResult.throwIfNotSatisfied()
+
+  let mounts = mainMount
+
+  const processor = await configToml
+    .read((c) => c.pay_to_relay?.processor)
+    .const(effects)
+
+  if (processor === 'ClnRest') {
+    mounts = mounts.mountDependency<typeof clnManifest>({
+      dependencyId: 'c-lightning',
+      volumeId: 'main',
+      subpath: null,
+      mountpoint: clnMountpoint,
+      readonly: true,
+    })
+  } else if (processor === 'LNBits') {
+    mounts = mounts.mountDependency<typeof lnbitsManifest>({
+      dependencyId: 'lnbits',
+      volumeId: 'main',
+      subpath: null,
+      mountpoint: lnbitsMountpoint,
+      readonly: true,
+    })
+  }
 
   /**
    * ======================== Daemons ========================
@@ -20,12 +49,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     subcontainer: await sdk.SubContainer.of(
       effects,
       { imageId: 'nostr-rs-relay' },
-      sdk.Mounts.of().mountVolume({
-        volumeId: 'main',
-        subpath: null,
-        mountpoint: '/data',
-        readonly: false,
-      }),
+      mounts,
       'nostr-rs-relay-sub',
     ),
     exec: { command: ['./nostr-rs-relay', '--db', '/data'] },

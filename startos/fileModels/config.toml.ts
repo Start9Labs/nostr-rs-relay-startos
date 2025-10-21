@@ -1,4 +1,5 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
+import { relayInterfacePort } from '../utils'
 
 const {
   object,
@@ -12,7 +13,7 @@ const {
   anyOf,
 } = matches
 
-const clnNodeUrl = 'c-lightning.startos' // @TODO get actual value
+const clnNodeUrl = 'c-lightning.startos:3010' // @TODO get actual value
 const lnbitsNodeUrl = 'lnbits.startos' // @TODO get actual value
 const clnRunePath = ''
 
@@ -29,7 +30,7 @@ const shape = object({
   }),
   network: object({
     address: literal('0.0.0.0').onMismatch('0.0.0.0'), // used. not exposed
-    port: literal(8080).onMismatch(8080), // used. not exposed
+    port: literal(relayInterfacePort).onMismatch(relayInterfacePort), // used. not exposed
   }),
   options: object({
     reject_future_seconds: natural.optional().onMismatch(1600), // used. not exposed.
@@ -91,28 +92,22 @@ const shape = object({
     ),
   ),
   pay_to_relay: allOf(
-    anyOf(
-      object({
-        enabled: literal(true),
-        sign_ups: boolean.optional().onMismatch(undefined),
-        processor: literals('ClnRest', 'LNBits')
-          .optional()
-          .onMismatch(undefined),
-        admission_cost: natural.optional().onMismatch(undefined),
-        cost_per_event: natural.optional().onMismatch(undefined),
-      }),
-      object({
-        enabled: literal(false),
-      }),
-    ),
+    object({
+      enabled: boolean,
+      sign_ups: boolean.optional().onMismatch(undefined),
+      processor: literals('ClnRest', 'LNBits').optional().onMismatch(undefined),
+      admission_cost: natural.optional().onMismatch(undefined),
+      cost_per_event: natural.optional().onMismatch(undefined),
+      terms_message: string.optional().onMismatch(undefined),
+    }),
     anyOf(
       object({
         direct_message: literal(true),
-        terms_message: string.optional().onMismatch(undefined),
-        secret_key: string.onMismatch(''),
+        secret_key: string,
       }),
       object({
         direct_message: literal(false),
+        secret_key: literal(undefined),
       }),
     ),
     anyOf(
@@ -130,7 +125,7 @@ const shape = object({
   ),
 })
 
-export const configToml = FileHelper.toml(
+export const configToml = FileHelper.yaml(
   {
     volumeId: 'main',
     subpath: '/config.toml',

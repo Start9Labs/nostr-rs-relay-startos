@@ -49,14 +49,12 @@ const blacklistSpec = InputSpec.of({
 
 // input spec
 export const inputSpec = InputSpec.of({
-  type: Value.union(
-    {
-      name: 'Permitted Event Types',
-      default: 'all',
-      description:
-        'Permit all event kinds, or create a whitelist or blacklist certain event kinds. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds',
-    },
-    Variants.of({
+  type: Value.union({
+    name: 'Permitted Event Types',
+    default: 'all',
+    description:
+      'Permit all event kinds, or create a whitelist or blacklist certain event kinds. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds',
+    variants: Variants.of({
       all: {
         name: 'Permit all Event Types',
         spec: InputSpec.of({}),
@@ -74,7 +72,7 @@ export const inputSpec = InputSpec.of({
           'A list of event types to prohibit. All others will be permitted',
       },
     }),
-  ),
+  }),
 })
 
 export const configureEvents = sdk.Action.withInput(

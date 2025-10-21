@@ -6,6 +6,7 @@ const { InputSpec, Value } = sdk
 
 // input spec
 export const inputSpec = InputSpec.of({
+  // @TODO should be select, use bitcoin externalip for example
   relay_url: Value.text({
     name: 'Relay URL',
     description: 'The advertised URL for your public relay',

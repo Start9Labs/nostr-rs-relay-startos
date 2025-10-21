@@ -15,7 +15,7 @@ export const manifest = setupManifest({
   supportSite: 'https://todo.sr.ht/~gheartsfield/nostr-rs-relay/',
   marketingSite: 'https://nostr.com/',
   donationUrl: null,
-    docsUrl:
+  docsUrl:
     'https://github.com/Start9Labs/nostr-rs-relay/blob/update/040/docs/README.md',
   description: {
     short: 'A Nostr relay, written in Rust',
@@ -25,7 +25,7 @@ export const manifest = setupManifest({
   images: {
     'nostr-rs-relay': {
       source: {
-        dockerTag: 'scsibug/nostr-rs-relay:0.9.0',
+        dockerBuild: {},
       },
       arch: architectures,
     } as SDKImageInputSpec,

@@ -57,14 +57,12 @@ export const inputSpec = InputSpec.of({
           passive: 'Passive',
         },
       }),
-      domains_union: Value.union(
-        {
-          name: 'Domain Permissions',
-          description:
-            'Permit all domains, or whitelist/blacklist certain domains',
-          default: 'all',
-        },
-        Variants.of({
+      domains_union: Value.union({
+        name: 'Domain Permissions',
+        description:
+          'Permit all domains, or whitelist/blacklist certain domains',
+        default: 'all',
+        variants: Variants.of({
           all: {
             name: 'Permit all Domains',
             spec: InputSpec.of({}),
@@ -82,7 +80,7 @@ export const inputSpec = InputSpec.of({
               'Create a list of prohibited domains. All others will be permitted',
           },
         }),
-      ),
+      }),
       verify_expiration: Value.text({
         name: 'Verify Expiration',
         description:
