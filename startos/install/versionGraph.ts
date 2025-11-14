@@ -13,7 +13,7 @@ export const versionGraph = VersionGraph.of({
       { imageId: 'nostr-rs-relay' },
       mainMount,
       'chown',
-      (s) => s.execFail(['chown', '-R', '$APP_USER:$APP_USER', '$APP_DATA']),
+      (s) => s.execFail(['chown', '-R', 'appuser:appuser', '/data']),
     )
   },
 })
