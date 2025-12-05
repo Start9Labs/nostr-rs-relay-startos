@@ -54,40 +54,31 @@ const inputSpec = InputSpec.of({
     units: 'Sats',
     min: 1,
   }),
-  direct_message_object: Value.object(
-    {
-      name: 'Welcome Message',
-    },
-    InputSpec.of({
-      direct_message: Value.union({
-        name: 'Send Message on Signup',
-        description:
-          'Optionally send a welcome message to new customers when they sign up',
-        default: 'disabled',
-        variants: Variants.of({
-          disabled: {
-            name: 'Disabled',
-            spec: InputSpec.of({}),
-          },
-          enabled: {
-            name: 'Enabled',
-            spec: InputSpec.of({
-              secret_key: Value.text({
-                name: 'Secret Key (nsec)',
-                description:
-                  'The Nostr private key (nsec) from which to send the direct message',
-                required: true,
-                default: null,
-              }),
-            }),
-          },
-        }),
-      }),
-      terms_message: Value.textarea({
-        name: 'Terms of Service',
-        description: 'The message to send to new customers on signup',
-        required: true,
-        default: `
+  direct_message: Value.union({
+    name: 'Send Message on Signup',
+    description:
+      'Optionally send a welcome message to new customers when they sign up',
+    default: 'disabled',
+    variants: Variants.of({
+      disabled: {
+        name: 'Disabled',
+        spec: InputSpec.of({}),
+      },
+      enabled: {
+        name: 'Enabled',
+        spec: InputSpec.of({
+          secret_key: Value.text({
+            name: 'Secret Key (nsec)',
+            description:
+              'The Nostr private key (nsec) from which to send the direct message',
+            required: true,
+            default: null,
+          }),
+          terms_message: Value.textarea({
+            name: 'Terms of Service',
+            description: 'The message to send to new customers on signup',
+            required: true,
+            default: `
 This service (and supporting services) are provided "as is", without warranty of any kind, express or implied.
 
 By using this service, you agree:
@@ -104,16 +95,11 @@ By using this service, you agree:
 * You may be exposed to content that you might find triggering or distasteful
 * The relay operator is not liable for content produced by users of the relay,
 `,
-      }),
-      secret_key: Value.text({
-        name: 'Secret Key (nsec)',
-        description:
-          'The Nostr private key (nsec) from which to send the direct message',
-        required: true,
-        default: null,
-      }),
+          }),
+        }),
+      },
     }),
-  ),
+  }),
 })
 
 export const configurePayments = sdk.Action.withInput(
@@ -154,20 +140,18 @@ export const configurePayments = sdk.Action.withInput(
               selection: 'ClnRest' as const,
               value: {},
             },
-      direct_message_object: {
-        direct_message: pay_to_relay.direct_message
-          ? {
-              selection: 'enabled' as const,
-              value: {
-                secret_key: pay_to_relay.secret_key,
-              },
-            }
-          : {
-              selection: 'disabled' as const,
-              value: {},
+      direct_message: pay_to_relay.direct_message
+        ? {
+            selection: 'enabled' as const,
+            value: {
+              secret_key: pay_to_relay.secret_key,
+              terms_message: pay_to_relay.terms_message,
             },
-        terms_message: pay_to_relay.terms_message,
-      },
+          }
+        : {
+            selection: 'disabled' as const,
+            value: {},
+          },
     }
   },
 
@@ -175,10 +159,11 @@ export const configurePayments = sdk.Action.withInput(
   async ({ effects, input }) => {
     configToml.merge(effects, {
       pay_to_relay: {
-        ...(input.direct_message_object.direct_message.selection === 'enabled'
+        ...(input.direct_message.selection === 'enabled'
           ? {
               direct_message: true,
-              secret_key: input.direct_message_object.secret_key,
+              secret_key: input.direct_message.value.secret_key,
+              terms_message: input.direct_message.value.terms_message,
             }
           : {
               direct_message: false,

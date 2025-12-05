@@ -7,7 +7,7 @@ const architectures =
   BUILD === 'x86_64' || BUILD === 'aarch64' ? [BUILD] : ['x86_64', 'aarch64']
 
 export const manifest = setupManifest({
-  id: 'nostr',
+  id: 'nostr-rs-relay',
   title: 'Nostr RS Relay',
   license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/nostr-rs-relay-startos/',
@@ -21,11 +21,11 @@ export const manifest = setupManifest({
     short: 'A Nostr relay, written in Rust',
     long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, including pay-to-relay capabilities.',
   },
-  volumes: ['main'],
+  volumes: ['main', 'db', 'config'],
   images: {
     'nostr-rs-relay': {
       source: {
-        dockerBuild: {},
+        dockerTag: 'scsibug/nostr-rs-relay:0.9.0',
       },
       arch: architectures,
     } as SDKImageInputSpec,

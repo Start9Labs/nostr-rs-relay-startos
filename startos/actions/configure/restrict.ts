@@ -1,7 +1,11 @@
 import { Patterns } from '@start9labs/start-sdk/base/lib/util'
 import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
-import { nullToUndefined } from '../../utils'
+import { configDefaults } from '../../utils'
+
+const {
+  verified_users: { mode },
+} = configDefaults
 
 const { InputSpec, Value, List, Variants } = sdk
 
@@ -50,7 +54,7 @@ export const inputSpec = InputSpec.of({
         name: 'Mode',
         description:
           'NIP-05 verification of users. Can be "enabled" to require NIP-05 metadata for event authors, "passive" to perform validation but never block publishing, or "disabled" to do nothing',
-        default: 'disabled',
+        default: mode,
         values: {
           disabled: 'Disabled',
           enabled: 'Enabled',
@@ -84,19 +88,19 @@ export const inputSpec = InputSpec.of({
       verify_expiration: Value.text({
         name: 'Verify Expiration',
         description:
-          'Consider an pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time. Note, if the domain provides a successful response that omits the account, verification is immediately revoked',
+          'Consider an pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time. Note, if the domain provides a successful response that omits the account, verification is immediately revoked. Value must be in the form of "1 week" or "2 days" or "12 hours"',
         required: false,
         default: null,
         patterns: [], // enforce "number unit", e.g. "2 weeks"
-      }).map(nullToUndefined),
+      }),
       verify_update_frequency: Value.text({
         name: 'Verify Update Frequency',
         description:
-          'How long to wait between verification attempts for a specific author',
+          'How long to wait between verification attempts for a specific author. Value must be in the form of "1 week" or "2 days" or "12 hours"',
         required: false,
         default: null,
         patterns: [], // enforce "number unit", e.g. "2 weeks"
-      }).map(nullToUndefined),
+      }),
       max_consecutive_failures: Value.number({
         name: 'Max Consecutive Failures',
         description:
@@ -105,7 +109,7 @@ export const inputSpec = InputSpec.of({
         default: 20,
         integer: true,
         min: 1,
-      }).map(nullToUndefined),
+      }),
     }),
   ),
   pubkey_whitelist: Value.list(
@@ -186,7 +190,12 @@ export const configureRestrict = sdk.Action.withInput(
 
     return configToml.merge(effects, {
       verified_users: {
-        ...verified_users,
+        ...Object.fromEntries(
+          Object.entries(verified_users).map(([key, value]) => [
+            key,
+            value === null ? undefined : value,
+          ]),
+        ),
         ...(domains_union.selection === 'domain_whitelist'
           ? {
               domain_whitelist: domains_union.value.domain_whitelist,

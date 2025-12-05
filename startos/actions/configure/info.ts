@@ -1,48 +1,33 @@
+import { utils } from '@start9labs/start-sdk'
 import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
-import { nullToUndefined } from '../../utils'
+import { relayInterfaceId } from '../../utils'
 
 const { InputSpec, Value } = sdk
 
 // input spec
 export const inputSpec = InputSpec.of({
-  // @TODO should be select, use bitcoin externalip for example
-  relay_url: Value.text({
-    name: 'Relay URL',
-    description: 'The advertised URL for your public relay',
-    required: false,
-    default: null,
-    placeholder: 'https://my-relay.xyz',
-    patterns: [sdk.patterns.url],
-  }).map(nullToUndefined),
+  relay_url: getExternalAddresses().map((val) =>
+    val === 'none' ? undefined : val,
+  ),
   name: Value.text({
     name: 'Name',
     description: "Your relay's human-readable name",
     required: false,
     default: null,
-    placeholder: "Bob's Public Relay",
-    patterns: [
-      {
-        regex: '.{3,32}',
-        description:
-          'Must be at least 3 character and no more than 32 characters',
-      },
-    ],
-  }).map(nullToUndefined),
+    placeholder: 'My Public Relay',
+    minLength: 3,
+    maxLength: 32,
+  }),
   description: Value.text({
     name: 'Description',
     description: 'A detailed description for your relay',
     required: false,
     default: null,
     placeholder: 'The best relay in town',
-    patterns: [
-      {
-        regex: '.{6,256}',
-        description:
-          'Must be at least 6 character and no more than 256 characters',
-      },
-    ],
-  }).map(nullToUndefined),
+    minLength: 6,
+    maxLength: 256,
+  }),
   pubkey: Value.text({
     name: 'Admin Pubkey',
     description: 'The Nostr hex pubkey (not npub) of the relay administrator',
@@ -51,19 +36,27 @@ export const inputSpec = InputSpec.of({
     placeholder: 'hex pubkey (not npub)',
     patterns: [
       {
-        regex: '[0-9a-fA-F]{64}',
+        regex: '^[0-9a-fA-F]{64}$',
         description:
           'Must be a valid 64-digit hexadecimal value (ie a Nostr hex pubkey, not an npub). Go to https://damus.io/key/ to convert npub to hex',
       },
     ],
-  }).map(nullToUndefined),
+  }),
   contact: Value.text({
     name: 'Admin Contact URI',
     description: 'Contact URI of the relay administrator',
     required: false,
     default: null,
     placeholder: 'mailto:contact@example.com',
-  }).map(nullToUndefined),
+    patterns: [
+      {
+        regex:
+          '^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\?[a-zA-Z0-9=&%+-]+)?$',
+        description:
+          'Must be a valid "mailto" contact URI, e.g. mailto:contact@example.com',
+      },
+    ],
+  }),
 })
 
 export const configureInfo = sdk.Action.withInput(
@@ -87,5 +80,37 @@ export const configureInfo = sdk.Action.withInput(
   async ({ effects }) => configToml.read((c) => c.info).const(effects),
 
   // the execution function
-  async ({ effects, input }) => configToml.merge(effects, { info: input }),
+  async ({ effects, input }) =>
+    configToml.merge(effects, {
+      info: Object.fromEntries(
+        Object.entries(input).map(([key, value]) => [
+          key,
+          value === null ? undefined : value,
+        ]),
+      ),
+    }),
 )
+
+export function getExternalAddresses() {
+  return sdk.Value.dynamicSelect(async ({ effects }) => {
+    const relay = await sdk.serviceInterface
+      .getOwn(effects, relayInterfaceId)
+      .const()
+
+    const urls =
+      relay?.addressInfo?.filter({
+        visibility: 'public',
+        kind: ['domain', 'ipv4', 'onion'],
+      }) || []
+
+    return {
+      name: 'External Address',
+      description:
+        "Address at which your node can be reached by peers. Select 'None' if you do not want your node to be reached by peers.",
+      values: urls.reduce((obj, url) => ({ ...obj, [url]: url }), {
+        none: 'None',
+      } as Record<string, string>),
+      default: urls.find((u) => u.endsWith('.onion')) || '',
+    }
+  })
+}

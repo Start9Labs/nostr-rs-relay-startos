@@ -1,11 +1,6 @@
 import { configToml } from './fileModels/config.toml'
 import { sdk } from './sdk'
-import {
-  clnMountpoint,
-  lnbitsMountpoint,
-  mainMount,
-  relayInterfacePort,
-} from './utils'
+import { clnMountpoint, lnbitsMountpoint, relayInterfacePort } from './utils'
 import { manifest as clnManifest } from 'c-lightning-startos/startos/manifest'
 import { manifest as lnbitsManifest } from 'lnbits-startos/startos/manifest'
 
@@ -13,16 +8,26 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Setup ========================
    */
-  console.info('[i] Starting nostr-rs-relay!')
+  console.info('Starting Nostr RS Relay!')
 
-  const depResult = await sdk.checkDependencies(effects)
-  depResult.throwIfNotSatisfied()
+  let mounts = sdk.Mounts.of()
+    .mountVolume({
+      volumeId: 'db',
+      subpath: null,
+      mountpoint: '/usr/src/app/db',
+      readonly: false,
+    })
+    .mountVolume({
+      volumeId: 'config',
+      subpath: 'config.toml',
+      mountpoint: '/usr/src/app/config.toml',
+      type: 'file',
+      readonly: false,
+    })
 
-  let mounts = mainMount
+  const toml = await configToml.read().const(effects)
 
-  const processor = await configToml
-    .read((c) => c.pay_to_relay?.processor)
-    .const(effects)
+  const processor = toml?.pay_to_relay?.processor
 
   if (processor === 'ClnRest') {
     mounts = mounts.mountDependency<typeof clnManifest>({
@@ -42,25 +47,36 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     })
   }
 
+  const subcontainer = await sdk.SubContainer.of(
+    effects,
+    { imageId: 'nostr-rs-relay' },
+    mounts,
+    'nostr-rs-relay-sub',
+  )
+
   /**
    * ======================== Daemons ========================
    */
-  return sdk.Daemons.of(effects, started).addDaemon('primary', {
-    subcontainer: await sdk.SubContainer.of(
-      effects,
-      { imageId: 'nostr-rs-relay' },
-      mounts,
-      'nostr-rs-relay-sub',
-    ),
-    exec: { command: ['./nostr-rs-relay', '--db', '/data'] },
-    ready: {
-      display: 'Relay Listening',
-      fn: () =>
-        sdk.healthCheck.checkPortListening(effects, relayInterfacePort, {
-          successMessage: 'The relay is ready',
-          errorMessage: 'The relay is not reachable',
-        }),
-    },
-    requires: [],
-  })
+  return sdk.Daemons.of(effects, started)
+    .addOneshot('chown', {
+      subcontainer,
+      exec: {
+        command: ['chown', '-R', 'appuser:appuser', '/usr/src/app'],
+        user: '0',
+      },
+      requires: [],
+    })
+    .addDaemon('primary', {
+      subcontainer,
+      exec: { command: sdk.useEntrypoint() },
+      ready: {
+        display: 'Relay Listening',
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, relayInterfacePort, {
+            successMessage: 'The relay is ready',
+            errorMessage: 'The relay is not reachable',
+          }),
+      },
+      requires: ['chown'],
+    })
 })

@@ -1,5 +1,5 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
-import { relayInterfacePort } from '../utils'
+import { clnMountpoint, configDefaults } from '../utils'
 
 const {
   object,
@@ -10,16 +10,32 @@ const {
   literal,
   literals,
   allOf,
-  anyOf,
+  oneOf,
 } = matches
 
-const clnNodeUrl = 'c-lightning.startos:3010' // @TODO get actual value
-const lnbitsNodeUrl = 'lnbits.startos' // @TODO get actual value
-const clnRunePath = ''
+const {
+  network,
+  options,
+  limits: {
+    messages_per_sec,
+    subscriptions_per_min,
+    max_blocking_threads,
+    max_event_bytes,
+    max_ws_message_bytes,
+    max_ws_frame_bytes,
+    broadcast_buffer,
+    event_persist_buffer,
+  },
+  verified_users: { mode, max_consecutive_failures },
+} = configDefaults
 
-const shape = object({
+const clnNodeUrl = 'c-lightning.startos:3010'
+const lnbitsNodeUrl = 'lnbits.startos'
+const clnRunePath = `${clnMountpoint}/.commando-env`
+
+export const shape = object({
   info: object({
-    relay_url: string.optional().onMismatch(undefined), // used. not exposed. @TODO expose this, but how?
+    relay_url: string.optional().onMismatch(undefined),
     name: string.optional().onMismatch(undefined),
     description: string.optional().onMismatch(undefined),
     pubkey: string.optional().onMismatch(undefined),
@@ -27,90 +43,60 @@ const shape = object({
     favicon: string.optional().onMismatch(undefined), // @TODO implement with file upload
     relay_icon: string.optional().onMismatch(undefined),
     relay_page: string.optional().onMismatch(undefined), // @TODO implement with file upload
-  }),
-  network: object({
-    address: literal('0.0.0.0').onMismatch('0.0.0.0'), // used. not exposed
-    port: literal(relayInterfacePort).onMismatch(relayInterfacePort), // used. not exposed
-  }),
-  options: object({
-    reject_future_seconds: natural.optional().onMismatch(1600), // used. not exposed.
-  }),
+  }).optional(),
+  network: literal(network).onMismatch(network),
+  options: literal(options).onMismatch(options),
   limits: allOf(
     object({
-      messages_per_sec: natural.optional().onMismatch(undefined),
-      subscriptions_per_min: natural.optional().onMismatch(undefined),
-      max_blocking_threads: natural.optional().onMismatch(undefined),
-      max_event_bytes: natural.optional().onMismatch(undefined),
-      max_ws_message_bytes: natural.optional().onMismatch(undefined),
-      max_ws_frame_bytes: natural.optional().onMismatch(undefined),
-      broadcast_buffer: natural.optional().onMismatch(undefined),
-      event_persist_buffer: natural.optional().onMismatch(undefined),
-      limit_scrapers: boolean.optional().onMismatch(undefined), // not used. not exposed.
+      messages_per_sec: natural.optional().onMismatch(messages_per_sec),
+      subscriptions_per_min: natural
+        .optional()
+        .onMismatch(subscriptions_per_min),
+      max_blocking_threads: natural.optional().onMismatch(max_blocking_threads),
+      max_event_bytes: natural.optional().onMismatch(max_event_bytes),
+      max_ws_message_bytes: natural.optional().onMismatch(max_ws_message_bytes),
+      max_ws_frame_bytes: natural.optional().onMismatch(max_ws_frame_bytes),
+      broadcast_buffer: natural.optional().onMismatch(broadcast_buffer),
+      event_persist_buffer: natural.optional().onMismatch(event_persist_buffer),
+    }).optional(),
+    object({
+      event_kind_allowlist: arrayOf(natural).optional().onMismatch(undefined),
+      event_kind_blacklist: arrayOf(natural).optional().onMismatch(undefined),
     }),
-    anyOf(
-      object({
-        event_kind_allowlist: literal(undefined),
-        event_kind_blacklist: literal(undefined),
-      }),
-      object({
-        event_kind_allowlist: arrayOf(natural).onMismatch([]),
-        event_kind_blacklist: literal(undefined),
-      }),
-      object({
-        event_kind_allowlist: literal(undefined),
-        event_kind_blacklist: arrayOf(natural).onMismatch([]),
-      }),
-    ),
-  ),
+  ).optional(),
   authorization: object({
     pubkey_whitelist: arrayOf(string).optional().onMismatch(undefined),
-    nip42_auth: boolean.optional().onMismatch(undefined), // not used. not exposed.
-    nip42_dms: boolean.optional().onMismatch(undefined), // not used. not exposed.
-  }),
+  }).optional(),
   verified_users: allOf(
     object({
       mode: literals('enabled', 'disabled', 'passive')
         .optional()
-        .onMismatch(undefined),
+        .onMismatch(mode),
       verify_expiration: string.optional().onMismatch(undefined),
       verify_update_frequency: string.optional().onMismatch(undefined),
-      max_consecutive_failures: natural.optional().onMismatch(undefined),
+      max_consecutive_failures: natural
+        .optional()
+        .onMismatch(max_consecutive_failures),
+    }).optional(),
+    object({
+      domain_whitelist: arrayOf(string).optional().onMismatch(undefined),
+      domain_blacklist: arrayOf(string).optional().onMismatch(undefined),
     }),
-    anyOf(
-      object({
-        domain_whitelist: literal(undefined),
-        domain_blacklist: literal(undefined),
-      }),
-      object({
-        domain_whitelist: arrayOf(string).onMismatch([]),
-        domain_blacklist: literal(undefined),
-      }),
-      object({
-        domain_whitelist: literal(undefined),
-        domain_blacklist: arrayOf(string).onMismatch([]),
-      }),
-    ),
-  ),
+  ).optional(),
   pay_to_relay: allOf(
     object({
-      enabled: boolean,
+      enabled: boolean.optional().onMismatch(undefined),
       sign_ups: boolean.optional().onMismatch(undefined),
       processor: literals('ClnRest', 'LNBits').optional().onMismatch(undefined),
       admission_cost: natural.optional().onMismatch(undefined),
       cost_per_event: natural.optional().onMismatch(undefined),
       terms_message: string.optional().onMismatch(undefined),
+    }).optional(),
+    object({
+      direct_message: boolean.optional().onMismatch(undefined),
+      secret_key: string.optional().onMismatch(undefined),
     }),
-    anyOf(
-      object({
-        direct_message: literal(true),
-        secret_key: string,
-      }),
-      object({
-        direct_message: literal(false),
-        secret_key: literal(undefined),
-      }),
-    ),
-    anyOf(
+    oneOf(
       object({
         processor: literal('ClnRest'),
         node_url: literal(clnNodeUrl).onMismatch(clnNodeUrl),
@@ -122,12 +108,12 @@ const shape = object({
         api_secret: string.optional().onMismatch(undefined),
       }),
     ),
-  ),
+  ).optional(),
 })
 
-export const configToml = FileHelper.yaml(
+export const configToml = FileHelper.toml(
   {
-    volumeId: 'main',
+    volumeId: 'config',
     subpath: '/config.toml',
   },
   shape,
