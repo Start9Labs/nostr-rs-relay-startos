@@ -4,7 +4,9 @@ import { clnMountpoint, lnbitsMountpoint, relayInterfacePort } from './utils'
 import { manifest as clnManifest } from 'c-lightning-startos/startos/manifest'
 import { manifest as lnbitsManifest } from 'lnbits-startos/startos/manifest'
 
-export const main = sdk.setupMain(async ({ effects, started }) => {
+export const appPath = '/usr/src/app'
+
+export const main = sdk.setupMain(async ({ effects }) => {
   /**
    * ======================== Setup ========================
    */
@@ -14,13 +16,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     .mountVolume({
       volumeId: 'db',
       subpath: null,
-      mountpoint: '/usr/src/app/db',
+      mountpoint: `${appPath}/db`,
       readonly: false,
     })
     .mountVolume({
       volumeId: 'config',
       subpath: 'config.toml',
-      mountpoint: '/usr/src/app/config.toml',
+      mountpoint: `${appPath}/config.toml`,
       type: 'file',
       readonly: false,
     })
@@ -57,12 +59,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Daemons ========================
    */
-  return sdk.Daemons.of(effects, started)
+  return sdk.Daemons.of(effects)
     .addOneshot('chown', {
       subcontainer,
       exec: {
-        command: ['chown', '-R', 'appuser:appuser', '/usr/src/app'],
-        user: '0',
+        command: ['chown', '-R', 'appuser:appuser', appPath],
       },
       requires: [],
     })

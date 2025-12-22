@@ -1,4 +1,3 @@
-import { utils } from '@start9labs/start-sdk'
 import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 import { relayInterfaceId } from '../../utils'
@@ -98,10 +97,12 @@ export function getExternalAddresses() {
       .const()
 
     const urls =
-      relay?.addressInfo?.filter({
-        visibility: 'public',
-        kind: ['domain', 'ipv4', 'onion'],
-      }) || []
+      relay?.addressInfo
+        ?.filter({
+          visibility: 'public',
+          kind: ['domain', 'ipv4', 'onion'],
+        })
+        .format() || []
 
     return {
       name: 'External Address',

@@ -1,12 +1,15 @@
-# Hello World for StartOS
-
-A bare bones project serving as a template for [StartOS Service Packaging](https://docs.star9.com/packaging-guide).
+<p align="center">
+  <img src="icon.png" alt="Project Logo" width="21%">
+</p>
 
 ## Building from source
 
-`npm i`
-`make`
+1. Set up your [environment](https://docs.start9.com/packaging-guide/environment-setup.html).
 
-## Creating your own project
+1. Clone this repository and `cd` into it.
 
-Follow the [Quick Start Guide](https://docs.star9.com/packaging-guide/quick-start/) for StartOS service packaging, replacing references to `hello-world-startos` with this service ID.
+1. run `make`.
+
+1. The resulting `.s9pk` can be side loaded into StartOS.
+
+For a complete list of build options, see the [docs](https://docs.start9.com/packaging-guide/building.html)
