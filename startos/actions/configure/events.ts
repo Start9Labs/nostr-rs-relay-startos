@@ -81,7 +81,7 @@ export const configureEvents = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Events',
+    name: 'Permitted Events',
     description: 'Decide which events are permitted or prohibited',
     warning: null,
     allowedStatuses: 'any',

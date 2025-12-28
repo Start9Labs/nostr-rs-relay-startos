@@ -105,7 +105,7 @@ export const configureLimits = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Data Limits',
+    name: 'Set Data Limits',
     description:
       'Establish limits to optimize performance and protect your relay from abuse',
     warning: null,

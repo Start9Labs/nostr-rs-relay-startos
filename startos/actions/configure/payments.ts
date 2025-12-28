@@ -108,7 +108,7 @@ export const configurePayments = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Payments',
+    name: 'Paid Relay Settings',
     description: 'Require payment to use this relay',
     warning: null,
     allowedStatuses: 'any',
