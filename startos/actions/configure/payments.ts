@@ -6,13 +6,15 @@ const { InputSpec, Value, Variants } = sdk
 // input spec
 const inputSpec = InputSpec.of({
   enabled: Value.toggle({
-    name: 'Pay to Relay',
+    name: 'Enabled',
+    description:
+      'Whether or not to make this a paid relay. If enabled, users must pay according to your setting here. If disabled, none of your setting here will take effect.',
     default: false,
   }),
   sign_ups: Value.toggle({
-    name: 'Sign Ups',
+    name: 'Allow New Sign Ups',
     description: 'Whether or not new sign ups should be allowed',
-    default: true,
+    default: false,
   }),
   processor: Value.union({
     name: 'Processor',
@@ -78,8 +80,7 @@ const inputSpec = InputSpec.of({
             name: 'Terms of Service',
             description: 'The message to send to new customers on signup',
             required: true,
-            default: `
-This service (and supporting services) are provided "as is", without warranty of any kind, express or implied.
+            default: `This service (and supporting services) are provided "as is", without warranty of any kind, express or implied.
 
 By using this service, you agree:
 * Not to engage in spam or abuse the relay service
@@ -93,8 +94,7 @@ By using this service, you agree:
 * To have your IP address collected to detect abuse or misuse
 * To cooperate with the relay to combat abuse or misuse
 * You may be exposed to content that you might find triggering or distasteful
-* The relay operator is not liable for content produced by users of the relay,
-`,
+* The relay operator is not liable for content produced by users of the relay`,
           }),
         }),
       },

@@ -1,7 +1,7 @@
 import { setupManifest } from '@start9labs/start-sdk'
 
 export const manifest = setupManifest({
-  id: 'nostr-rs-relay',
+  id: 'nostr', // @TODO change ID to nostr-rs-relay once OS migration is implemented
   title: 'Nostr RS Relay',
   license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/nostr-rs-relay-startos/',
@@ -15,12 +15,14 @@ export const manifest = setupManifest({
     short: 'A Nostr relay, written in Rust',
     long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, including pay-to-relay capabilities.',
   },
-  volumes: ['main', 'db', 'config'],
+  volumes: ['db', 'config', 'main'], // main for migration only
   images: {
     'nostr-rs-relay': {
       source: {
         dockerTag: 'scsibug/nostr-rs-relay:0.9.0',
       },
+      arch: ['x86_64'],
+      emulateMissingAs: 'x86_64',
     },
   },
   dependencies: {

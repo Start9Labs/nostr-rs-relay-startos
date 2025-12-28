@@ -64,6 +64,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       subcontainer,
       exec: {
         command: ['chown', '-R', 'appuser:appuser', appPath],
+        user: 'root',
       },
       requires: [],
     })
