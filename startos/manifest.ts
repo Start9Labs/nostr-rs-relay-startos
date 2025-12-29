@@ -19,10 +19,8 @@ export const manifest = setupManifest({
   images: {
     'nostr-rs-relay': {
       source: {
-        dockerTag: 'scsibug/nostr-rs-relay:0.9.0',
+        dockerTag: 'chekist32/nostr-rs-relay:0.9.0',
       },
-      arch: ['x86_64'],
-      emulateMissingAs: 'x86_64',
     },
   },
   dependencies: {
