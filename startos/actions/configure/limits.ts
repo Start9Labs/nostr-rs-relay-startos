@@ -118,7 +118,7 @@ export const configureLimits = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async ({ effects }) => configToml.read((c) => c.limits).const(effects),
+  async ({ effects }) => configToml.read((c) => c.limits).once(),
 
   // the execution function
   async ({ effects, input }) =>

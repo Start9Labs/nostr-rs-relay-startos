@@ -96,7 +96,7 @@ export const configureEvents = sdk.Action.withInput(
   async function ({
     effects,
   }): Promise<typeof inputSpec.validator._TYPE | void> {
-    const limits = await configToml.read((c) => c.limits).const(effects)
+    const limits = await configToml.read((c) => c.limits).once()
     if (!limits) return
 
     return {

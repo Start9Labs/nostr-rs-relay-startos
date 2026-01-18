@@ -152,7 +152,7 @@ export const configureRestrict = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async function ({ effects }) {
-    const data = await configToml.read().const(effects)
+    const data = await configToml.read().once()
     if (!data) return
 
     const { verified_users, authorization } = data

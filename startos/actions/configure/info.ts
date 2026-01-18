@@ -76,7 +76,7 @@ export const configureInfo = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async ({ effects }) => configToml.read((c) => c.info).const(effects),
+  async ({ effects }) => configToml.read((c) => c.info).once(),
 
   // the execution function
   async ({ effects, input }) =>

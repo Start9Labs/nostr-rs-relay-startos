@@ -121,9 +121,7 @@ export const configurePayments = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async function ({ effects }) {
-    const pay_to_relay = await configToml
-      .read((c) => c.pay_to_relay)
-      .const(effects)
+    const pay_to_relay = await configToml.read((c) => c.pay_to_relay).once()
     if (!pay_to_relay) return
 
     return {
@@ -156,7 +154,7 @@ export const configurePayments = sdk.Action.withInput(
   },
 
   // the execution function
-  async ({ effects, input }) => {
+  async ({ effects, input }) =>
     configToml.merge(effects, {
       pay_to_relay: {
         ...(input.direct_message.selection === 'enabled'
@@ -178,6 +176,5 @@ export const configurePayments = sdk.Action.withInput(
               api_secret: input.processor.value.api_secret,
             }),
       },
-    })
-  },
+    }),
 )

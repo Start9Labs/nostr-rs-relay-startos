@@ -12,5 +12,7 @@ on:
 jobs:
   build:
     uses: start9labs/shared-workflows/.github/workflows/buildService.yml@master
+    # with:
+    #   FREE_DISK_SPACE: true
     secrets:
       DEV_KEY: ${{ secrets.DEV_KEY }}
