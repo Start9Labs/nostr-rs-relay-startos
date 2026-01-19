@@ -1,4 +1,5 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import { cln, lnbits } from './i18n'
 
 export const manifest = setupManifest({
   id: 'nostr', // @TODO change ID to nostr-rs-relay once OS migration is implemented
@@ -12,8 +13,8 @@ export const manifest = setupManifest({
   docsUrl:
     'https://github.com/Start9Labs/nostr-rs-relay/blob/update/040/docs/README.md',
   description: {
-    short: 'A Nostr relay, written in Rust',
-    long: 'This is a Nostr relay, written in Rust. It currently supports the entire relay protocol, including pay-to-relay capabilities.',
+    short: '',
+    long: '',
   },
   volumes: ['db', 'config', 'main'], // main for migration only
   images: {
@@ -25,8 +26,7 @@ export const manifest = setupManifest({
   },
   dependencies: {
     'c-lightning': {
-      description:
-        'Needed if you want to accept relay subscription payments using Core Lightning',
+      description: 'cln',
       optional: true,
       metadata: {
         title: 'Core Lightning',
@@ -34,8 +34,7 @@ export const manifest = setupManifest({
       },
     },
     lnbits: {
-      description:
-        'Needed if you want to accept relay subscription payments using LNBits',
+      description: 'lnbits',
       optional: true,
       metadata: {
         title: 'LNBits',
