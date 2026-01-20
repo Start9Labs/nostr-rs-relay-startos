@@ -2,6 +2,7 @@ import { Patterns } from '@start9labs/start-sdk/base/lib/util'
 import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 import { configDefaults } from '../../utils'
+import { i18n } from '../../i18n'
 
 const {
   verified_users: { mode },
@@ -14,9 +15,10 @@ const domainWhitelistSpec = InputSpec.of({
   domain_whitelist: Value.list(
     List.text(
       {
-        name: 'Permitted Domains',
-        description:
+        name: i18n('Permitted Domains'),
+        description: i18n(
           'Domain names that are allowed to publish events. If defined, only events NIP-05 verified authors at these domains are persisted',
+        ),
       },
       {
         patterns: [Patterns.hostname],
@@ -31,9 +33,10 @@ const domainBlacklistSpec = InputSpec.of({
   domain_blacklist: Value.list(
     List.text(
       {
-        name: 'Prohibited Domains',
-        description:
+        name: i18n('Prohibited Domains'),
+        description: i18n(
           'Domain names that will be prevented from publishing events',
+        ),
       },
       {
         patterns: [Patterns.hostname],
@@ -47,64 +50,71 @@ const domainBlacklistSpec = InputSpec.of({
 export const inputSpec = InputSpec.of({
   verified_users: Value.object(
     {
-      name: 'Verified Users (NIP-05)',
+      name: i18n('Verified Users (NIP-05)'),
     },
     InputSpec.of({
       mode: Value.select({
-        name: 'Mode',
-        description:
+        name: i18n('Mode'),
+        description: i18n(
           'NIP-05 verification of users. Can be "enabled" to require NIP-05 metadata for event authors, "passive" to perform validation but never block publishing, or "disabled" to do nothing',
+        ),
         default: mode,
         values: {
-          disabled: 'Disabled',
-          enabled: 'Enabled',
-          passive: 'Passive',
+          disabled: i18n('Disabled'),
+          enabled: i18n('Enabled'),
+          passive: i18n('Passive'),
         },
       }),
       domains_union: Value.union({
-        name: 'Domain Permissions',
-        description:
+        name: i18n('Domain Permissions'),
+        description: i18n(
           'Permit all domains, or whitelist/blacklist certain domains',
+        ),
         default: 'all',
         variants: Variants.of({
           all: {
-            name: 'Permit all Domains',
+            name: i18n('Permit all Domains'),
             spec: InputSpec.of({}),
           },
           domain_whitelist: {
-            name: 'Domain Whitelist',
+            name: i18n('Domain Whitelist'),
             spec: domainWhitelistSpec,
-            description:
+            description: i18n(
               'Create a list of permitted domains. All others will be prohibited',
+            ),
           },
           domain_blacklist: {
-            name: 'Domain Blacklist',
+            name: i18n('Domain Blacklist'),
             spec: domainBlacklistSpec,
-            description:
+            description: i18n(
               'Create a list of prohibited domains. All others will be permitted',
+            ),
           },
         }),
       }),
       verify_expiration: Value.text({
-        name: 'Verify Expiration',
-        description:
+        name: i18n('Verify Expiration'),
+        description: i18n(
           'Consider an pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time. Note, if the domain provides a successful response that omits the account, verification is immediately revoked. Value must be in the form of "1 week" or "2 days" or "12 hours"',
+        ),
         required: false,
         default: null,
         patterns: [], // enforce "number unit", e.g. "2 weeks"
       }),
       verify_update_frequency: Value.text({
-        name: 'Verify Update Frequency',
-        description:
+        name: i18n('Verify Update Frequency'),
+        description: i18n(
           'How long to wait between verification attempts for a specific author. Value must be in the form of "1 week" or "2 days" or "12 hours"',
+        ),
         required: false,
         default: null,
         patterns: [], // enforce "number unit", e.g. "2 weeks"
       }),
       max_consecutive_failures: Value.number({
-        name: 'Max Consecutive Failures',
-        description:
+        name: i18n('Max Consecutive Failures'),
+        description: i18n(
           'How many consecutive failed checks before we give up on verifying an author',
+        ),
         required: false,
         default: 20,
         integer: true,
@@ -115,17 +125,19 @@ export const inputSpec = InputSpec.of({
   pubkey_whitelist: Value.list(
     List.text(
       {
-        name: 'Authorized Pubkeys',
-        description:
+        name: i18n('Authorized Pubkeys'),
+        description: i18n(
           'A list of public keys (in hex format) that are permitted to publish to the relay. Go to https://damus.io/key/ to convert from npub to hex',
+        ),
       },
       {
         placeholder: 'hex pubkey (not npub)',
         patterns: [
           {
             regex: '[0-9a-fA-F]{64}',
-            description:
+            description: i18n(
               'Hexadecimal format required. Go to https://damus.io/key/ to convert an npub to hex',
+            ),
           },
         ],
       },
@@ -139,8 +151,8 @@ export const configureRestrict = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Restrict Access',
-    description: 'Limit relay usage to verified or authorized users',
+    name: i18n('Restrict Access'),
+    description: i18n('Limit relay usage to verified or authorized users'),
     warning: null,
     allowedStatuses: 'any',
     group: 'configure',

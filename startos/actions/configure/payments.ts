@@ -1,23 +1,25 @@
 import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
+import { i18n } from '../../i18n'
 
 const { InputSpec, Value, Variants } = sdk
 
 // input spec
 const inputSpec = InputSpec.of({
   enabled: Value.toggle({
-    name: 'Enabled',
-    description:
+    name: i18n('Enabled'),
+    description: i18n(
       'Whether or not to make this a paid relay. If enabled, users must pay according to your setting here. If disabled, none of your setting here will take effect.',
+    ),
     default: false,
   }),
   sign_ups: Value.toggle({
-    name: 'Allow New Sign Ups',
-    description: 'Whether or not new sign ups should be allowed',
+    name: i18n('Allow New Sign Ups'),
+    description: i18n('Whether or not new sign ups should be allowed'),
     default: false,
   }),
   processor: Value.union({
-    name: 'Processor',
+    name: i18n('Processor'),
     default: 'ClnRest',
     variants: Variants.of({
       ClnRest: {
@@ -28,8 +30,8 @@ const inputSpec = InputSpec.of({
         name: 'LNBits',
         spec: InputSpec.of({
           api_secret: Value.text({
-            name: 'API Secret',
-            description: 'Your LNBits API secret',
+            name: i18n('API Secret'),
+            description: i18n('Your LNBits API secret'),
             required: true,
             default: null,
             masked: true,
@@ -39,8 +41,8 @@ const inputSpec = InputSpec.of({
     }),
   }),
   admission_cost: Value.number({
-    name: 'Admission Cost',
-    description: 'The cost to be admitted to the relay',
+    name: i18n('Admission Cost'),
+    description: i18n('The cost to be admitted to the relay'),
     required: false,
     default: null,
     integer: true,
@@ -48,8 +50,8 @@ const inputSpec = InputSpec.of({
     min: 1,
   }),
   cost_per_event: Value.number({
-    name: 'Cost Per Event',
-    description: 'The cost per post',
+    name: i18n('Cost Per Event'),
+    description: i18n('The cost per post'),
     required: false,
     default: null,
     integer: true,
@@ -57,28 +59,30 @@ const inputSpec = InputSpec.of({
     min: 1,
   }),
   direct_message: Value.union({
-    name: 'Send Message on Signup',
-    description:
+    name: i18n('Send Message on Signup'),
+    description: i18n(
       'Optionally send a welcome message to new customers when they sign up',
+    ),
     default: 'disabled',
     variants: Variants.of({
       disabled: {
-        name: 'Disabled',
+        name: i18n('Disabled'),
         spec: InputSpec.of({}),
       },
       enabled: {
-        name: 'Enabled',
+        name: i18n('Enabled'),
         spec: InputSpec.of({
           secret_key: Value.text({
-            name: 'Secret Key (nsec)',
-            description:
+            name: i18n('Secret Key (nsec)'),
+            description: i18n(
               'The Nostr private key (nsec) from which to send the direct message',
+            ),
             required: true,
             default: null,
           }),
           terms_message: Value.textarea({
-            name: 'Terms of Service',
-            description: 'The message to send to new customers on signup',
+            name: i18n('Terms of Service'),
+            description: i18n('The message to send to new customers on signup'),
             required: true,
             default: `This service (and supporting services) are provided "as is", without warranty of any kind, express or implied.
 
@@ -108,8 +112,8 @@ export const configurePayments = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Paid Relay Settings',
-    description: 'Require payment to use this relay',
+    name: i18n('Paid Relay Settings'),
+    description: i18n('Require payment to use this relay'),
     warning: null,
     allowedStatuses: 'any',
     group: 'configure',

@@ -1,6 +1,7 @@
 import { configToml } from '../../fileModels/config.toml'
 import { sdk } from '../../sdk'
 import { configDefaults } from '../../utils'
+import { i18n } from '../../i18n'
 
 const {
   limits: {
@@ -20,9 +21,10 @@ const { InputSpec, Value } = sdk
 // input spec
 export const inputSpec = InputSpec.of({
   messages_per_sec: Value.number({
-    name: 'Messages Per Second Limit',
-    description:
+    name: i18n('Messages Per Second Limit'),
+    description: i18n(
       'Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection',
+    ),
     required: false,
     default: messages_per_sec,
     min: 1,
@@ -30,9 +32,10 @@ export const inputSpec = InputSpec.of({
     units: 'msgs/sec',
   }),
   subscriptions_per_min: Value.number({
-    name: 'Subscriptions Per Minute Limit',
-    description:
+    name: i18n('Subscriptions Per Minute Limit'),
+    description: i18n(
       'Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service',
+    ),
     required: false,
     default: subscriptions_per_min,
     min: 1,
@@ -40,9 +43,10 @@ export const inputSpec = InputSpec.of({
     units: 'subs/min',
   }),
   max_blocking_threads: Value.number({
-    name: 'Max Blocking Threads',
-    description:
+    name: i18n('Max Blocking Threads'),
+    description: i18n(
       'Maximum number of blocking threads used for database connections',
+    ),
     required: false,
     default: max_blocking_threads,
     integer: true,
@@ -50,9 +54,10 @@ export const inputSpec = InputSpec.of({
     units: 'threads',
   }),
   max_event_bytes: Value.number({
-    name: 'Max Event Size',
-    description:
+    name: i18n('Max Event Size'),
+    description: i18n(
       'Limit the maximum size of an EVENT message. Set to 0 for unlimited',
+    ),
     required: false,
     default: max_event_bytes,
     integer: true,
@@ -60,8 +65,8 @@ export const inputSpec = InputSpec.of({
     units: 'bytes',
   }),
   max_ws_message_bytes: Value.number({
-    name: 'Max Websocket Message Size',
-    description: 'Maximum WebSocket message in bytes.',
+    name: i18n('Max Websocket Message Size'),
+    description: i18n('Maximum WebSocket message in bytes.'),
     required: false,
     default: max_ws_message_bytes,
     integer: true,
@@ -69,8 +74,8 @@ export const inputSpec = InputSpec.of({
     units: 'bytes',
   }),
   max_ws_frame_bytes: Value.number({
-    name: 'Max Websocket Frame Size',
-    description: 'Maximum WebSocket frame size in bytes.',
+    name: i18n('Max Websocket Frame Size'),
+    description: i18n('Maximum WebSocket frame size in bytes.'),
     required: false,
     default: max_ws_frame_bytes,
     integer: true,
@@ -78,9 +83,10 @@ export const inputSpec = InputSpec.of({
     units: 'bytes',
   }),
   broadcast_buffer: Value.number({
-    name: 'Broadcast Buffer Size',
-    description:
+    name: i18n('Broadcast Buffer Size'),
+    description: i18n(
       'Broadcast buffer size, in number of events. This prevents slow readers from consuming memory',
+    ),
     required: false,
     default: broadcast_buffer,
     integer: true,
@@ -88,9 +94,10 @@ export const inputSpec = InputSpec.of({
     units: 'events',
   }),
   event_persist_buffer: Value.number({
-    name: 'Event Persistence Buffer',
-    description:
+    name: i18n('Event Persistence Buffer'),
+    description: i18n(
       'Event persistence buffer size, in number of events. This provides backpressure to senders if writes are slow',
+    ),
     required: false,
     default: event_persist_buffer,
     integer: true,
@@ -105,9 +112,10 @@ export const configureLimits = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Set Data Limits',
-    description:
+    name: i18n('Set Data Limits'),
+    description: i18n(
       'Establish limits to optimize performance and protect your relay from abuse',
+    ),
     warning: null,
     allowedStatuses: 'any',
     group: 'configure',

@@ -3,6 +3,7 @@ import { configToml } from './fileModels/config.toml'
 import { T } from '@start9labs/start-sdk'
 import { manifest } from './manifest'
 import { plugins } from 'c-lightning-startos/startos/actions/config/plugins'
+import { i18n } from './i18n'
 
 export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   const processor = await configToml
@@ -12,7 +13,7 @@ export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   if (processor === 'ClnRest') {
     await sdk.action.createTask(effects, 'c-lightning', plugins, 'critical', {
       input: { kind: 'partial', value: { clnrest: true } },
-      reason: 'Must enable CLNRest to use Core Lightning for payments',
+      reason: i18n('Must enable CLNRest to use Core Lightning for payments'),
       when: { condition: 'input-not-matches', once: false },
       replayId: 'enable-clnrest',
     })

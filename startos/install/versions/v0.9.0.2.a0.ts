@@ -4,10 +4,11 @@ import { readdir, readFile, rm } from 'fs/promises'
 import { join } from 'path'
 import { configToml } from '../../fileModels/config.toml'
 import { configDefaults } from '../../utils'
+import { i18n } from '../../i18n'
 
 export const v_0_9_0_2_a0 = VersionInfo.of({
   version: '0.9.0:2-alpha.0',
-  releaseNotes: 'Revamped for StartOS 0.4.0',
+  releaseNotes: i18n('Revamped for StartOS 0.4.0'),
   migrations: {
     up: async ({ effects }) => {
       const mainVol = '/media/startos/volumes/main'

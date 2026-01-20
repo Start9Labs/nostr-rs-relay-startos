@@ -1,4 +1,5 @@
 import { configToml } from './fileModels/config.toml'
+import { i18n } from './i18n'
 import { sdk } from './sdk'
 import { clnMountpoint, lnbitsMountpoint, relayInterfacePort } from './utils'
 import { manifest as clnManifest } from 'c-lightning-startos/startos/manifest'
@@ -10,7 +11,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
   /**
    * ======================== Setup ========================
    */
-  console.info('Starting Nostr RS Relay!')
+  console.info(i18n('Starting Nostr RS Relay!'))
 
   let mounts = sdk.Mounts.of()
     .mountVolume({
@@ -72,11 +73,11 @@ export const main = sdk.setupMain(async ({ effects }) => {
       subcontainer,
       exec: { command: sdk.useEntrypoint() },
       ready: {
-        display: 'Relay Listening',
+        display: i18n('Relay'),
         fn: () =>
           sdk.healthCheck.checkPortListening(effects, relayInterfacePort, {
-            successMessage: 'The relay is ready',
-            errorMessage: 'The relay is not reachable',
+            successMessage: i18n('Relay is ready'),
+            errorMessage: i18n('Relay is unreachable'),
           }),
       },
       requires: ['chown'],
