@@ -1,8 +1,8 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { cln, lnbits } from './i18n'
+import { cln, lnbits, long, short } from './i18n'
 
 export const manifest = setupManifest({
-  id: 'nostr', // @TODO change ID to nostr-rs-relay once OS migration is implemented
+  id: 'nostr-rs-relay',
   title: 'Nostr RS Relay',
   license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/nostr-rs-relay-startos/',
@@ -13,8 +13,8 @@ export const manifest = setupManifest({
   docsUrl:
     'https://github.com/Start9Labs/nostr-rs-relay/blob/update/040/docs/README.md',
   description: {
-    short: '',
-    long: '',
+    short,
+    long,
   },
   volumes: ['db', 'config', 'main'], // main for migration only
   images: {
@@ -26,7 +26,7 @@ export const manifest = setupManifest({
   },
   dependencies: {
     'c-lightning': {
-      description: 'cln',
+      description: cln,
       optional: true,
       metadata: {
         title: 'Core Lightning',
@@ -34,7 +34,7 @@ export const manifest = setupManifest({
       },
     },
     lnbits: {
-      description: 'lnbits',
+      description: lnbits,
       optional: true,
       metadata: {
         title: 'LNBits',
