@@ -1,6 +1,6 @@
 import { LangDict } from './default'
 
-const translations = {
+export default {
   es_ES: {
     0: '¡Iniciando Nostr RS Relay!',
     1: 'Relay',
@@ -101,7 +101,6 @@ const translations = {
     96: 'El mensaje a enviar a nuevos clientes al registrarse',
     97: 'Configuración de relay de pago',
     98: 'Requiere pago para usar este relay',
-    99: 'Renovado para StartOS 0.4.0',
   },
   de_DE: {
     0: 'Starte Nostr RS Relay!',
@@ -203,7 +202,6 @@ const translations = {
     96: 'Die Nachricht, die neuen Kunden bei der Anmeldung gesendet wird',
     97: 'Bezahl-Relay-Einstellungen',
     98: 'Zahlung für die Nutzung dieses Relays erforderlich',
-    99: 'Überarbeitet für StartOS 0.4.0',
   },
   pl_PL: {
     0: 'Uruchamianie Nostr RS Relay!',
@@ -305,7 +303,6 @@ const translations = {
     96: 'Wiadomość wysyłana nowym klientom przy rejestracji',
     97: 'Ustawienia płatnego relay',
     98: 'Wymaga płatności za korzystanie z tego relay',
-    99: 'Przeprojektowany dla StartOS 0.4.0',
   },
   fr_FR: {
     0: 'Démarrage de Nostr RS Relay !',
@@ -407,12 +404,5 @@ const translations = {
     96: "Le message à envoyer aux nouveaux clients lors de l'inscription",
     97: 'Paramètres du relay payant',
     98: 'Paiement requis pour utiliser ce relay',
-    99: 'Refait pour StartOS 0.4.0',
   },
 } satisfies Record<string, LangDict>
-
-/**
- * Plumbing. DO NOT EDIT.
- */
-export type Lang = keyof typeof translations
-export default translations

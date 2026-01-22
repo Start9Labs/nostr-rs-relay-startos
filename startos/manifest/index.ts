@@ -1,5 +1,5 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { cln, lnbits, long, short } from './i18n'
+import { short, long, cln, lnbits } from './i18n'
 
 export const manifest = setupManifest({
   id: 'nostr-rs-relay',
@@ -12,10 +12,7 @@ export const manifest = setupManifest({
   donationUrl: null,
   docsUrl:
     'https://github.com/Start9Labs/nostr-rs-relay/blob/update/040/docs/README.md',
-  description: {
-    short,
-    long,
-  },
+  description: { short, long },
   volumes: ['db', 'config', 'main'], // main for migration only
   images: {
     'nostr-rs-relay': {

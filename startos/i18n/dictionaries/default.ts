@@ -115,9 +115,6 @@ const dict = {
   'The message to send to new customers on signup': 96,
   'Paid Relay Settings': 97,
   'Require payment to use this relay': 98,
-
-  // install/versions
-  'Revamped for StartOS 0.4.0': 99,
 } as const
 
 /**

@@ -1,5 +1,6 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
 import { clnMountpoint, configDefaults } from '../utils'
+import { sdk } from '../sdk'
 
 const { object, arrayOf, string, natural, boolean, literal, literals } = matches
 
@@ -84,7 +85,7 @@ export const shape = object({
 
 export const configToml = FileHelper.toml(
   {
-    volumeId: 'config',
+    base: sdk.volumes.config,
     subpath: '/config.toml',
   },
   shape,
