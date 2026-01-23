@@ -11,7 +11,7 @@ export const manifest = setupManifest({
   marketingSite: 'https://nostr.com/',
   donationUrl: null,
   docsUrl:
-    'https://github.com/Start9Labs/nostr-rs-relay/blob/update/040/docs/README.md',
+    'https://github.com/Start9Labs/nostr-rs-relay-startos/blob/update/040/docs/instructions.md',
   description: { short, long },
   volumes: ['db', 'config', 'main'], // main for migration only
   images: {
