@@ -95,17 +95,14 @@ export const configureInfo = sdk.Action.withInput(
 
 export function getExternalAddresses() {
   return sdk.Value.dynamicSelect(async ({ effects }) => {
-    const relay = await sdk.serviceInterface
-      .getOwn(effects, relayInterfaceId)
-      .const()
-
-    const urls =
-      relay?.addressInfo
+    const urls = await sdk.serviceInterface
+      .getOwn(effects, relayInterfaceId, (r) => r?.addressInfo
         ?.filter({
           visibility: 'public',
           kind: ['domain', 'ipv4', 'onion'],
         })
-        .format() || []
+        .format() || [])
+      .const()
 
     return {
       name: i18n('External Address'),

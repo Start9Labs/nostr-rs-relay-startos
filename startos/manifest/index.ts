@@ -19,6 +19,7 @@ export const manifest = setupManifest({
       source: {
         dockerTag: 'chekist32/nostr-rs-relay:0.9.0',
       },
+      arch: ['x86_64', 'aarch64'],
     },
   },
   dependencies: {
