@@ -11,9 +11,6 @@ const dict = {
   'Relay websocket': 4,
   'Nostr clients use this interface to connect to the relay': 5,
 
-  // dependencies.ts
-  'Must enable CLNRest to use Core Lightning for payments': 6,
-
   // configure/info.ts
   Name: 7,
   "Your relay's human-readable name": 8,
@@ -95,26 +92,6 @@ const dict = {
   'Event persistence buffer size, in number of events. This provides backpressure to senders if writes are slow': 78,
   'Set Data Limits': 79,
   'Establish limits to optimize performance and protect your relay from abuse': 80,
-
-  // configure/payments.ts
-  'Whether or not to make this a paid relay. If enabled, users must pay according to your setting here. If disabled, none of your setting here will take effect.': 81,
-  'Allow New Sign Ups': 82,
-  'Whether or not new sign ups should be allowed': 83,
-  Processor: 84,
-  'API Secret': 85,
-  'Your LNBits API secret': 86,
-  'Admission Cost': 87,
-  'The cost to be admitted to the relay': 88,
-  'Cost Per Event': 89,
-  'The cost per post': 90,
-  'Send Message on Signup': 91,
-  'Optionally send a welcome message to new customers when they sign up': 92,
-  'Secret Key (nsec)': 93,
-  'The Nostr private key (nsec) from which to send the direct message': 94,
-  'Terms of Service': 95,
-  'The message to send to new customers on signup': 96,
-  'Paid Relay Settings': 97,
-  'Require payment to use this relay': 98,
 } as const
 
 /**

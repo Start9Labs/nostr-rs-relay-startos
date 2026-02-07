@@ -1,9 +1,6 @@
-import { configToml } from './fileModels/config.toml'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { clnMountpoint, lnbitsMountpoint, relayInterfacePort } from './utils'
-import { manifest as clnManifest } from 'c-lightning-startos/startos/manifest'
-import { manifest as lnbitsManifest } from 'lnbits-startos/startos/manifest'
+import { relayInterfacePort } from './utils'
 
 export const appPath = '/usr/src/app'
 
@@ -13,7 +10,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
    */
   console.info(i18n('Starting Nostr RS Relay!'))
 
-  let mounts = sdk.Mounts.of()
+  const mounts = sdk.Mounts.of()
     .mountVolume({
       volumeId: 'db',
       subpath: null,
@@ -27,28 +24,6 @@ export const main = sdk.setupMain(async ({ effects }) => {
       type: 'file',
       readonly: false,
     })
-
-  const toml = await configToml.read().const(effects)
-
-  const processor = toml?.pay_to_relay?.processor
-
-  if (processor === 'ClnRest') {
-    mounts = mounts.mountDependency<typeof clnManifest>({
-      dependencyId: 'c-lightning',
-      volumeId: 'main',
-      subpath: null,
-      mountpoint: clnMountpoint,
-      readonly: true,
-    })
-  } else if (processor === 'LNBits') {
-    mounts = mounts.mountDependency<typeof lnbitsManifest>({
-      dependencyId: 'lnbits',
-      volumeId: 'main',
-      subpath: null,
-      mountpoint: lnbitsMountpoint,
-      readonly: true,
-    })
-  }
 
   const subcontainer = await sdk.SubContainer.of(
     effects,

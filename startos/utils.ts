@@ -1,6 +1,3 @@
-export const clnMountpoint = '/mnt/cln'
-export const lnbitsMountpoint = '/mnt/lnbits'
-
 export const relayInterfacePort = 8080
 export const relayInterfaceId = 'relay'
 

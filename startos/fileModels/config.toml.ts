@@ -1,8 +1,8 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
-import { clnMountpoint, configDefaults } from '../utils'
+import { configDefaults } from '../utils'
 import { sdk } from '../sdk'
 
-const { object, arrayOf, string, natural, boolean, literal, literals } = matches
+const { object, arrayOf, string, natural, literal, literals } = matches
 
 const {
   network,
@@ -19,10 +19,6 @@ const {
   },
   verified_users: { mode, max_consecutive_failures },
 } = configDefaults
-
-const clnNodeUrl = 'c-lightning.startos:3010'
-const lnbitsNodeUrl = 'lnbits.startos'
-const clnRunePath = `${clnMountpoint}/.commando-env`
 
 export const shape = object({
   info: object({
@@ -63,23 +59,6 @@ export const shape = object({
       .onMismatch(max_consecutive_failures),
     domain_whitelist: arrayOf(string).optional().onMismatch(undefined),
     domain_blacklist: arrayOf(string).optional().onMismatch(undefined),
-  }).optional(),
-  pay_to_relay: object({
-    enabled: boolean.onMismatch(false),
-    sign_ups: boolean.onMismatch(false),
-    processor: literals('ClnRest', 'LNBits').optional().onMismatch(undefined),
-    admission_cost: natural.optional().onMismatch(undefined),
-    cost_per_event: natural.optional().onMismatch(undefined),
-    // message on signup
-    direct_message: boolean.onMismatch(false),
-    terms_message: string.optional().onMismatch(undefined),
-    secret_key: string.optional().onMismatch(undefined),
-    // dependencies
-    node_url: literals(clnNodeUrl, lnbitsNodeUrl)
-      .optional()
-      .onMismatch(undefined),
-    rune_path: literal(clnRunePath).onMismatch(clnRunePath), // ClnRest only
-    api_secret: string.optional().onMismatch(undefined), // LNBits only
   }).optional(),
 })
 

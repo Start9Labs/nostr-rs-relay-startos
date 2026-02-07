@@ -6,8 +6,8 @@ import { configToml } from '../../fileModels/config.toml'
 import { configDefaults } from '../../utils'
 import { i18n } from '../../i18n'
 
-export const v_0_9_0_2_a0 = VersionInfo.of({
-  version: '0.9.0:2-alpha.0',
+export const v_0_9_0_2_a1 = VersionInfo.of({
+  version: '0.9.0:2-alpha.1',
   releaseNotes: {
     en_US: 'Revamped for StartOS 0.4.0',
     es_ES: 'Renovado para StartOS 0.4.0',

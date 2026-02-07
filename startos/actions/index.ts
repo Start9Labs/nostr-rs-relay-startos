@@ -1,13 +1,11 @@
 import { sdk } from '../sdk'
-import { configureInfo } from './configure/info'
-import { configureEvents } from './configure/events'
-import { configureRestrict } from './configure/restrict'
-import { configureLimits } from './configure/limits'
-import { configurePayments } from './configure/payments'
+import { configureInfo } from './info'
+import { configureEvents } from './events'
+import { configureRestrict } from './restrict'
+import { configureLimits } from './limits'
 
 export const actions = sdk.Actions.of()
   .addAction(configureInfo)
   .addAction(configureEvents)
   .addAction(configureRestrict)
   .addAction(configureLimits)
-  .addAction(configurePayments)
