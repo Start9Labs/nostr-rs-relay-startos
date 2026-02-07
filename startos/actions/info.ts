@@ -1,7 +1,7 @@
-import { configToml } from '../../fileModels/config.toml'
-import { sdk } from '../../sdk'
-import { relayInterfaceId } from '../../utils'
-import { i18n } from '../../i18n'
+import { configToml } from '../fileModels/config.toml'
+import { sdk } from '../sdk'
+import { relayInterfaceId } from '../utils'
+import { i18n } from '../i18n'
 
 const { InputSpec, Value } = sdk
 

@@ -1,6 +1,6 @@
-import { configToml } from '../../fileModels/config.toml'
-import { sdk } from '../../sdk'
-import { i18n } from '../../i18n'
+import { configToml } from '../fileModels/config.toml'
+import { sdk } from '../sdk'
+import { i18n } from '../i18n'
 
 const { InputSpec, Value, List, Variants } = sdk
 

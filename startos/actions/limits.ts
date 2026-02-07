@@ -1,7 +1,7 @@
-import { configToml } from '../../fileModels/config.toml'
-import { sdk } from '../../sdk'
-import { configDefaults } from '../../utils'
-import { i18n } from '../../i18n'
+import { configToml } from '../fileModels/config.toml'
+import { sdk } from '../sdk'
+import { configDefaults } from '../utils'
+import { i18n } from '../i18n'
 
 const {
   limits: {

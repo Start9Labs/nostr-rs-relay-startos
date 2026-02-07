@@ -1,8 +1,8 @@
 import { Patterns } from '@start9labs/start-sdk/base/lib/util'
-import { configToml } from '../../fileModels/config.toml'
-import { sdk } from '../../sdk'
-import { configDefaults } from '../../utils'
-import { i18n } from '../../i18n'
+import { configToml } from '../fileModels/config.toml'
+import { sdk } from '../sdk'
+import { configDefaults } from '../utils'
+import { i18n } from '../i18n'
 
 const {
   verified_users: { mode },
