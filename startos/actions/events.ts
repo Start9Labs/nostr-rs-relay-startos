@@ -99,29 +99,27 @@ export const configureEvents = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async function ({
-    effects,
-  }): Promise<typeof inputSpec.validator._TYPE | void> {
+  async function ({ effects }) {
     const limits = await configToml.read((c) => c.limits).once()
     if (!limits) return
 
     return {
       type: limits.event_kind_allowlist?.length
         ? {
-            selection: 'whitelist',
+            selection: 'whitelist' as const,
             value: {
               event_kind_allowlist: limits.event_kind_allowlist.map(String),
             },
           }
         : limits.event_kind_blacklist?.length
           ? {
-              selection: 'blacklist',
+              selection: 'blacklist' as const,
               value: {
                 event_kind_blacklist: limits.event_kind_blacklist.map(String),
               },
             }
           : {
-              selection: 'all',
+              selection: 'all' as const,
               value: {},
             },
     }

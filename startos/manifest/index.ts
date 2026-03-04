@@ -5,12 +5,12 @@ export const manifest = setupManifest({
   id: 'nostr-rs-relay',
   title: 'Nostr RS Relay',
   license: 'MIT',
-  wrapperRepo: 'https://github.com/Start9Labs/nostr-rs-relay-startos/',
-  upstreamRepo: 'https://sr.ht/~gheartsfield/nostr-rs-relay/',
-  supportSite: 'https://todo.sr.ht/~gheartsfield/nostr-rs-relay/',
-  marketingSite: 'https://nostr.com/',
   donationUrl: null,
-  docsUrl: 'https://github.com/scsibug/nostr-rs-relay',
+  packageRepo:
+    'https://github.com/Start9Labs/nostr-rs-relay-startos/tree/update/040',
+  upstreamRepo: 'https://sr.ht/~gheartsfield/nostr-rs-relay/',
+  marketingUrl: 'https://nostr.com/',
+  docsUrls: ['https://github.com/scsibug/nostr-rs-relay'],
   description: { short, long },
   volumes: ['db', 'config', 'main'], // main for migration only
   images: {

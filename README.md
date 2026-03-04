@@ -8,7 +8,7 @@ This document describes what is **unique** to the StartOS package.
 
 ## Container Runtime
 
-Single container running the upstream `chekist32/nostr-rs-relay:0.9.0` image.
+Single container running the upstream `chekist32/nostr-rs-relay` image.
 
 **Supported architectures:** x86_64, aarch64
 
@@ -156,12 +156,10 @@ Compared to upstream nostr-rs-relay:
 
 ```yaml
 package_id: nostr-rs-relay
-upstream_version: "0.9.0"
-startos_version: "0.9.0:2-alpha.0"
 
 containers:
   - name: nostr-rs-relay
-    image: chekist32/nostr-rs-relay:0.9.0
+    image: chekist32/nostr-rs-relay
     arch: [x86_64, aarch64]
 
 volumes:
