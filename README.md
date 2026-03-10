@@ -2,7 +2,7 @@
 
 This repository packages [nostr-rs-relay](https://sr.ht/~gheartsfield/nostr-rs-relay/) for StartOS. nostr-rs-relay is a Nostr relay written in Rust that supports the entire relay protocol.
 
-For general information about nostr-rs-relay and the Nostr protocol, see the [upstream documentation](https://github.com/scsibug/nostr-rs-relay).
+For general information about nostr-rs-relay and the Nostr protocol, see the [upstream documentation](https://github.com/scsibug/nostr-rs-relay/blob/master/README.md).
 
 This document describes what is **unique** to the StartOS package.
 

@@ -5,14 +5,14 @@ import { join } from 'path'
 import { configToml } from '../../fileModels/config.toml'
 import { configDefaults } from '../../utils'
 
-export const v_0_9_0_3_b0 = VersionInfo.of({
-  version: '0.9.0:3-beta.0',
+export const v_0_9_0_4_b0 = VersionInfo.of({
+  version: '0.9.0:4-beta.0',
   releaseNotes: {
-    en_US: 'Update to StartOS SDK beta.55',
-    es_ES: 'Actualización a StartOS SDK beta.55',
-    de_DE: 'Update auf StartOS SDK beta.55',
-    pl_PL: 'Aktualizacja do StartOS SDK beta.55',
-    fr_FR: 'Mise à jour vers StartOS SDK beta.55',
+    en_US: 'Update to StartOS SDK beta.59',
+    es_ES: 'Actualización a StartOS SDK beta.59',
+    de_DE: 'Update auf StartOS SDK beta.59',
+    pl_PL: 'Aktualizacja do StartOS SDK beta.59',
+    fr_FR: 'Mise à jour vers StartOS SDK beta.59',
   },
   migrations: {
     up: async ({ effects }) => {
