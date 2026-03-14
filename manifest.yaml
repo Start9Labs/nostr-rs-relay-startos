@@ -1,10 +1,14 @@
 id: nostr
 title: "Nostr RS Relay"
-version: 0.9.0
+version: 0.9.1
 release-notes: |
-  * Upstream code update
-  * Code cleanup and fixes
-  * Update bundling process to use Deno emit module
+  * Bump nostr-rs-relay to latest master (17 commits ahead of 0.9.0)
+  * NIP-91 support: tag querying for SQLite and PostgreSQL
+  * Fix disconnect handling and subscription send errors
+  * Fix deterministic ordering for AND tag operations
+  * Fix auth event confirmation and NIP-05 verifier
+  * Two rounds of dependency upgrades
+  * Clippy and rustfmt cleanup
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/nostr-rs-relay-startos"
 upstream-repo: "https://sr.ht/~gheartsfield/nostr-rs-relay/"
