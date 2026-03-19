@@ -36,6 +36,8 @@ export const v_0_9_0_4_b1 = VersionInfo.of({
       ).then(YAML.parse, () => undefined)
 
       if (configYaml) {
+        const relayType = configYaml['relay-type']
+
         // srv
         await new Promise((res, rej) => {
           execFile(
@@ -45,23 +47,22 @@ export const v_0_9_0_4_b1 = VersionInfo.of({
           )
         }).catch(console.error)
 
-        const old =
-          configYaml['relay-type'].type === 'private'
+        const old = relayType
+          ? relayType.type === 'private'
             ? {
                 authorization: {
-                  pubkey_whitelist: configYaml['relay-type'].pubkey_whitelist,
+                  pubkey_whitelist: relayType.pubkey_whitelist,
                 },
               }
             : {
-                info: configYaml['relay-type'].info,
+                info: relayType.info,
                 limits: {
-                  ...configYaml['relay-type'].limits,
+                  ...relayType.limits,
                   event_kind_blacklist:
-                    configYaml['relay-type'].limits.event_kind_blacklist.map(
-                      Number,
-                    ),
+                    relayType.limits?.event_kind_blacklist?.map(Number) ?? [],
                 },
               }
+          : {}
 
         await configToml.write(effects, { ...configDefaults, ...old })
 
