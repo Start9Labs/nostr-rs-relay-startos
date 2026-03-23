@@ -120,7 +120,7 @@ None.
 
 ## Backups
 
-Backs up volumes: `db`, `config`
+Backs up volumes: `main`, `db`, `config`
 
 **Backup includes:**
 - SQLite database with all relay data
@@ -198,7 +198,7 @@ health_checks:
     type: port_listening
     port: 8080
 
-backup_volumes: [db, config]
+backup_volumes: [main, db, config]
 
 config_file: /usr/src/app/config.toml
 config_format: toml

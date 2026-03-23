@@ -5,8 +5,8 @@ import { join } from 'path'
 import { configToml } from '../../fileModels/config.toml'
 import { configDefaults } from '../../utils'
 
-export const v_0_9_0_4_b2 = VersionInfo.of({
-  version: '0.9.0:4-beta.2',
+export const v_0_9_0_4_b3 = VersionInfo.of({
+  version: '0.9.0:4-beta.3',
   releaseNotes: {
     en_US: 'Update to StartOS SDK beta.60',
     es_ES: 'Actualización a StartOS SDK beta.60',
