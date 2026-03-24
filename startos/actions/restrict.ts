@@ -1,12 +1,7 @@
 import { Patterns } from '@start9labs/start-sdk/base/lib/util'
 import { configToml } from '../fileModels/config.toml'
 import { sdk } from '../sdk'
-import { configDefaults } from '../utils'
 import { i18n } from '../i18n'
-
-const {
-  verified_users: { mode },
-} = configDefaults
 
 const { InputSpec, Value, List, Variants } = sdk
 
@@ -58,7 +53,7 @@ export const inputSpec = InputSpec.of({
         description: i18n(
           'NIP-05 verification of users. Can be "enabled" to require NIP-05 metadata for event authors, "passive" to perform validation but never block publishing, or "disabled" to do nothing',
         ),
-        default: mode,
+        default: 'disabled',
         values: {
           disabled: i18n('Disabled'),
           enabled: i18n('Enabled'),
@@ -116,9 +111,10 @@ export const inputSpec = InputSpec.of({
           'How many consecutive failed checks before we give up on verifying an author',
         ),
         required: false,
-        default: 20,
+        default: null,
         integer: true,
         min: 1,
+        placeholder: '20',
       }),
     }),
   ),

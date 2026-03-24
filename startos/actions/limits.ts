@@ -1,20 +1,6 @@
 import { configToml } from '../fileModels/config.toml'
 import { sdk } from '../sdk'
-import { configDefaults } from '../utils'
 import { i18n } from '../i18n'
-
-const {
-  limits: {
-    messages_per_sec,
-    subscriptions_per_min,
-    max_blocking_threads,
-    max_event_bytes,
-    max_ws_message_bytes,
-    max_ws_frame_bytes,
-    broadcast_buffer,
-    event_persist_buffer,
-  },
-} = configDefaults
 
 const { InputSpec, Value } = sdk
 
@@ -26,10 +12,11 @@ export const inputSpec = InputSpec.of({
       'Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection',
     ),
     required: false,
-    default: messages_per_sec,
+    default: null,
     min: 1,
     integer: true,
     units: 'msgs/sec',
+    placeholder: '10',
   }),
   subscriptions_per_min: Value.number({
     name: i18n('Subscriptions Per Minute Limit'),
@@ -37,10 +24,11 @@ export const inputSpec = InputSpec.of({
       'Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service',
     ),
     required: false,
-    default: subscriptions_per_min,
+    default: null,
     min: 1,
     integer: true,
     units: 'subs/min',
+    placeholder: '10',
   }),
   max_blocking_threads: Value.number({
     name: i18n('Max Blocking Threads'),
@@ -48,10 +36,11 @@ export const inputSpec = InputSpec.of({
       'Maximum number of blocking threads used for database connections',
     ),
     required: false,
-    default: max_blocking_threads,
+    default: null,
     integer: true,
     min: 1,
     units: 'threads',
+    placeholder: '16',
   }),
   max_event_bytes: Value.number({
     name: i18n('Max Event Size'),
@@ -59,28 +48,31 @@ export const inputSpec = InputSpec.of({
       'Limit the maximum size of an EVENT message. Set to 0 for unlimited',
     ),
     required: false,
-    default: max_event_bytes,
+    default: null,
     integer: true,
     min: 1024,
     units: 'bytes',
+    placeholder: '131072',
   }),
   max_ws_message_bytes: Value.number({
     name: i18n('Max Websocket Message Size'),
     description: i18n('Maximum WebSocket message in bytes.'),
     required: false,
-    default: max_ws_message_bytes,
+    default: null,
     integer: true,
     min: 1024,
     units: 'bytes',
+    placeholder: '131072',
   }),
   max_ws_frame_bytes: Value.number({
     name: i18n('Max Websocket Frame Size'),
     description: i18n('Maximum WebSocket frame size in bytes.'),
     required: false,
-    default: max_ws_frame_bytes,
+    default: null,
     integer: true,
     min: 1024,
     units: 'bytes',
+    placeholder: '131072',
   }),
   broadcast_buffer: Value.number({
     name: i18n('Broadcast Buffer Size'),
@@ -88,10 +80,11 @@ export const inputSpec = InputSpec.of({
       'Broadcast buffer size, in number of events. This prevents slow readers from consuming memory',
     ),
     required: false,
-    default: broadcast_buffer,
+    default: null,
     integer: true,
     min: 128,
     units: 'events',
+    placeholder: '16384',
   }),
   event_persist_buffer: Value.number({
     name: i18n('Event Persistence Buffer'),
@@ -99,10 +92,11 @@ export const inputSpec = InputSpec.of({
       'Event persistence buffer size, in number of events. This provides backpressure to senders if writes are slow',
     ),
     required: false,
-    default: event_persist_buffer,
+    default: null,
     integer: true,
     min: 64,
     units: 'events',
+    placeholder: '4096',
   }),
 })
 
