@@ -1,0 +1,23 @@
+{
+  "name": "nostr-rs-relay-startos",
+  "scripts": {
+    "build": "rm -rf ./javascript && ncc build startos/index.ts -o ./javascript",
+    "prettier": "prettier --write startos",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@start9labs/start-sdk": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.27",
+    "@vercel/ncc": "^0.38.4",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true
+  }
+}
