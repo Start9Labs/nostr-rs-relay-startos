@@ -7,7 +7,7 @@ export const manifest = setupManifest({
   license: 'MIT',
   donationUrl: null,
   packageRepo:
-    'https://github.com/Start9Labs/nostr-rs-relay-startos/tree/update/040',
+    'https://github.com/Start9Labs/nostr-rs-relay-startos',
   upstreamRepo: 'https://sr.ht/~gheartsfield/nostr-rs-relay/',
   marketingUrl: 'https://nostr.com/',
   docsUrls: [
