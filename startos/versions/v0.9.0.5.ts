@@ -4,14 +4,14 @@ import { readdir, readFile, rm } from 'fs/promises'
 import { join } from 'path'
 import { configToml } from '../fileModels/config.toml'
 
-export const v_0_9_0_4 = VersionInfo.of({
-  version: '0.9.0:4',
+export const v_0_9_0_5 = VersionInfo.of({
+  version: '0.9.0:5',
   releaseNotes: {
-    en_US: 'Update to StartOS SDK beta.60',
-    es_ES: 'Actualización a StartOS SDK beta.60',
-    de_DE: 'Update auf StartOS SDK beta.60',
-    pl_PL: 'Aktualizacja do StartOS SDK beta.60',
-    fr_FR: 'Mise à jour vers StartOS SDK beta.60',
+    en_US: 'Internal updates (start-sdk 1.2.0)',
+    es_ES: 'Actualizaciones internas (start-sdk 1.2.0)',
+    de_DE: 'Interne Aktualisierungen (start-sdk 1.2.0)',
+    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 1.2.0)',
+    fr_FR: 'Mises à jour internes (start-sdk 1.2.0)',
   },
   migrations: {
     up: async ({ effects }) => {
