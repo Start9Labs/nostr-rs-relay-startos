@@ -10,10 +10,6 @@ export const manifest = setupManifest({
     'https://github.com/Start9Labs/nostr-rs-relay-startos',
   upstreamRepo: 'https://sr.ht/~gheartsfield/nostr-rs-relay/',
   marketingUrl: 'https://nostr.com/',
-  docsUrls: [
-    'https://github.com/scsibug/nostr-rs-relay/blob/master/README.md',
-    'https://github.com/scsibug/nostr-rs-relay/blob/master/config.toml',
-  ],
   description: { short, long },
   volumes: ['db', 'config', 'main'], // main for migration only
   images: {
