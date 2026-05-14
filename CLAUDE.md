@@ -1,4 +1,3 @@
-## How the upstream version is pulled
-- dockerTag in `startos/manifest/index.ts`: `chekist32/nostr-rs-relay:<version>`
+# CLAUDE.md
 
-> Upstream is on sr.ht. Docker image is from a third-party (chekist32).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the doc map and contribution workflow.
