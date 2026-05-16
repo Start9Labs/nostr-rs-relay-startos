@@ -4,14 +4,14 @@ import { readdir, readFile, rm } from 'fs/promises'
 import { join } from 'path'
 import { configToml } from '../fileModels/config.toml'
 
-export const v_0_9_0_7 = VersionInfo.of({
-  version: '0.9.0:7',
+export const v_0_9_0_8 = VersionInfo.of({
+  version: '0.9.0:8',
   releaseNotes: {
-    en_US: 'Internal updates (start-sdk 1.5.0)',
-    es_ES: 'Actualizaciones internas (start-sdk 1.5.0)',
-    de_DE: 'Interne Aktualisierungen (start-sdk 1.5.0)',
-    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 1.5.0)',
-    fr_FR: 'Mises à jour internes (start-sdk 1.5.0)',
+    en_US: 'Internal updates (start-sdk 1.5.2)',
+    es_ES: 'Actualizaciones internas (start-sdk 1.5.2)',
+    de_DE: 'Interne Aktualisierungen (start-sdk 1.5.2)',
+    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 1.5.2)',
+    fr_FR: 'Mises à jour internes (start-sdk 1.5.2)',
   },
   migrations: {
     up: async ({ effects }) => {
