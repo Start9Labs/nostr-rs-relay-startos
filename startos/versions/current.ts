@@ -4,7 +4,7 @@ import { readdir, readFile, rm } from 'fs/promises'
 import { join } from 'path'
 import { configToml } from '../fileModels/config.toml'
 
-export const v_0_9_0_7 = VersionInfo.of({
+export const current = VersionInfo.of({
   version: '0.9.0:7',
   releaseNotes: {
     en_US: 'Internal updates (start-sdk 1.5.0)',
