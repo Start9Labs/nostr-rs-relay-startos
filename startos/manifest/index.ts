@@ -15,7 +15,7 @@ export const manifest = setupManifest({
   images: {
     'nostr-rs-relay': {
       source: {
-        dockerTag: 'chekist32/nostr-rs-relay:0.9.0',
+        dockerBuild: { dockerfile: 'Dockerfile' },
       },
       arch: ['x86_64', 'aarch64'],
     },

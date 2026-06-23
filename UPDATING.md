@@ -1,25 +1,32 @@
 # Updating the upstream version
 
-Upstream Nostr RS Relay is developed on sourcehut; this package consumes it via the third-party `chekist32/nostr-rs-relay` Docker image, not by building from source. A bump here requires the desired version to be published as a tag on the Docker image — track sourcehut to see what exists upstream, then confirm the chekist32 tag before bumping.
+This package builds **nostr-rs-relay** from source inside the `Dockerfile`, pinned to an upstream release tag. A bump means pointing the build at a newer tag.
+
+Upstream is developed on sourcehut (`git.sr.ht/~gheartsfield/nostr-rs-relay`); `github.com/scsibug/nostr-rs-relay` is a faithful mirror (identical commit SHAs) that the `Dockerfile` clones from and that is easier to query.
 
 ## Determining the upstream version
 
-- **nostr-rs-relay** ([git.sr.ht/~gheartsfield/nostr-rs-relay](https://git.sr.ht/~gheartsfield/nostr-rs-relay)) — sourcehut has no JSON tag API; use `git ls-remote` to list tags:
+List release tags (sourcehut has no JSON tag API; the GitHub mirror works identically):
 
-  ```
-  git ls-remote --tags --sort=-v:refname https://git.sr.ht/~gheartsfield/nostr-rs-relay | grep -v '\^{}$' | head
-  ```
+```
+git ls-remote --tags --sort=-v:refname https://github.com/scsibug/nostr-rs-relay | grep -v '\^{}$' | head
+# canonical home: https://git.sr.ht/~gheartsfield/nostr-rs-relay
+```
 
-  The latest release is the highest semver tag. Currently pinned indirectly via the Docker tag in `startos/manifest/index.ts` (the `dockerTag` field).
-
-- **chekist32/nostr-rs-relay** ([hub.docker.com/r/chekist32/nostr-rs-relay](https://hub.docker.com/r/chekist32/nostr-rs-relay/tags)) — confirm the upstream version has been republished as a Docker tag:
-
-  ```
-  curl -fsSL "https://hub.docker.com/v2/repositories/chekist32/nostr-rs-relay/tags?page_size=20&ordering=last_updated" | jq -r '.results[].name'
-  ```
-
-  If the matching tag isn't there yet, you can't bump until it is. The Docker tag is the pin — set in `startos/manifest/index.ts` as `dockerTag: 'chekist32/nostr-rs-relay:<version>'`.
+The latest release is the highest semver tag. Do **not** use crates.io — it is frozen at `0.8.12` (Aug 2023) and does not reflect current releases.
 
 ## Applying the bump
 
-- `startos/manifest/index.ts` — update `images['nostr-rs-relay'].source.dockerTag` to `chekist32/nostr-rs-relay:<new version>`.
+1. **`Dockerfile`** — set `ARG NRR_VERSION` to the new tag (e.g. `0.10.0`) and `ARG NRR_COMMIT` to the commit that tag points to. Resolve it with:
+
+   ```
+   git ls-remote https://github.com/scsibug/nostr-rs-relay refs/tags/<tag>^{}
+   ```
+
+   Use the dereferenced (`^{}`) commit. The build fails if the clone's HEAD does not match `NRR_COMMIT`.
+2. **`startos/versions/current.ts`** — set `version` to `<upstream>:0` and update `releaseNotes` in every locale. The latest version always lives in this file; edit it in place. Spin off a new version file only when the bump needs an `up`/`down` migration — see [Versions](https://docs.start9.com/packaging/versions.html).
+3. Rebuild with `make` and confirm the relay starts.
+
+### Config compatibility
+
+nostr-rs-relay reads `config.toml` (modeled in `startos/fileModels/config.toml.ts`) and runs its own SQLite schema migrations on startup, so a version bump needs no StartOS-side data migration. When bumping, skim the upstream `config.toml` for any renamed or removed keys the file model writes — additive changes need no action.
