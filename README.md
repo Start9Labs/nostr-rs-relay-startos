@@ -27,14 +27,13 @@
 - [Dependencies](#dependencies)
 - [Limitations and Differences](#limitations-and-differences)
 - [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
-- [Contributing](#contributing)
 - [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
 ## Image and Container Runtime
 
-Single container running the `chekist32/nostr-rs-relay` image (third-party Docker build of the upstream source).
+Single container running nostr-rs-relay, compiled from source (Rust) in the `Dockerfile` and pinned to an upstream release tag.
 
 **Architectures:** x86_64, aarch64
 
@@ -110,9 +109,9 @@ max_consecutive_failures = 20
 |-----------|------|----------|------|-------------|
 | Relay Websocket | 8080 | `ws://` | api | Nostr client connections |
 
-Clients connect using standard Nostr websocket protocol. The interface is exposed via Tor (.onion) and LAN (.local).
+Clients connect using the standard Nostr websocket protocol. The interface is reachable on your LAN (`.local`) by default; you can additionally expose it over Tor by installing the Tor service and provisioning an `.onion` address for this interface.
 
-**Note:** Tor uses `ws://` (not `wss://`). Firefox users connecting to web clients like noStrudel must set `network.websocket.allowInsecureFromHTTPS` to `true` in `about:config`.
+**Note:** these addresses are plain `ws://` (not `wss://`). Firefox users connecting to web clients like noStrudel must set `network.websocket.allowInsecureFromHTTPS` to `true` in `about:config`.
 
 ---
 
@@ -201,17 +200,11 @@ None.
 
 ---
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development workflow.
-
----
-
 ## Quick Reference for AI Consumers
 
 ```yaml
 package_id: nostr-rs-relay
-image: chekist32/nostr-rs-relay
+image: built from source (scsibug/nostr-rs-relay, Rust)
 architectures:
   - x86_64
   - aarch64

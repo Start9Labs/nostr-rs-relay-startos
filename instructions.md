@@ -8,14 +8,14 @@
 ## What you get on StartOS
 
 - A **Nostr RS Relay** daemon backed by a SQLite database — your own Nostr relay that clients connect to over websocket.
-- A **Relay websocket** interface exposing the relay at port 8080 over Tor and LAN.
+- A **Relay websocket** interface exposing the relay at port 8080 on your LAN, and over Tor if you provision an `.onion` address for it.
 - Configuration entirely through StartOS Actions — there is no separate config UI, and you do not edit `config.toml` by hand.
 
 ## Using Nostr RS Relay
 
 ### Connecting clients
 
-The **Relay websocket** interface holds the URLs your clients use. Copy a Tor or LAN address from that interface and add it to your Nostr client of choice (Damus, Amethyst, noStrudel, etc.) as a relay.
+The **Relay websocket** interface holds the URLs your clients use. Copy a LAN address — or a Tor `.onion` address if you've provisioned one — from that interface and add it to your Nostr client of choice (Damus, Amethyst, noStrudel, etc.) as a relay.
 
 The relay speaks plain `ws://` rather than `wss://`. If you connect from a web client served over HTTPS (e.g. noStrudel in Firefox), set `network.websocket.allowInsecureFromHTTPS` to `true` in `about:config` so the browser will open the websocket.
 
