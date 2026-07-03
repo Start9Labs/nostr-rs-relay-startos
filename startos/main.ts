@@ -25,7 +25,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       readonly: false,
     })
 
-  const subcontainer = await sdk.SubContainer.of(
+  const subcontainer = sdk.SubContainer.of(
     effects,
     { imageId: 'nostr-rs-relay' },
     mounts,

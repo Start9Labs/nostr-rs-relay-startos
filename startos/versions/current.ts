@@ -5,18 +5,13 @@ import { join } from 'path'
 import { configToml } from '../fileModels/config.toml'
 
 export const current = VersionInfo.of({
-  version: '0.10.0:0',
+  version: '0.10.0:1',
   releaseNotes: {
-    en_US:
-      'Updates Nostr RS Relay to 0.10.0 (NIP-91 tag queries, dependency and stability fixes). The relay is now built from source rather than a third-party Docker image, so future releases can track upstream directly.',
-    es_ES:
-      'Actualiza Nostr RS Relay a 0.10.0 (consultas por etiqueta NIP-91, actualizaciones de dependencias y correcciones de estabilidad). El relay ahora se compila desde el código fuente en lugar de una imagen de terceros, para poder seguir las versiones upstream directamente.',
-    de_DE:
-      'Aktualisiert Nostr RS Relay auf 0.10.0 (NIP-91-Tag-Abfragen, Abhängigkeits- und Stabilitätskorrekturen). Das Relay wird jetzt aus dem Quellcode gebaut statt aus einem Drittanbieter-Image, sodass künftige Versionen direkt dem Upstream folgen können.',
-    pl_PL:
-      'Aktualizuje Nostr RS Relay do 0.10.0 (zapytania po tagach NIP-91, aktualizacje zależności i poprawki stabilności). Relay jest teraz budowany ze źródeł zamiast obrazu od osób trzecich, dzięki czemu kolejne wydania mogą śledzić upstream bezpośrednio.',
-    fr_FR:
-      "Met à jour Nostr RS Relay vers 0.10.0 (requêtes par tag NIP-91, mises à jour des dépendances et corrections de stabilité). Le relay est désormais compilé depuis les sources plutôt qu'à partir d'une image tierce, afin que les futures versions puissent suivre l'upstream directement.",
+    en_US: 'Internal updates (start-sdk 2.0.x)',
+    es_ES: 'Actualizaciones internas (start-sdk 2.0.x)',
+    de_DE: 'Interne Aktualisierungen (start-sdk 2.0.x)',
+    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 2.0.x)',
+    fr_FR: 'Mises à jour internes (start-sdk 2.0.x)',
   },
   migrations: {
     up: async ({ effects }) => {
