@@ -1,4 +1,4 @@
-import { Patterns } from '@start9labs/start-sdk/base/lib/util'
+import { utils } from '@start9labs/start-sdk'
 import { configToml } from '../fileModels/config.toml'
 import { sdk } from '../sdk'
 import { i18n } from '../i18n'
@@ -16,7 +16,7 @@ const domainWhitelistSpec = InputSpec.of({
         ),
       },
       {
-        patterns: [Patterns.hostname],
+        patterns: [utils.Patterns.hostname],
         placeholder: 'start9.com',
       },
     ),
@@ -34,7 +34,7 @@ const domainBlacklistSpec = InputSpec.of({
         ),
       },
       {
-        patterns: [Patterns.hostname],
+        patterns: [utils.Patterns.hostname],
         placeholder: 'bitcoin.com',
       },
     ),
