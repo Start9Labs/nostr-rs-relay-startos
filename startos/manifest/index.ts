@@ -6,8 +6,7 @@ export const manifest = setupManifest({
   title: 'Nostr RS Relay',
   license: 'MIT',
   donationUrl: null,
-  packageRepo:
-    'https://github.com/Start9Labs/nostr-rs-relay-startos',
+  packageRepo: 'https://github.com/Start9Labs/nostr-rs-relay-startos',
   upstreamRepo: 'https://sr.ht/~gheartsfield/nostr-rs-relay/',
   marketingUrl: 'https://nostr.com/',
   description: { short, long },

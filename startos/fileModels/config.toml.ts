@@ -50,7 +50,10 @@ export const shape = z.object({
     .catch(undefined),
   verified_users: z
     .object({
-      mode: z.enum(['enabled', 'disabled', 'passive']).optional().catch(undefined),
+      mode: z
+        .enum(['enabled', 'disabled', 'passive'])
+        .optional()
+        .catch(undefined),
       verify_expiration: z.string().optional().catch(undefined),
       verify_update_frequency: z.string().optional().catch(undefined),
       max_consecutive_failures: z.number().optional().catch(undefined),

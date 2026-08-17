@@ -30,7 +30,9 @@ export const inputSpec = InputSpec.of({
   }),
   pubkey: Value.text({
     name: i18n('Admin Pubkey'),
-    description: i18n('The Nostr hex pubkey (not npub) of the relay administrator'),
+    description: i18n(
+      'The Nostr hex pubkey (not npub) of the relay administrator',
+    ),
     required: false,
     default: null,
     placeholder: 'hex pubkey (not npub)',
