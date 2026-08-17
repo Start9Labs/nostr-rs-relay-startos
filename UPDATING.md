@@ -24,6 +24,7 @@ The latest release is the highest semver tag. Do **not** use crates.io — it is
    ```
 
    Use the dereferenced (`^{}`) commit. The build fails if the clone's HEAD does not match `NRR_COMMIT`.
+
 2. **`startos/versions/current.ts`** — set `version` to `<upstream>:0` and update `releaseNotes` in every locale. The latest version always lives in this file; edit it in place. Spin off a new version file only when the bump needs an `up`/`down` migration — see [Versions](https://docs.start9.com/packaging/versions.html).
 3. Rebuild with `make` and confirm the relay starts.
 

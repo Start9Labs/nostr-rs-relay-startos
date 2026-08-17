@@ -4,13 +4,15 @@
 
 # Nostr RS Relay on StartOS
 
-> **Upstream docs:** <https://github.com/scsibug/nostr-rs-relay/blob/master/README.md>
->
 > Everything not listed in this document should behave the same as upstream
-> Nostr RS Relay. If a feature, setting, or behavior is not mentioned
-> here, the upstream documentation is accurate and fully applicable.
+> nostr-rs-relay. If a feature, setting, or behavior is not mentioned here, the
+> upstream documentation is accurate and fully applicable — see the
+> Documentation section of `instructions.md` for links.
 
-[Nostr RS Relay](https://sr.ht/~gheartsfield/nostr-rs-relay/) is a Nostr relay written in Rust that supports the entire relay protocol.
+[nostr-rs-relay](https://sr.ht/~gheartsfield/nostr-rs-relay/) is a Nostr relay: a websocket server that accepts, stores, and serves signed Nostr events. This package builds it from a pinned upstream release, exposes its whole configuration through four forms, and keeps the relay's data and its settings on separate volumes.
+
+- **Upstream repo:** <https://sr.ht/~gheartsfield/nostr-rs-relay/>
+- **Wrapper repo:** <https://github.com/Start9Labs/nostr-rs-relay-startos>
 
 ---
 
@@ -18,185 +20,169 @@
 
 - [Image and Container Runtime](#image-and-container-runtime)
 - [Volume and Data Layout](#volume-and-data-layout)
-- [Installation and First-Run Flow](#installation-and-first-run-flow)
-- [Configuration Management](#configuration-management)
-- [Network Access and Interfaces](#network-access-and-interfaces)
-- [Actions (StartOS UI)](#actions-startos-ui)
-- [Backups and Restore](#backups-and-restore)
-- [Health Checks](#health-checks)
+- [File Models](#file-models)
 - [Dependencies](#dependencies)
+- [Network Access and Interfaces](#network-access-and-interfaces)
+- [Installation and First-Run Flow](#installation-and-first-run-flow)
+- [Actions](#actions)
+- [Tasks](#tasks)
+- [Health Checks](#health-checks)
+- [Backups and Restore](#backups-and-restore)
 - [Limitations and Differences](#limitations-and-differences)
-- [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
 - [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
 ## Image and Container Runtime
 
-Single container running nostr-rs-relay, compiled from source (Rust) in the `Dockerfile` and pinned to an upstream release tag.
+Built from source rather than pulled, because upstream publishes no image this package can use.
 
-**Architectures:** x86_64, aarch64
+| Property      | Value                                                                    |
+| ------------- | ------------------------------------------------------------------------ |
+| Image         | Built from `Dockerfile` — a Rust build stage, then a slim Debian runtime |
+| Architectures | x86_64, aarch64                                                          |
+| Command       | `./nostr-rs-relay --db /usr/src/app/db`                                  |
 
-**Startup order:** A `chown` one-shot sets ownership of the app directory to `appuser`, then the relay daemon starts.
+| Subcontainer         | Purpose                                       |
+| -------------------- | --------------------------------------------- |
+| `nostr-rs-relay-sub` | The `primary` daemon — the one to `attach` to |
 
----
+**The build is pinned to a release tag _and_ the commit that tag points to**, and the build fails outright if they ever disagree. That guards against a re-pointed tag silently changing what ships. Upstream develops on SourceHut; the build clones GitHub's faithful mirror, which has identical commit hashes and is more reliable to clone from.
+
+The runtime stage deliberately mirrors upstream's own Dockerfile — same working directory, same `appuser`, same database path, same relative config path — so the image contract this package's code depends on stays upstream's rather than becoming a local invention. The command is in exec form so StartOS's SIGTERM reaches the relay directly instead of a shell wrapper.
+
+One oneshot, `chown`, hands the working directory to `appuser` before the daemon starts, since StartOS creates volumes root-owned.
 
 ## Volume and Data Layout
 
-| Volume | Mount Point | Purpose |
-|--------|-------------|---------|
-| `main` | N/A (host) | StartOS metadata (migration use only) |
-| `db` | `/usr/src/app/db` | SQLite database for relay data |
-| `config` | `/usr/src/app/config.toml` (file mount) | TOML configuration file |
+Three volumes are declared and two carry data.
 
----
+| Volume   | Mount Point                                                | Purpose                                                      |
+| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| `db`     | `/usr/src/app/db`                                          | The SQLite event database — every event the relay has stored |
+| `config` | its `config.toml` at `/usr/src/app/config.toml`, as a file | The relay's configuration                                    |
+| `main`   | — (unused)                                                 | Retained only for the 0.10.0:1 migration path                |
 
-## Installation and First-Run Flow
+**Splitting the database from the config is what makes the config replaceable without touching the data.** The config is mounted as a single file, not a directory, so nothing else on that volume enters the container.
 
-| Step | Upstream | StartOS |
-|------|----------|---------|
-| Installation | Build from source or run Docker image | Install from marketplace or sideload `.s9pk` |
-| Configuration | Edit `config.toml` manually | Writes default `config.toml` with restrictive limits suitable for private relay operation |
-| Network binding | User configures address/port | Fixed to `0.0.0.0:8080`, managed by StartOS |
+The event database grows with what the relay accepts, and is the only thing here that cannot be rebuilt — events are signed by their authors and cannot be regenerated.
 
----
+## File Models
 
-## Configuration Management
+One model, holding the relay's whole configuration.
 
-Configuration is managed entirely through Actions — there is no traditional config UI. The relay uses a TOML config file at `/usr/src/app/config.toml`.
+| File          | Format | Modelled                | Written by                                 |
+| ------------- | ------ | ----------------------- | ------------------------------------------ |
+| `config.toml` | TOML   | Yes — `FileHelper.toml` | Every init, and the four configure actions |
 
-### StartOS-Managed Settings
+**Enforced** — rewritten whenever the package writes: the listen address and port, so the relay always binds where the interface publishes, and the future-timestamp rejection window.
 
-| Category | Settings |
-|----------|----------|
-| `info.*` | Relay metadata (name, description, pubkey, contact) |
-| `network.*` | Network binding (fixed: `0.0.0.0:8080`) |
-| `options.*` | Protocol options (fixed defaults) |
-| `limits.*` | Rate limits, buffer sizes, event kind filtering |
-| `authorization.pubkey_whitelist` | Authorized pubkeys for private relay |
-| `verified_users.*` | NIP-05 verification settings |
+**Yours** — everything else, and it is the bulk of the file: relay identity and contact details, the event kind allow- and block-lists, the pubkey whitelist, the NIP-05 verification settings with their domain lists, and every rate and size limit. Each of the four actions owns one group.
 
-### Fixed Defaults (not exposed to user)
-
-```toml
-[network]
-address = "0.0.0.0"
-port = 8080
-
-[options]
-reject_future_seconds = 1600
-
-[limits]
-messages_per_sec = 10
-subscriptions_per_min = 10
-max_blocking_threads = 16
-max_event_bytes = 131072
-max_ws_message_bytes = 131072
-max_ws_frame_bytes = 131072
-broadcast_buffer = 16384
-event_persist_buffer = 4096
-
-[verified_users]
-mode = "disabled"
-max_consecutive_failures = 20
-```
-
----
-
-## Network Access and Interfaces
-
-| Interface | Port | Protocol | Type | Description |
-|-----------|------|----------|------|-------------|
-| Relay Websocket | 8080 | `ws://` | api | Nostr client connections |
-
-Clients connect using the standard Nostr websocket protocol. The interface is reachable on your LAN (`.local`) by default; you can additionally expose it over Tor by installing the Tor service and provisioning an `.onion` address for this interface.
-
-**Note:** these addresses are plain `ws://` (not `wss://`). Firefox users connecting to web clients like noStrudel must set `network.websocket.allowInsecureFromHTTPS` to `true` in `about:config`.
-
----
-
-## Actions (StartOS UI)
-
-All actions are in the `configure` group, have visibility `enabled`, and are available at any service status (running or stopped).
-
-### General Information (`configure-info`)
-
-Configures relay metadata exposed to clients:
-- **Name**: Human-readable relay name
-- **Description**: Detailed relay description
-- **Admin Pubkey**: Relay operator's Nostr hex pubkey (not npub)
-- **Admin Contact URI**: mailto: URI for contact
-- **External Address**: Public URL for relay (selects from available interfaces)
-
-### Permitted Events (`configure-events`)
-
-Control which Nostr event kinds are accepted:
-- **Permit all**: Accept all event kinds (default)
-- **Whitelist**: Only accept specified event kinds
-- **Blacklist**: Reject specified event kinds, accept all others
-
-### Restrict Access (`configure-restrict`)
-
-Configure who can publish to the relay:
-- **NIP-05 Verification**: Enable/disable/passive verification of user identities
-- **Domain Permissions**: Whitelist or blacklist NIP-05 domains
-- **Verify Expiration / Update Frequency**: Timing controls for NIP-05 checks
-- **Max Consecutive Failures**: Give up threshold for verification
-- **Pubkey Whitelist**: List of authorized hex pubkeys (for private relay operation)
-
-### Set Data Limits (`configure-limits`)
-
-Adjust performance and protection limits:
-- Messages per second (server-wide)
-- Subscriptions per minute
-- Max blocking threads
-- Max event/websocket message/frame sizes (bytes)
-- Broadcast and event persistence buffer sizes (events)
-
----
-
-## Backups and Restore
-
-**Volumes backed up:** `db`, `config`
-
-- `db` — SQLite database with all relay data
-- `config` — TOML configuration file
-
-**Restore behavior:** All relay data and configuration are restored. No reconfiguration needed.
-
----
-
-## Health Checks
-
-| Check | Method | Display | Message |
-|-------|--------|---------|---------|
-| Relay | Port listening (8080) | "Relay" | "Relay is ready" / "Relay is unreachable" |
-
----
+A key left unset is absent from the file entirely rather than written as a zero or an empty list, so the relay applies its own default. Clearing a field in a form is therefore how you hand a setting back rather than pin it.
 
 ## Dependencies
 
-None.
+None. The relay bundles its own SQLite database and needs nothing else installed.
 
----
+## Network Access and Interfaces
+
+One interface. Nostr clients connect to it as a websocket, which is what the relay's whole protocol runs over.
+
+| Interface       | Id      | Type | Port | Description                                 |
+| --------------- | ------- | ---- | ---- | ------------------------------------------- |
+| Relay websocket | `relay` | api  | 8080 | Nostr clients use this interface to connect |
+
+The port is bound on the `websocket` MultiHost with the `ws` protocol, and is not masked.
+
+**`relay_url` in the config is separate from this**, and is yours to set. It is what the relay advertises about itself to clients querying its metadata — so it should be an address the relay actually publishes, or clients are told to reconnect somewhere that does not answer.
+
+## Installation and First-Run Flow
+
+Install seeds a config and starts the relay. There is no task, no account, and no credential — a fresh relay is **open**: any client that can reach it can publish events to it and read them back.
+
+That is a reasonable default for a relay you have not published an address for, and a poor one for an address you have shared. Before sharing it, decide:
+
+- **Who may publish.** Restrict Access limits writes to a pubkey whitelist, or to users verified by NIP-05.
+- **What may be published.** Permitted Events allow-lists or block-lists event kinds.
+- **How much.** Set Data Limits caps message rates, event sizes, and subscription counts.
+
+Filling in General Information is worth doing regardless: without it, clients discovering your relay see no name, description, or contact.
+
+## Actions
+
+Four actions, all in one **Configure** group, all available whether or not the service is running, and all applied on the next restart. Each owns one section of the config and pre-fills from the current file.
+
+### General Information
+
+The relay's public identity: name, description, contact, operator pubkey, the advertised relay URL, and the icon, favicon, and landing page.
+
+- **What it changes:** the `info` section.
+- **Cost:** seconds, then a restart.
+- **Repeat safety:** idempotent.
+- **This is what other people see.** Nostr clients read it to describe your relay in their UI.
+
+### Permitted Events
+
+Which event kinds the relay accepts, as an allow-list or a block-list.
+
+- **What it changes:** the kind lists in the `limits` section.
+- **Cost:** seconds, then a restart.
+- **Repeat safety:** idempotent.
+- **It does not delete anything.** Blocking a kind stops new events of that kind being accepted; events already stored stay stored and are still served.
+
+### Restrict Access
+
+Limits who may use the relay — a pubkey whitelist, and NIP-05 verification with its own domain allow- and block-lists.
+
+- **What it changes:** the `authorization` and `verified_users` sections.
+- **Cost:** seconds, then a restart.
+- **Repeat safety:** idempotent.
+- **Verification has three modes**, and `passive` is the one to know: it verifies and records, but does not reject unverified users. Use it to see what a restriction would do before enforcing it.
+- **A whitelist applies to writes, not reads.** Restricting who can publish does not make the relay's contents private.
+
+### Set Data Limits
+
+Rate and size caps: messages per second, subscriptions per minute, maximum event and websocket frame sizes, and the internal buffer and thread limits.
+
+- **What it changes:** the `limits` section.
+- **Cost:** seconds, then a restart.
+- **Repeat safety:** idempotent.
+- **Leaving a field blank removes the cap** rather than setting it to zero.
+- **These are the abuse controls.** An open relay with no limits will accept whatever is sent to it, at whatever rate.
+
+## Tasks
+
+None. This package raises no tasks, so the service is never held on a prompt and its ordinary controls are always available.
+
+## Health Checks
+
+One check, on the only daemon.
+
+| Check     | Displayed | Method                 |
+| --------- | --------- | ---------------------- |
+| `primary` | "Relay"   | Port 8080 is listening |
+
+The relay binds quickly, so a failure means it did not start — most often a `config.toml` value it rejects, which it names in the service logs. A relay that is green but refuses events is working as configured: check the event-kind lists and the access restrictions before treating it as a fault.
+
+## Backups and Restore
+
+Two volumes are copied wholesale — `sdk.Backups.ofVolumes('db', 'config')`. No dump step and nothing excluded.
+
+- **Included:** the whole event database, and `config.toml` with the relay's identity and every restriction.
+- **Not included:** the unused `main` volume.
+- **Size:** the event database is the whole of it, and a busy public relay's grows without bound — there is no retention policy here to trim it.
+- **Restore:** complete, and no task is raised. Check `relay_url` afterwards: it is yours rather than derived, so a restore onto a differently-addressed server keeps advertising the old address until you change it.
 
 ## Limitations and Differences
 
-1. **No payment support** — Pay-to-relay functionality has been removed from this package.
-2. **Fixed network binding** — Always binds to `0.0.0.0:8080`; not configurable.
-3. **No favicon/relay_page upload** — File upload for custom branding is not implemented.
-4. **WebSocket over Tor** — Uses `ws://` not `wss://`, requiring browser configuration for web clients.
-
----
-
-## What Is Unchanged from Upstream
-
-- Full Nostr relay protocol support
-- SQLite database backend
-- NIP-05 verification
-- Event kind filtering
-- Rate limiting and abuse protection
-- All relay information fields (NIP-11)
+1. **A fresh relay is open** to both reads and writes. Every restriction is opt-in.
+2. **Restricting writes does not make reads private.** Anything stored is served to anyone who asks.
+3. **`relay_url` is not derived from the published addresses** and does not follow a restore.
+4. **There is no retention or pruning.** The event database only grows.
+5. **Blocking an event kind is not retroactive** — stored events of that kind remain.
+6. **The image is built from source**, pinned to a release tag and its commit; a re-pointed tag fails the build rather than shipping silently.
+7. **No riscv64 build.** x86_64 and aarch64 only.
 
 ---
 
@@ -204,21 +190,28 @@ None.
 
 ```yaml
 package_id: nostr-rs-relay
-image: built from source (scsibug/nostr-rs-relay, Rust)
+image: ./Dockerfile # built from a pinned upstream release tag + commit
 architectures:
   - x86_64
   - aarch64
+subcontainers:
+  - nostr-rs-relay-sub # the only container; also runs the chown oneshot
 volumes:
-  main: host (StartOS metadata)
   db: /usr/src/app/db
-  config: /usr/src/app/config.toml (file mount)
-ports:
-  relay: 8080
-dependencies: none
-startos_managed_env_vars: []
+  config: its config.toml at /usr/src/app/config.toml (file mount)
+  main: unused; legacy
+file_models:
+  - config.toml
+startos_managed_env_vars: [] # RUST_LOG and APP_DATA come from the image
+dependencies: []
+interfaces:
+  relay: { type: api, port: 8080 } # websocket
 actions:
   - configure-info
   - configure-events
   - configure-restrict
   - configure-limits
+tasks: []
+health_checks:
+  - primary # displayed "Relay"
 ```
