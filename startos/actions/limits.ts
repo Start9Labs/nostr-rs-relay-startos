@@ -9,7 +9,7 @@ export const inputSpec = InputSpec.of({
   messages_per_sec: Value.number({
     name: i18n('Messages Per Second Limit'),
     description: i18n(
-      'Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection',
+      'Limit events created per second, averaged over one minute. Note: this is for the server as a whole, not per connection. Leave blank for no limit',
     ),
     required: false,
     default: null,
@@ -21,7 +21,7 @@ export const inputSpec = InputSpec.of({
   subscriptions_per_min: Value.number({
     name: i18n('Subscriptions Per Minute Limit'),
     description: i18n(
-      'Limit client subscriptions created per second, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service',
+      'Limit client subscriptions created, averaged over one minute. Strongly recommended to set this to a low value such as 10 to ensure fair service. Leave blank for no limit',
     ),
     required: false,
     default: null,
@@ -33,7 +33,7 @@ export const inputSpec = InputSpec.of({
   max_blocking_threads: Value.number({
     name: i18n('Max Blocking Threads'),
     description: i18n(
-      'Maximum number of blocking threads used for database connections',
+      "Maximum number of blocking threads used for database connections. Leave blank for the relay's default of 16",
     ),
     required: false,
     default: null,
@@ -45,7 +45,7 @@ export const inputSpec = InputSpec.of({
   max_event_bytes: Value.number({
     name: i18n('Max Event Size'),
     description: i18n(
-      'Limit the maximum size of an EVENT message. Set to 0 for unlimited',
+      "Limit the maximum size of an EVENT message. Leave blank for the relay's default of 128 KB",
     ),
     required: false,
     default: null,
@@ -56,7 +56,9 @@ export const inputSpec = InputSpec.of({
   }),
   max_ws_message_bytes: Value.number({
     name: i18n('Max Websocket Message Size'),
-    description: i18n('Maximum WebSocket message in bytes.'),
+    description: i18n(
+      "Maximum WebSocket message size. Leave blank for the relay's default of 128 KB",
+    ),
     required: false,
     default: null,
     integer: true,
@@ -66,7 +68,9 @@ export const inputSpec = InputSpec.of({
   }),
   max_ws_frame_bytes: Value.number({
     name: i18n('Max Websocket Frame Size'),
-    description: i18n('Maximum WebSocket frame size in bytes.'),
+    description: i18n(
+      "Maximum WebSocket frame size. Leave blank for the relay's default of 128 KB",
+    ),
     required: false,
     default: null,
     integer: true,
