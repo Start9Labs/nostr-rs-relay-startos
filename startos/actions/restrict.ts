@@ -51,7 +51,7 @@ export const inputSpec = InputSpec.of({
       mode: Value.select({
         name: i18n('Mode'),
         description: i18n(
-          'NIP-05 verification of users. Can be "enabled" to require NIP-05 metadata for event authors, "passive" to perform validation but never block publishing, or "disabled" to do nothing',
+          '- Disabled: no NIP-05 verification.\n- Enabled: event authors must have NIP-05 metadata to publish.\n- Passive: authors are verified, but publishing is never blocked.',
         ),
         default: 'disabled',
         values: {
@@ -63,7 +63,7 @@ export const inputSpec = InputSpec.of({
       domains_union: Value.union({
         name: i18n('Domain Permissions'),
         description: i18n(
-          'Permit all domains, or whitelist/blacklist certain domains',
+          '- Permit all Domains: no restriction by domain.\n- Domain Whitelist: only events from authors NIP-05 verified at the domains you list are kept.\n- Domain Blacklist: authors at the domains you list are prevented from publishing.',
         ),
         default: 'all',
         variants: Variants.of({
@@ -90,7 +90,7 @@ export const inputSpec = InputSpec.of({
       verify_expiration: Value.text({
         name: i18n('Verify Expiration'),
         description: i18n(
-          'Consider an pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time. Note, if the domain provides a successful response that omits the account, verification is immediately revoked. Value must be in the form of "1 week" or "2 days" or "12 hours"',
+          'Consider a pubkey "verified" if we have a successful validation from the NIP-05 domain within this amount of time. Note, if the domain provides a successful response that omits the account, verification is immediately revoked. Value must be in the form of "1 week" or "2 days" or "12 hours"',
         ),
         required: false,
         default: null,

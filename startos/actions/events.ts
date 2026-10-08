@@ -56,7 +56,7 @@ export const inputSpec = InputSpec.of({
     name: i18n('Permitted Event Types'),
     default: 'all',
     description: i18n(
-      'Permit all event kinds, or create a whitelist or blacklist certain event kinds. For a list of event kinds, see here: https://github.com/nostr-protocol/nips#event-kinds',
+      '- Permit all Event Types: the relay accepts every event kind.\n- Event Type Whitelist: the relay accepts only the kinds you list and discards all others.\n- Event Type Blacklist: the relay discards the kinds you list and accepts all others.\nEvent kinds are listed at https://github.com/nostr-protocol/nips#event-kinds',
     ),
     variants: Variants.of({
       all: {

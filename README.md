@@ -148,7 +148,7 @@ Rate and size caps: messages per second, subscriptions per minute, maximum event
 - **What it changes:** the `limits` section.
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** idempotent.
-- **Leaving a field blank removes the cap** rather than setting it to zero.
+- **Leaving a field blank hands it back to the relay's own default** rather than setting it to zero: no limit for the message and subscription rates, 256 KiB for the event and websocket sizes, 16 blocking threads.
 - **These are the abuse controls.** An open relay with no limits will accept whatever is sent to it, at whatever rate.
 
 ## Tasks

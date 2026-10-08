@@ -2,9 +2,9 @@ import { FileHelper, z } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 import { relayInterfacePort } from '../utils'
 
-export const shape = z.object({
+export const shape = z.looseObject({
   info: z
-    .object({
+    .looseObject({
       relay_url: z.string().optional().catch(undefined),
       name: z.string().optional().catch(undefined),
       description: z.string().optional().catch(undefined),
@@ -17,18 +17,18 @@ export const shape = z.object({
     .optional()
     .catch(undefined),
   network: z
-    .object({
+    .looseObject({
       address: z.literal('0.0.0.0').catch('0.0.0.0'),
       port: z.literal(relayInterfacePort).catch(relayInterfacePort),
     })
     .catch({ address: '0.0.0.0', port: relayInterfacePort }),
   options: z
-    .object({
+    .looseObject({
       reject_future_seconds: z.literal(1600).catch(1600),
     })
     .catch({ reject_future_seconds: 1600 }),
   limits: z
-    .object({
+    .looseObject({
       messages_per_sec: z.number().optional().catch(undefined),
       subscriptions_per_min: z.number().optional().catch(undefined),
       max_blocking_threads: z.number().optional().catch(undefined),
@@ -43,13 +43,13 @@ export const shape = z.object({
     .optional()
     .catch(undefined),
   authorization: z
-    .object({
+    .looseObject({
       pubkey_whitelist: z.array(z.string()).optional().catch(undefined),
     })
     .optional()
     .catch(undefined),
   verified_users: z
-    .object({
+    .looseObject({
       mode: z
         .enum(['enabled', 'disabled', 'passive'])
         .optional()

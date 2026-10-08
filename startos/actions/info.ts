@@ -12,7 +12,7 @@ export const inputSpec = InputSpec.of({
   ),
   name: Value.text({
     name: i18n('Name'),
-    description: i18n("Your relay's human-readable name"),
+    description: null,
     required: false,
     default: null,
     placeholder: 'My Public Relay',
@@ -21,7 +21,7 @@ export const inputSpec = InputSpec.of({
   }),
   description: Value.text({
     name: i18n('Description'),
-    description: i18n('A detailed description for your relay'),
+    description: null,
     required: false,
     default: null,
     placeholder: 'The best relay in town',
@@ -47,7 +47,9 @@ export const inputSpec = InputSpec.of({
   }),
   contact: Value.text({
     name: i18n('Admin Contact URI'),
-    description: i18n('Contact URI of the relay administrator'),
+    description: i18n(
+      "An email address where people can reach the relay's administrator, written as mailto:you@example.com",
+    ),
     required: false,
     default: null,
     placeholder: 'mailto:contact@example.com',
@@ -70,7 +72,9 @@ export const configureInfo = sdk.Action.withInput(
   // metadata
   async ({ effects }) => ({
     name: i18n('General Information'),
-    description: i18n('Provide basic information about your Nostr relay'),
+    description: i18n(
+      'Set the name, description and administrator details that Nostr clients see when they look up your relay, and the address it advertises as its own',
+    ),
     warning: null,
     allowedStatuses: 'any',
     group: 'configure',
@@ -111,12 +115,12 @@ export function getExternalAddresses() {
     return {
       name: i18n('External Address'),
       description: i18n(
-        "Address at which your node can be reached by peers. Select 'None' if you do not want your node to be reached by peers.",
+        "The advertised URL for the relay's websocket. Choose an address the clients you share it with can reach, or None to advertise none",
       ),
       values: urls.reduce((obj, url) => ({ ...obj, [url]: url }), {
         none: i18n('None'),
       } as Record<string, string>),
-      default: urls.find((u) => u.endsWith('.onion')) || '',
+      default: urls.find((u) => u.endsWith('.onion')) ?? null,
     }
   })
 }
