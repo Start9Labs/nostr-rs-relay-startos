@@ -70,6 +70,7 @@ const dict = {
   'Hexadecimal format required. Go to https://damus.io/key/ to convert an npub to hex': 60,
   'Restrict Access': 61,
   'Limit relay usage to verified or authorized users': 62,
+  'Must be a number and a unit, such as "1 week", "2 days" or "12 hours"': 81,
 
   // configure/limits.ts
   'Messages Per Second Limit': 63,

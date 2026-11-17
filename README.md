@@ -93,7 +93,7 @@ One interface. Nostr clients connect to it as a websocket, which is what the rel
 | --------------- | ------- | ---- | ---- | ------------------------------------------- |
 | Relay websocket | `relay` | api  | 8080 | Nostr clients use this interface to connect |
 
-The port is bound on the `websocket` MultiHost with the `ws` protocol, and is not masked.
+The port is bound on the `websocket` MultiHost with the `ws` protocol, and is not masked. StartOS terminates TLS in front of it, so clients off the server connect to `wss://` addresses while the relay itself serves plain websocket on 8080. A LAN or `.local` address carries the server's own certificate, which a client accepts only on a device that trusts the server's Root CA.
 
 **`relay_url` in the config is separate from this**, and is yours to set. It is what the relay advertises about itself to clients querying its metadata — so it should be an address the relay actually publishes, or clients are told to reconnect somewhere that does not answer.
 
@@ -140,6 +140,8 @@ Limits who may use the relay — a pubkey whitelist, and NIP-05 verification wit
 - **Repeat safety:** idempotent.
 - **Verification has three modes**, and `passive` is the one to know: it verifies and records, but does not reject unverified users. Use it to see what a restriction would do before enforcing it.
 - **A whitelist applies to writes, not reads.** Restricting who can publish does not make the relay's contents private.
+- **An empty Authorized Pubkeys list writes no whitelist**, so every pubkey may publish. Entries are stored in lowercase, the form the relay compares event pubkeys against.
+- **Verification intervals are a number and a unit** — `2 days`, `12 hours`, `1h30m`. The relay refuses to start on an interval it cannot parse.
 
 ### Set Data Limits
 
