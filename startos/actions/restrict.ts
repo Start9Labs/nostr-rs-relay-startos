@@ -5,6 +5,15 @@ import { i18n } from '../i18n'
 
 const { InputSpec, Value, List, Variants } = sdk
 
+// A subset of what the relay's duration parser reads; it refuses to start on anything it can't.
+const durationPattern = {
+  regex:
+    '^\\s*(\\d{1,6}\\s*(s|secs?|seconds?|m|mins?|minutes?|h|hrs?|hours?|d|days?|w|weeks?|months?|years?)\\s*)+$',
+  description: i18n(
+    'Must be a number and a unit, such as "1 week", "2 days" or "12 hours"',
+  ),
+}
+
 // domain whitelist spec
 const domainWhitelistSpec = InputSpec.of({
   domain_whitelist: Value.list(
@@ -94,7 +103,7 @@ export const inputSpec = InputSpec.of({
         ),
         required: false,
         default: null,
-        patterns: [], // enforce "number unit", e.g. "2 weeks"
+        patterns: [durationPattern],
       }),
       verify_update_frequency: Value.text({
         name: i18n('Verify Update Frequency'),
@@ -103,7 +112,7 @@ export const inputSpec = InputSpec.of({
         ),
         required: false,
         default: null,
-        patterns: [], // enforce "number unit", e.g. "2 weeks"
+        patterns: [durationPattern],
       }),
       max_consecutive_failures: Value.number({
         name: i18n('Max Consecutive Failures'),
@@ -130,7 +139,7 @@ export const inputSpec = InputSpec.of({
         placeholder: 'hex pubkey (not npub)',
         patterns: [
           {
-            regex: '[0-9a-fA-F]{64}',
+            regex: '^[0-9a-fA-F]{64}$',
             description: i18n(
               'Hexadecimal format required. Go to https://damus.io/key/ to convert an npub to hex',
             ),
@@ -164,31 +173,28 @@ export const configureRestrict = sdk.Action.withInput(
     if (!data) return
 
     const { verified_users, authorization } = data
-    if (!verified_users || !authorization) return
+    const { domain_whitelist, domain_blacklist, ...verification } =
+      verified_users ?? {}
 
     return {
       verified_users: {
-        ...verified_users,
-        domains_union: verified_users.domain_whitelist?.length
+        ...verification,
+        domains_union: domain_whitelist?.length
           ? {
               selection: 'domain_whitelist' as const,
-              value: {
-                domain_whitelist: verified_users.domain_whitelist,
-              },
+              value: { domain_whitelist },
             }
-          : verified_users.domain_blacklist?.length
+          : domain_blacklist?.length
             ? {
                 selection: 'domain_blacklist' as const,
-                value: {
-                  domain_blacklist: verified_users.domain_blacklist,
-                },
+                value: { domain_blacklist },
               }
             : {
                 selection: 'all' as const,
                 value: {},
               },
       },
-      pubkey_whitelist: authorization.pubkey_whitelist,
+      pubkey_whitelist: authorization?.pubkey_whitelist,
     }
   },
 
@@ -219,7 +225,11 @@ export const configureRestrict = sdk.Action.withInput(
                 domain_blacklist: undefined,
               }),
       },
-      authorization: { pubkey_whitelist: input.pubkey_whitelist },
+      authorization: {
+        pubkey_whitelist: input.pubkey_whitelist.length
+          ? input.pubkey_whitelist.map((k) => k.toLowerCase())
+          : undefined,
+      },
     })
   },
 )

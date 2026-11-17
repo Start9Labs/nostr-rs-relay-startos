@@ -3,7 +3,8 @@
 # (paths, user, run command) matches what startos/main.ts expects:
 # WORKDIR /usr/src/app, USER appuser, db at /usr/src/app/db, config read from
 # ./config.toml relative to WORKDIR.
-FROM docker.io/library/rust:1-bookworm AS builder
+# The sqlx 0.6 in upstream's lockfile does not compile on Rust 1.100 or later.
+FROM docker.io/library/rust:1.99-bookworm AS builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

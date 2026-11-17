@@ -80,6 +80,7 @@ export default {
     78: 'Tamaño del buffer de persistencia de eventos, en número de eventos. Esto proporciona contrapresión a los emisores si las escrituras son lentas',
     79: 'Establecer límites de datos',
     80: 'Establece límites para optimizar el rendimiento y proteger tu relay del abuso',
+    81: 'Debe ser un número y una unidad, por ejemplo "1 week", "2 days" o "12 hours"',
   },
   de_DE: {
     0: 'Starte Nostr RS Relay!',
@@ -160,6 +161,7 @@ export default {
     78: 'Ereignis-Persistenz-Puffergröße in Anzahl der Ereignisse. Dies bietet Gegendruck für Sender, wenn Schreibvorgänge langsam sind',
     79: 'Datenlimits festlegen',
     80: 'Lege Limits fest, um die Leistung zu optimieren und dein Relay vor Missbrauch zu schützen',
+    81: 'Muss eine Zahl und eine Einheit sein, z. B. "1 week", "2 days" oder "12 hours"',
   },
   pl_PL: {
     0: 'Uruchamianie Nostr RS Relay!',
@@ -240,6 +242,7 @@ export default {
     78: 'Rozmiar bufora trwałości wydarzeń w liczbie wydarzeń. Zapewnia to przeciwciśnienie dla nadawców, gdy zapisy są wolne',
     79: 'Ustaw limity danych',
     80: 'Ustaw limity aby zoptymalizować wydajność i chronić relay przed nadużyciami',
+    81: 'Musi to być liczba i jednostka, np. "1 week", "2 days" lub "12 hours"',
   },
   fr_FR: {
     0: 'Démarrage de Nostr RS Relay !',
@@ -320,5 +323,6 @@ export default {
     78: "Taille du buffer de persistance d'événements, en nombre d'événements. Cela fournit une contre-pression aux émetteurs si les écritures sont lentes",
     79: 'Définir les limites de données',
     80: 'Établissez des limites pour optimiser les performances et protéger votre relay contre les abus',
+    81: 'Doit être un nombre suivi d\'une unité, par exemple "1 week", "2 days" ou "12 hours"',
   },
 } satisfies Record<string, LangDict>

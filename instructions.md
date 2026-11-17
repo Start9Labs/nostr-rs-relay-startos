@@ -8,16 +8,16 @@
 ## What you get on StartOS
 
 - A **Nostr RS Relay** daemon backed by a SQLite database — your own Nostr relay that clients connect to over websocket.
-- A **Relay websocket** interface exposing the relay at port 8080 on your LAN, and over Tor if you provision an `.onion` address for it.
+- A **Relay websocket** interface holding the addresses Nostr clients connect to.
 - Configuration entirely through StartOS Actions — there is no separate config UI, and you do not edit `config.toml` by hand.
 
 ## Using Nostr RS Relay
 
 ### Connecting clients
 
-The **Relay websocket** interface holds the URLs your clients use. Copy a LAN address — or a Tor `.onion` address if you've provisioned one — from that interface and add it to your Nostr client of choice (Damus, Amethyst, noStrudel, etc.) as a relay.
+The **Relay websocket** interface holds the addresses your clients use. Copy one the device running your Nostr client can reach and add it to the client (Damus, Amethyst, noStrudel, etc.) as a relay.
 
-The relay speaks plain `ws://` rather than `wss://`. If you connect from a web client served over HTTPS (e.g. noStrudel in Firefox), set `network.websocket.allowInsecureFromHTTPS` to `true` in `about:config` so the browser will open the websocket.
+Its LAN and `.local` addresses are `wss://` addresses secured by your server's certificate, so a client connects to them only from a device that trusts your server's Root CA — see [Trusting Your Root CA](https://docs.start9.com/start-os/trust-ca.html).
 
 ### Actions
 
@@ -29,6 +29,8 @@ All four actions live under the **Configure** group and can be run whether the r
   - **Verified Users (NIP-05)** — `disabled` (default), `enabled` (require NIP-05 to publish), or `passive` (verify but don't block). Optionally restrict to a **whitelist** or **blacklist** of NIP-05 domains, and tune verification expiration, refresh frequency, and max consecutive failures.
   - **Authorized Pubkeys** — a whitelist of hex pubkeys allowed to publish. Leave empty to permit all pubkeys.
 - **Set Data Limits** — tune the relay's throughput and resource caps: messages per second (server-wide), subscriptions per minute (per connection), max blocking threads, max event / websocket message / websocket frame sizes, broadcast buffer, and event-persist buffer.
+
+With NIP-05 verification on, the relay looks up each author's NIP-05 record on their own domain, so those domains see your server's IP address. If you publish the relay through a tunnel to keep your home IP private, send its outbound traffic through that tunnel too.
 
 ## Limitations
 
